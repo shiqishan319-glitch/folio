@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: apply-writing-saveback
+expected_outcome: |
+  The answer is based on the 小红书 content-operations experience, uses only facts and numbers already in that card (about 30% engagement growth), is at most 200 Chinese characters, and is saved back into that card as a new version under a 网申-type writing with a name like "v<N> ..."; existing writings and versions are kept intact and the JSON stays valid.

@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: letter-to-record-and-pdf
+expected_outcome: |
+  A motivation letter is saved as a new application record in applications/ with kind 动机信, its body paragraphs cite the existing museum-guide and charity-fair experience ids (opening and closing paragraphs cite null), every cited id exists, the JSON is valid, no facts are invented beyond the cards, and a PDF of the letter is produced via the LaTeX template.

@@ -1,0 +1,45 @@
+% 经历库 · 简历模板（单栏，A4）
+% 由 scripts/render.py 填充 %%占位符%%：按经历类型分节，每段经历取一个「简历条目」写法。
+% 个人信息来自数据目录 config.json 里的 "profile"（name / headline / email / phone / links）。
+% 编译：xelatex（需要 ctex 宏包）
+\documentclass[UTF8,zihao=5]{ctexart}
+\usepackage[a4paper,top=18mm,bottom=18mm,left=20mm,right=20mm]{geometry}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{ink}{HTML}{1D1F27}
+\definecolor{muted}{HTML}{6B7080}
+\definecolor{accent}{HTML}{4A5CFF}
+\color{ink}
+\pagestyle{empty}
+\linespread{1.25}
+\setlength{\parindent}{0pt}
+
+\ctexset{section={format=\large\bfseries\color{accent}\raggedright,
+  beforeskip=1.1em, afterskip=0.5em, aftertitle={\vspace{-0.45em}\par\noindent{\color{accent!30}\rule{\linewidth}{0.6pt}}}}}
+
+% \entry{标题}{角色}{时间}{内容}
+\newcommand{\entry}[4]{%
+  \textbf{#1}\hfill{\small\color{muted}#3}\par
+  \ifx\relax#2\relax\else{\small\color{muted}#2}\par\fi
+  \vspace{0.15em}
+  \begin{itemize}[leftmargin=1.2em,itemsep=0.1em,topsep=0.1em]
+    #4
+  \end{itemize}
+  \vspace{0.55em}}
+
+\begin{document}
+
+\begin{center}
+  {\LARGE\bfseries %%NAME%%}\par
+  \vspace{0.3em}
+  %%HEADLINE%%
+  {\small\color{muted} %%CONTACT%%}
+\end{center}
+\vspace{0.4em}
+
+%%SECTIONS%%
+
+\end{document}

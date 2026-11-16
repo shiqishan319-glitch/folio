@@ -1,0 +1,5 @@
+{
+  "schema": 1,
+  "types": ["实习", "项目", "志愿者", "获奖", "思考"],
+  "profile": {"name": "", "headline": "", "email": "", "phone": "", "links": []}
+}

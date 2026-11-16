@@ -1,0 +1,10 @@
+*.pyc
+*.swp
+.DS_Store
+.dev-vault/
+.idea/
+.vscode/
+__pycache__/
+node_modules/
+~$*
+jingliku-workspace/

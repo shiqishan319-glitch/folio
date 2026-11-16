@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "types": [
+    "实习",
+    "项目",
+    "志愿者",
+    "获奖",
+    "思考"
+  ],
+  "profile": {
+    "name": "示例同学",
+    "headline": "社会人类学 · 本科三年级",
+    "email": "student@example.com",
+    "phone": "",
+    "links": []
+  },
+  "created": "2026-11-16T10:00:00+08:00"
+}

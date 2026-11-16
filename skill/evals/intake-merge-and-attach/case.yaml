@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: intake-merge-and-attach
+expected_outcome: |
+  The existing 小红书 experience card is updated with the new column work (not duplicated as a new card); a new card for the library student assistant job is created with type 实习, time 2026.03 – 2026.05 and no invented numbers; the poster is attached to the 市集 card as a symlink shortcut under assets/ with a works entry recording the original path, size and mtime; all JSON files stay valid; the reply asks a few follow-up questions about missing results or reflections.
+context:
+  scaffold_script: place-files.sh

@@ -1,0 +1,38 @@
+% 经历库 · 申请记录模板（自荐信 / 动机信 / Cover letter）
+% 由 scripts/render.py 填充 %%占位符%%；也可以 `render.py doc <id> --tex-only` 导出后手动修改。
+% 编译：xelatex（需要 ctex 宏包；不指定 fontset，ctex 会按系统自动选中文字体）
+\documentclass[UTF8,zihao=-4]{ctexart}
+\usepackage[a4paper,top=28mm,bottom=26mm,left=28mm,right=28mm]{geometry}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+
+\definecolor{ink}{HTML}{1D1F27}
+\definecolor{muted}{HTML}{6B7080}
+\color{ink}
+\linespread{1.45}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0.55em}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot[C]{\small\color{muted}\thepage}
+
+\begin{document}
+
+\begin{flushleft}
+  {\Large\bfseries %%TITLE%%}\par
+  \vspace{0.35em}
+  {\small\color{muted} %%META%%}
+\end{flushleft}
+\vspace{0.8em}
+
+%%BODY%%
+
+\vspace{2em}
+\begin{flushright}
+  %%SIGNATURE%%
+\end{flushright}
+
+\end{document}

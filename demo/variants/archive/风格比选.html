@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>经历库 风格比选</title>
+<style>
+:root{--bg:#f5f5f7;--panel:#fff;--line:#e3e4e8;--ink:#15171c;--muted:#6b7080;--accent:#3347c9;
+  --font:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1116;--panel:#171a21;--line:#272b35;--ink:#e9ebf1;--muted:#8d94a5;--accent:#97a4ff;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1116;--panel:#171a21;--line:#272b35;--ink:#e9ebf1;--muted:#8d94a5;--accent:#97a4ff;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 var(--font)}
+main{max-width:1180px;margin:0 auto;padding:40px 16px 64px}
+h1{font-size:26px;margin:0 0 6px}
+p.lead{color:var(--muted);margin:0 0 28px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+a.card{display:flex;flex-direction:column;gap:6px;padding:20px;border:1px solid var(--line);border-radius:14px;background:var(--panel);color:inherit;text-decoration:none;transition:border-color .15s,transform .15s}
+a.card:hover{border-color:var(--accent);transform:translateY(-2px)}
+a.card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tag{font-size:12px;color:var(--muted)}
+.name{font-size:18px;font-weight:600}
+.desc{color:var(--muted);font-size:14px}
+.go{margin-top:auto;padding-top:8px;color:var(--accent);font-size:14px}
+footer{margin-top:28px;color:var(--muted);font-size:13px}
+@media (prefers-reduced-motion:reduce){a.card{transition:none}a.card:hover{transform:none}}
+</style>
+</head>
+<body>
+<main>
+  <h1>经历库 Demo · 风格比选</h1>
+  <p class="lead">几个版本的交互和数据基本一样，只有视觉风格不同。每个都点开，在宽屏下试几下：切换经历、切写法版本、展开对比、展开完整文档。</p>
+  <div class="grid">
+    <a class="card" href="v0-原版.html">
+      <span class="tag">原版 · 基线</span>
+      <span class="name">简洁工具风</span>
+      <span class="desc">现有 Demo，灰白底加蓝色强调色。</span>
+      <span class="go">打开 →</span>
+    </a>
+    <a class="card" href="../../index.html">
+      <span class="tag">合并版 · v1 + v8 ★</span>
+      <span class="name">精致 Bento</span>
+      <span class="desc">以精致产品感为底，加入卡片墙的统计卡、详情 Bento 拼贴和「结果」大号数字；半屏宽度下也整理过。</span>
+      <span class="go">打开 →</span>
+    </a>
+    <a class="card" href="v1-精致产品感.html">
+      <span class="tag">方案 1 · 候选</span>
+      <span class="name">精致产品感</span>
+      <span class="desc">布局不变，提升质感：配色、字体层级、阴影层次、过渡动画和细节微交互。参考 Linear / Arc。</span>
+      <span class="go">打开 →</span>
+    </a>
+    <a class="card" href="v2-英伦旅行剪报.html">
+      <span class="tag">方案 2</span>
+      <span class="name">英伦旅行剪报</span>
+      <span class="desc">复古英伦旅行剪报，克制的黑白配色：老式火车票、邮戳、航空明信片、报纸剪报。</span>
+      <span class="go">打开 →</span>
+    </a>
+    <a class="card" href="v3-年轻活泼.html">
+      <span class="tag">方案 3</span>
+      <span class="name">年轻活泼</span>
+      <span class="desc">面向低年级学生：每种经历类型有自己的颜色和图标，圆润卡片和轻快的小动效。</span>
+      <span class="go">打开 →</span>
+    </a>
+    <a class="card" href="v5-新粗野主义.html">
+      <span class="tag">方案 5</span>
+      <span class="name">新粗野主义</span>
+      <span class="desc">粗黑描边、硬投影、饱和色块，按钮可以「按下去」。年轻用户里流行的风格。</span>
+      <span class="go">打开 →</span>
+    </a>
+    <a class="card" href="v8-Bento卡片墙.html">
+      <span class="tag">方案 8 · 候选</span>
+      <span class="name">Bento 卡片墙</span>
+      <span class="desc">大小不一的圆角卡片拼贴，顶部有统计；「结果」以大号数字突出。适合截图分享。</span>
+      <span class="go">打开 →</span>
+    </a>
+    <a class="card" href="v9-笔记封面.html">
+      <span class="tag">方案 9</span>
+      <span class="name">笔记封面风</span>
+      <span class="desc">每段经历是一张笔记封面卡，渐变封面加粗体大标题，时间线是双列信息流。</span>
+      <span class="go">打开 →</span>
+    </a>
+  </div>
+  <footer>选定后可以混搭，比如方案 1 的质感加上方案 3 的类型配色。建议也拖窄浏览器看看：产品实际住在 AI 工具的右半屏。</footer>
+</main>
+</body>
+</html>
