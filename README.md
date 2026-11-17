@@ -38,11 +38,13 @@
 │   ├── architecture.md       Skill 架构：AI 就是后端，代码只有一根细管子
 │   └── notes/
 │       └── 2026-11-11-思考.md  原始头脑风暴笔记
-├── skill/                    经历库 Skill 包（装进 Claude Code / Codex 等）
+├── skill/                    经历库 Skill 包（装进 Claude Code / Codex / Qoder / WorkBuddy / DSH 等）
 │   ├── SKILL.md              给 AI 的全部 know-how
 │   ├── references/data-format.md  数据格式
 │   ├── app/index.html        前端（v10）
-│   ├── scripts/serve.py      唯一的代码：本地细管子（Python 标准库）
+│   ├── VERSION               版本号（改了 skill 就加一）
+│   ├── scripts/serve.py      本地细管子（Python 标准库）
+│   ├── scripts/check_update.py  每次会话检查 GitHub 有没有新版本
 │   ├── templates/latex/      申请记录、简历 LaTeX 模板
 │   ├── examples/sample-vault/ 示例数据
 │   └── adapters/             各 harness 的安装与打开方式
@@ -86,4 +88,5 @@ PRD 里列了 10 个待解决问题，前 3 个决定产品形态，要先定：
 - PRD 以本仓库的 `docs/PRD.md` 为准。原稿在飞书（「个人素材库-产品思路」），迁入后改动都在这里做，靠 git 记录历史。
 - 讨论用 Issue：一个待解决问题、一条需求或一个 bug 开一个 Issue，标题带编号（如 `[问题2] 产品住在哪里`、`[C1] Demo 接入真实数据`）。
 - 改动走分支 + Pull Request，不直接推 `main`。
+- 改了 `skill/` 下的任何东西，提交前把 `skill/VERSION` 的版本号加一（复制安装的用户靠它发现新版本）。
 - 新的原始想法放 `docs/notes/YYYY-MM-DD-主题.md`，整理成结论后再合进 PRD。

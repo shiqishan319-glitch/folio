@@ -5,6 +5,9 @@ All product logic lives in the front end and in the harness AI (see SKILL.md).
     python3 serve.py [--vault ~/经历库] [--port 8765]
     python3 serve.py --vault ~/经历库 --ensure     # AI uses this: prints "RUNNING <url>" or starts it
                                                   # detached in the background and prints "STARTED <url>"
+    python3 serve.py --vault ~/经历库 --restart    # after an update: stop the old server, start the new code
+
+  Port: last used port (from .runtime.json), else 8765; if another app holds it, the next free one.
 
   GET    /                 app/index.html (with the write token injected)
   GET    /vault/<path>     a vault file; a folder returns a JSON listing [{name,dir,size,mtime}]
@@ -12,30 +15,66 @@ All product logic lives in the front end and in the harness AI (see SKILL.md).
   DELETE /vault/<path>.json   move to .trash/
 Only 127.0.0.1; Host is checked; writes need the X-Token header. Standard library only.
 """
-import argparse, json, mimetypes, os, secrets, socket, subprocess, sys, time, urllib.request
+import argparse, json, mimetypes, os, secrets, signal, socket, subprocess, sys, time, urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--vault", default=os.environ.get("JINGLIKU_VAULT", "~/经历库"))
-ap.add_argument("--port", type=int, default=8765)
+ap.add_argument("--port", type=int, default=None, help="preferred port (default: last used, else 8765)")
 ap.add_argument("--app", default=str(Path(__file__).resolve().parent.parent / "app"))
 ap.add_argument("--ensure", action="store_true", help="print the URL if running, else start detached")
+ap.add_argument("--restart", action="store_true", help="stop the running server (e.g. after an update), then --ensure")
 A = ap.parse_args()
 VAULT, APP = Path(A.vault).expanduser().resolve(), Path(A.app).resolve()
 WRITABLE = ("experiences/", "applications/", "config.json")
+SIGNATURE = "X-Jingliku"  # every response carries it, so we never mistake another app for ours
+
+
+def runtime():
+    try:
+        return json.loads((VAULT / ".runtime.json").read_text())
+    except Exception:
+        return {}
 
 
 def running_url():
-    """The URL in .runtime.json, but only if a server there actually answers."""
+    """The URL in .runtime.json, but only if OUR server answers there."""
     try:
-        u = json.loads((VAULT / ".runtime.json").read_text())["url"]
+        u = runtime()["url"]
         with urllib.request.urlopen(u + "vault/config.json", timeout=2) as r:
-            return u if r.status == 200 else None
+            return u if r.status == 200 and r.headers.get(SIGNATURE) else None
     except Exception:
         return None
 
+
+# keep the URL stable: reuse last port unless the user asked for one
+A.port = A.port or runtime().get("port") or 8765
+
+def is_our_process(pid):
+    """True if pid is a running serve.py (also catches older versions without the signature header)."""
+    try:
+        if os.name == "nt":
+            return bool(running_url())
+        out = subprocess.run(["ps", "-p", str(int(pid)), "-o", "command="], capture_output=True, text=True).stdout
+        return "serve.py" in out
+    except (OSError, ValueError):
+        return False
+
+
+if A.restart:
+    pid = runtime().get("pid")
+    if pid and is_our_process(pid):
+        try:
+            os.kill(int(pid), signal.SIGTERM)
+        except OSError:
+            pass
+        for _ in range(25):  # wait until it is really gone
+            time.sleep(0.2)
+            if not is_our_process(pid):
+                break
+    A.ensure = True
 
 if A.ensure:
     if not VAULT.is_dir():
@@ -72,15 +111,28 @@ def stable_token():
     return t
 
 
+def port_free(p):
+    """Free = nobody answers on it AND we can bind it.
+    The connect test catches other apps listening on any interface (0.0.0.0 / ::), which a
+    SO_REUSEADDR bind on macOS would wrongly allow; SO_REUSEADDR itself is still needed to
+    reclaim our own port right after a restart (TIME_WAIT). Windows uses exclusive binding."""
+    with socket.socket() as c:
+        c.settimeout(0.3)
+        if c.connect_ex(("127.0.0.1", p)) == 0:
+            return False
+    with socket.socket() as s:
+        s.setsockopt(socket.SOL_SOCKET, getattr(socket, "SO_EXCLUSIVEADDRUSE", socket.SO_REUSEADDR), 1)
+        try:
+            s.bind(("127.0.0.1", p)); return True
+        except OSError:
+            return False
+
+
 def free_port(p):
-    """Same port as last time if possible (SO_REUSEADDR lets us reclaim it right after a restart)."""
-    while True:
-        with socket.socket() as s:
-            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            try:
-                s.bind(("127.0.0.1", p)); return p
-            except OSError:
-                p += 1
+    for q in range(p, p + 50):
+        if port_free(q):
+            return q
+    sys.exit(f"NO_FREE_PORT in {p}-{p + 49}")
 
 
 TOKEN = stable_token() if VAULT.is_dir() else secrets.token_urlsafe(16)
@@ -90,12 +142,16 @@ HOSTS = {f"127.0.0.1:{PORT}", f"localhost:{PORT}"}
 
 class H(BaseHTTPRequestHandler):
     def send(self, code, body=b"", ctype="application/json; charset=utf-8"):
-        self.send_response(code)
-        self.send_header("Content-Type", ctype)
-        self.send_header("Content-Length", str(len(body)))
-        self.send_header("Cache-Control", "no-store")
-        self.end_headers()
-        self.wfile.write(body)
+        try:
+            self.send_response(code)
+            self.send_header("Content-Type", ctype)
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("Cache-Control", "no-store")
+            self.send_header(SIGNATURE, "1")
+            self.end_headers()
+            self.wfile.write(body)
+        except (BrokenPipeError, ConnectionResetError):
+            pass  # the browser closed or reloaded mid-response; nothing to report
 
     def target(self):
         """Map /vault/<rel> to a path inside the vault, or None."""
@@ -165,7 +221,7 @@ if __name__ == "__main__":
     if not VAULT.is_dir():
         sys.exit(f"no vault at {VAULT} — create it first (see SKILL.md)")
     url = f"http://127.0.0.1:{PORT}/"
-    (VAULT / ".runtime.json").write_text(json.dumps({"url": url, "pid": os.getpid()}))
+    (VAULT / ".runtime.json").write_text(json.dumps({"url": url, "port": PORT, "pid": os.getpid()}))
     print(f"经历库 running at {url}  (vault: {VAULT})", flush=True)
     try:
         ThreadingHTTPServer(("127.0.0.1", PORT), H).serve_forever()

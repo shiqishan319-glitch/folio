@@ -1,6 +1,6 @@
 ---
 name: jingliku
-description: 经历库——住在本地、由 AI 维护的个人经历数据库，右半屏有可视化前端。当用户想记录或整理自己的经历（实习、项目、志愿者、获奖、思考），准备网申、简历、自荐信、动机信、评奖评优材料，想找某段经历已有的写法或改写新版本，或导出简历/申请材料 PDF 时使用。Use for a personal experience vault: logging experiences, preparing applications, resumes and cover letters, exporting PDFs.
+description: "经历库——住在本地、由 AI 维护的个人经历数据库，右半屏有可视化前端。当用户想记录或整理自己的经历（实习、项目、志愿者、获奖、思考），准备网申、简历、自荐信、动机信、评奖评优材料，想找某段经历已有的写法或改写新版本，或导出简历/申请材料 PDF 时使用。Use for a personal experience vault: logging experiences, preparing applications, resumes and cover letters, exporting PDFs."
 ---
 
 # 经历库 Skill
@@ -34,7 +34,7 @@ description: 经历库——住在本地、由 AI 维护的个人经历数据库
 
 ## 每次会话第一步：启动
 
-**先读 `<SKILL>/recipes/01-启动.md`，照做。** 它会：检查 Python → 确认数据目录 → 确保网页在运行 → 在右半屏打开。启动成功后再处理用户的请求。同一个会话里后面的请求，只需要做铁律第 1 条那一条命令。
+**先读 `<SKILL>/recipes/01-启动.md`，照做。** 它会：检查 Python → 检查有没有新版本 → 确认数据目录 → 确保网页在运行 → 在右半屏打开。启动成功后再处理用户的请求。同一个会话里后面的请求，只需要做铁律第 1 条那一条命令。
 
 ## 用户想做什么 → 读哪个文件
 
