@@ -113,30 +113,3 @@ python3 -m http.server 8765 --bind 127.0.0.1 --directory demo
 ## 开源协议
 
 本项目采用 **[GNU Affero General Public License v3.0 (AGPL-3.0)](LICENSE)** 开源：个人可自由使用与修改；若对外分发修改版本或架设为网络服务，须以同一协议开源全部修改源码并保留原作者版权声明。
-
----
-
-## 开发日志（dev）
-
-- **2026-11-18 · v0.3.4**
-  - 选择性合入 `skill/ui-fix-and-wordcount`：清理 `.card::before` 遗留阴影 Halo、补充重命名框中文输入法（`keyCode === 229`）防误触、`05-整篇文档.md` 增加硬卡字数（`±5%`）校验指引、`07-导出PDF.md` 补充简历生成前用途确认与纯文本兜底。
-- **2026-11-18 · v0.3.3**
-  - **多模态作品集分层存储与语义索引**：新增 `skill/scripts/works.py`（`attach` 按 5 MB 阈值自动 `copy` / `link` 并记录 `sha256`、`relink` 基于 Spotlight 找回断链、`audit` 盘点库内体积与摘要覆盖率）。
-  - **大视频流式播放与 HTTP Range**：升级 `skill/scripts/serve.py`，支持 `206 Partial Content` 分片流式读取，大视频可顺滑拖拽进度条且不再整文件读入内存。
-  - **前端检索与摘要展示**：`skill/app/index.html` 支持在顶部搜索框直接检索 `works[].summary` 与文件名，并在作品卡片下展示轻量摘要。
-  - 更新 `skill/references/data-format.md`、`skill/recipes/02-入库.md` 与 `README.md`。
-- **2026-11-18 · v0.3.1 – v0.3.2**
-  - 新增 `LICENSE`（GNU AGPL-3.0）与 `fill_html.py` + `templates/html/resume.html` 零依赖 HTML A4 打印版简历（前端新增 `/resume-print` 入口与字数统计）。
-  - 强化 `check_update.py` 离线/受限网络超时与冷却保护，清理前端「个人概况」卡片与角标视觉细节。
-- **2026-11-18 · v0.3.0**
-  - 新增 Google Antigravity 专属适配（`skill/adapters/antigravity/README.md`），补充沙箱权限、回环探测授权、`browser` subagent 打开方式与 AI 一句话自安装引导。
-  - `serve.py` 自检请求显式绕过系统代理（`ProxyHandler({})`），并新增白名单二进制上传接口 `PUT /vault/assets/portrait.*`。
-  - 参照 `sqs-resume` 风格升级 `skill/templates/latex/resume.tex` 与 `fill_tex.py`：支持灰底黑条分节栏、可选右上角证件照、教育背景、`location` 与多版本「技能」卡片。
-  - 前端 `skill/app/index.html` 在时间线底部新增置底「个人信息」卡片与右侧 Bento 详情页（支持内联编辑与证件照拖拽/点击上传）。
-
-## TODO
-
-- [x] `serve.py` 支持 HTTP Range 请求，实现右半屏本地视频拖动进度条（PRD 需求 C3）。
-- [ ] Codex 适配实测与状态更新（`skill/adapters/codex/README.md`）。
-- [ ] 真实素材连续试用一个月（入库 → 申请 → 回存），打磨标签归纳与默认版本召回体验。
-- [ ] 探索用户自定义前端视图/小插件的打包与去中心化分享格式（PRD 需求 D5）。
