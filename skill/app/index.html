@@ -375,12 +375,13 @@ body{background:
 @container (max-width:380px){
   .stats{padding:8px 10px 9px;gap:7px 0;border-radius:16px;margin-bottom:14px}
   .sts{flex:1 1 100%;justify-content:space-between}
-  .st{padding:0 6px;gap:3px}
+  /* sized so three two-digit counts still leave room for the full labels (「简历」, not 「简」) */
+  .st{padding:0 5px;gap:2px}
   .st:last-child{padding-right:0}
-  .st .sn{font-size:19px;line-height:22px}
+  .st .sn{font-size:17px;line-height:22px;letter-spacing:-.05em}
   .st .sk{font-size:11px}
-  .st .wo,.st .wo2,.lg{display:none}
-  .st-main .sn{min-width:24px;padding:0 5px;border-radius:7px}
+  .st .wo,.lg{display:none}
+  .st-main .sn{min-width:22px;padding:0 4px;border-radius:7px}
   .bar{flex:1 1 100%}
 }
 
@@ -958,7 +959,7 @@ function statsHtml(){
   return `<div class="stats" aria-label="经历库概览"><div class="sts">
     <div class="st st-main" title="经历${span?' · '+span:''}"><span class="sn">${CARDS.length}</span><span class="sk">经历${span?`<span class="wo"> · ${span}</span>`:''}</span></div>
     <div class="st" title="写法版本"><span class="sn">${CARDS.reduce((n,c)=>n+nVers(c),0)}</span><span class="sk">写法</span></div>
-    <div class="st" title="简历"><span class="sn">${DOCS.length}</span><span class="sk">简<span class="wo2">历</span></span></div></div>
+    <div class="st" title="简历"><span class="sn">${DOCS.length}</span><span class="sk">简历</span></div></div>
     <div class="st-mix" title="类型分布"><div class="bar" aria-hidden="true">${per.map(p=>p.n?`<i class="${tc(p.t)}" style="flex:${p.n}" title="${p.t} ${p.n}"></i>`:'').join('')}</div>
       <div class="lg">${per.map(p=>`<span class="${tc(p.t)}${p.n?'':' zero'}"><i></i>${p.t}<b>${p.n}</b></span>`).join('')}</div></div></div>`;
 }

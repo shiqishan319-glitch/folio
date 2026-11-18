@@ -15,7 +15,7 @@ All product logic lives in the front end and in the harness AI (see SKILL.md).
   DELETE /vault/<path>.json   move to .trash/
 Only 127.0.0.1; Host is checked; writes need the X-Token header. Standard library only.
 """
-import argparse, json, mimetypes, os, secrets, signal, socket, subprocess, sys, time, urllib.request
+import argparse, json, mimetypes, os, re, secrets, signal, socket, subprocess, sys, time, urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlsplit
@@ -159,23 +159,21 @@ class H(BaseHTTPRequestHandler):
         total = path.stat().st_size
         start, end, code = 0, total - 1, 200
         rng = self.headers.get("Range")
-        if rng and rng.startswith("bytes=") and total > 0:
-            spec = rng[6:].split(",", 1)[0].strip()
-            if "-" in spec:
-                s_part, e_part = spec.split("-", 1)
-                if s_part == "" and e_part:
-                    length = int(e_part)
-                    start = max(0, total - length)
-                elif s_part:
-                    start = int(s_part)
-                    end = int(e_part) if e_part else total - 1
-                if start > end or start >= total:
-                    self.send_response(416)
-                    self.send_header("Content-Range", f"bytes */{total}")
-                    self.send_header(SIGNATURE, "1")
-                    return self.end_headers()
-                end = min(end, total - 1)
-                code = 206
+        # only "bytes=N-", "bytes=N-M" or "bytes=-N"; anything else is ignored (full 200), as RFC 9110 allows
+        m = re.fullmatch(r"bytes=(\d*)-(\d*)", (rng or "").split(",", 1)[0].strip())
+        if m and (m[1] or m[2]) and total > 0:
+            if m[1]:
+                start = int(m[1])
+                end = int(m[2]) if m[2] else total - 1
+            else:
+                start = max(0, total - int(m[2]))
+            if start > end or start >= total:
+                self.send_response(416)
+                self.send_header("Content-Range", f"bytes */{total}")
+                self.send_header(SIGNATURE, "1")
+                return self.end_headers()
+            end = min(end, total - 1)
+            code = 206
         length = (end - start + 1) if total > 0 else 0
         try:
             self.send_response(code)

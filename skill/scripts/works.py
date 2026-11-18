@@ -132,28 +132,51 @@ def cmd_attach(args):
         print("TIP: Tier-2 linked file has no `summary` yet; add 1-2 sentences so search & AI can find it without opening.")
 
 
+SEARCH_DIRS = ("Desktop", "Downloads", "Documents", "Movies", "Pictures")
+
+
+def mdfind(query: str):
+    if not shutil.which("mdfind"):
+        return []
+    try:
+        out = subprocess.check_output(["mdfind", query], text=True, timeout=8, stderr=subprocess.DEVNULL)
+    except Exception:
+        return []
+    return [Path(line.strip()) for line in out.splitlines() if line.strip()]
+
+
 def find_candidates_spotlight(filename: str):
-    hits = []
-    if shutil.which("mdfind"):
-        try:
-            out = subprocess.check_output(
-                ["mdfind", f'kMDItemFSName == "{filename}"'],
-                text=True, timeout=8, stderr=subprocess.DEVNULL
-            )
-            for line in out.splitlines():
-                p = Path(line.strip())
-                if p.exists():
-                    hits.append(p)
-        except Exception:
-            pass
+    """Files with the same name (Spotlight first, then a scan of the usual folders)."""
+    hits = [p for p in mdfind(f'kMDItemFSName == "{filename}"') if p.exists()]
     if not hits:
-        for base in ("Desktop", "Downloads", "Documents", "Movies", "Pictures"):
+        for base in SEARCH_DIRS:
             root = Path.home() / base
             if root.is_dir():
-                for p in root.rglob(filename):
-                    if p.exists():
-                        hits.append(p)
+                hits += [p for p in root.rglob(filename) if p.exists()]
     return hits
+
+
+def find_candidates_by_size(size: int):
+    """Yield files of exactly this size, for when the original was renamed as well as moved.
+    Spotlight hits come first; the folder scan only runs if the caller keeps asking."""
+    seen = set()
+    for p in mdfind(f"kMDItemFSSize == {int(size)}"):
+        if p.is_file():
+            seen.add(p)
+            yield p
+    for base in SEARCH_DIRS:
+        root = Path.home() / base
+        if not root.is_dir():
+            continue
+        for dirpath, dirnames, filenames in os.walk(root):
+            dirnames[:] = [d for d in dirnames if not d.startswith(".")]
+            for n in filenames:
+                p = Path(dirpath) / n
+                try:
+                    if p not in seen and p.is_file() and p.stat().st_size == size:
+                        yield p
+                except OSError:
+                    pass
 
 
 def cmd_relink(args):
@@ -194,6 +217,19 @@ def cmd_relink(args):
                     break
             if not match and len(candidates) == 1:
                 match = candidates[0]
+            # renamed as well as moved: look for files of the same size; a size hit alone could be a
+            # different file, so require the fingerprint (or, without one, the same mtime too)
+            if not match and want_size:
+                for cand in find_candidates_by_size(want_size):
+                    if (vault / "assets") in cand.parents:
+                        continue
+                    if want_sha:
+                        ok = file_sha256(cand) == want_sha
+                    else:
+                        ok = int(cand.stat().st_mtime) == w.get("mtime")
+                    if ok:
+                        match = cand
+                        break
 
             if match:
                 print(f"MATCH {cp.stem}: {w['asset']} -> {match}")
