@@ -25,16 +25,34 @@ STAMP = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "jingli
 FORCE, APPLY = "--force" in sys.argv, "--apply" in sys.argv
 
 
-def git(*args, timeout=20):
-    r = subprocess.run(["git", "-C", str(SKILL), *args], capture_output=True, text=True, timeout=timeout)
+def git(*args, timeout=5):
+    env = os.environ.copy()
+    env.setdefault("GIT_TERMINAL_PROMPT", "0")
+    env.setdefault("GCM_INTERACTIVE", "never")
+    env.setdefault("GIT_SSH_COMMAND", "ssh -o BatchMode=yes -o ConnectTimeout=3")
+    r = subprocess.run(["git", "-C", str(SKILL), *args], capture_output=True, text=True, timeout=timeout, env=env)
     return r.returncode, r.stdout.strip(), r.stderr.strip()
+
+
+def write_stamp(offset_seconds=0):
+    try:
+        STAMP.parent.mkdir(parents=True, exist_ok=True)
+        STAMP.write_text(str(int(time.time() - offset_seconds)))
+    except OSError:
+        pass
 
 
 def done(line, *more):
     print(line, *more, sep="\n")
     if not line.startswith("SKIPPED"):
-        STAMP.parent.mkdir(parents=True, exist_ok=True)
-        STAMP.write_text(str(int(time.time())))
+        write_stamp()
+    sys.exit(0)
+
+
+def skip_network(reason):
+    print(f"SKIPPED {reason}")
+    # Cool down for 2 hours on network/timeout failure so offline sessions don't stall repeatedly
+    write_stamp(offset_seconds=18 * 3600)
     sys.exit(0)
 
 
@@ -42,8 +60,12 @@ def ver(s):
     return tuple(int(x) for x in s.strip().split(".") if x.isdigit())
 
 
-if not (FORCE or APPLY) and STAMP.exists() and time.time() - float(STAMP.read_text() or 0) < 20 * 3600:
-    print("SKIPPED checked recently"); sys.exit(0)
+if not (FORCE or APPLY) and STAMP.exists():
+    try:
+        if time.time() - float(STAMP.read_text() or 0) < 20 * 3600:
+            print("SKIPPED checked recently"); sys.exit(0)
+    except (OSError, ValueError):
+        pass
 
 try:
     is_git = git("rev-parse", "--is-inside-work-tree")[1] == "true"
@@ -53,11 +75,11 @@ except (OSError, subprocess.TimeoutExpired):
 if is_git:
     up = git("rev-parse", "--abbrev-ref", "@{u}")[1] or f"origin/{BRANCH}"
     try:
-        rc, _, err = git("fetch", "--quiet")
+        rc, _, err = git("-c", "http.lowSpeedLimit=1000", "-c", "http.lowSpeedTime=3", "fetch", "--quiet", timeout=5)
     except subprocess.TimeoutExpired:
         rc, err = 1, "timeout"
     if rc:
-        print("SKIPPED cannot reach GitHub:", (err.splitlines() or ["?"])[0]); sys.exit(0)
+        skip_network("cannot reach GitHub: " + (err.splitlines() or ["?"])[0])
     n = int(git("rev-list", "--count", f"HEAD..{up}")[1] or 0)
     if n == 0:
         done(f"UP_TO_DATE {git('rev-parse', '--short', 'HEAD')[1]}")
@@ -69,17 +91,20 @@ if is_git:
     dirty = git("status", "--porcelain", "--untracked-files=no", "--", ".")[1]
     if dirty:
         print("DIRTY"); print(dirty); sys.exit(0)
-    rc, out, err = git("pull", "--ff-only", "--quiet", timeout=60)
+    try:
+        rc, out, err = git("pull", "--ff-only", "--quiet", timeout=30)
+    except subprocess.TimeoutExpired:
+        rc, err = 1, "timeout"
     done("UPDATED" if rc == 0 else f"SKIPPED pull failed: {err.splitlines()[0] if err else '?'}")
 
 # copied install: compare VERSION files
 local = (SKILL / "VERSION").read_text().strip() if (SKILL / "VERSION").exists() else "0"
 url = f"https://raw.githubusercontent.com/{REPO}/{BRANCH}/skill/VERSION"
 try:
-    with urllib.request.urlopen(url, timeout=8) as r:
+    with urllib.request.urlopen(url, timeout=4) as r:
         remote = r.read().decode().strip()
 except Exception as e:
-    print("SKIPPED cannot read the version on GitHub (offline, or the repo is private):", type(e).__name__); sys.exit(0)
+    skip_network(f"cannot read the version on GitHub (offline, or the repo is private): {type(e).__name__}")
 if ver(remote) <= ver(local):
     done(f"UP_TO_DATE {local}")
 if APPLY:

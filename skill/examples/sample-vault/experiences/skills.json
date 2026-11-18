@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "id": "skills",
+  "type": "技能",
+  "org": "",
+  "title": "技能与语言（多版本）",
+  "time": "",
+  "year": 2026,
+  "role": "",
+  "tags": [
+    "技能",
+    "语言",
+    "AI 工具"
+  ],
+  "fact": "数据与研究：Python / SQL / Excel 数据透视、质性用户访谈与问卷设计。\nAI 与产品工具：Figma 原型、Prompt 工程与评测集构建、Claude Code / Cursor。\n语言：中文（母语），英语（CET-6 610 / IELTS 7.0，可作为工作语言）。",
+  "result": "",
+  "thought": "不同岗位看重的技能顺序不同，用「技能」卡片可以按投递方向切换版本，不用每次手动改简历。",
+  "works": [],
+  "writings": [
+    {
+      "type": "简历条目",
+      "versions": [
+        {
+          "name": "v1 AI 产品向",
+          "text": "产品与 AI：Figma 原型设计、SQL / Python 数据分析、AI Eval 评测集搭建与 Prompt 调优\n研究与协作：用户质性访谈、PRD 撰写、跨团队推进与数据复盘\n语言能力：中文（母语），英语（CET-6 610，可流畅阅读英文技术文档）"
+        },
+        {
+          "name": "v2 通用运营向",
+          "text": "数据分析：Excel（数据透视 / VLOOKUP）、SQL 基础查询、内容选题与互动率复盘\n内容与策划：活动方案撰写、公众号/小红书图文排版、Figma 海报基础设计\n语言能力：中文（母语），英语（CET-6 610）"
+        },
+        {
+          "name": "v3 英文",
+          "text": "Product & AI: Figma, SQL, Python (pandas), AI Evaluation & Prompt Engineering\nResearch: Qualitative User Interviews, Survey Design, Data-driven Funnel Analysis\nLanguages: Mandarin (Native), English (Fluent, IELTS 7.0)"
+        }
+      ]
+    }
+  ],
+  "created": "2026-11-18T17:08:00+08:00",
+  "updated": "2026-11-18T17:08:00+08:00"
+}

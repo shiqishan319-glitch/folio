@@ -930,7 +930,7 @@ function statsHtml(){
   return `<div class="stats" aria-label="经历库概览"><div class="sts">
     <div class="st st-main" title="经历${span?' · '+span:''}"><span class="sn">${CARDS.length}</span><span class="sk">经历${span?`<span class="wo"> · ${span}</span>`:''}</span></div>
     <div class="st" title="写法版本"><span class="sn">${CARDS.reduce((n,c)=>n+nVers(c),0)}</span><span class="sk">写法</span></div>
-    <div class="st" title="申请记录"><span class="sn">${DOCS.length}</span><span class="sk">申请<span class="wo2">记录</span></span></div></div>
+    <div class="st" title="简历"><span class="sn">${DOCS.length}</span><span class="sk">简<span class="wo2">历</span></span></div></div>
     <div class="st-mix" title="类型分布"><div class="bar" aria-hidden="true">${per.map(p=>p.n?`<i class="${tc(p.t)}" style="flex:${p.n}" title="${p.t} ${p.n}"></i>`:'').join('')}</div>
       <div class="lg">${per.map(p=>`<span class="${tc(p.t)}${p.n?'':' zero'}"><i></i>${p.t}<b>${p.n}</b></span>`).join('')}</div></div></div>`;
 }
@@ -1005,7 +1005,7 @@ function filterCol(open){
     <div class="brandrow"><span class="brand"><span class="logo" aria-hidden="true">${LOGO}</span>经历库</span>${S.mode==='single'?`<button data-pane="list" title="返回时间线" aria-label="返回时间线">${ICON.collapse}</button>`:`<button data-toggle="filter" title="收起筛选栏" aria-label="收起筛选栏">${ICON.collapse}</button>`}</div>
     <div class="trow"><button class="name allt ${S.type?'':'on'}" data-alltypes="1" title="显示全部类型">类型 · 全部</button><span class="cnt">${CARDS.length}</span></div>
     <ul class="tree">${tree}</ul>
-    <div class="lab">申请记录<button class="more" data-dnew="1" title="新建申请记录" aria-label="新建申请记录">${ICON.plus}</button></div><ul class="sub" style="margin-left:0;padding-left:0;border:none">${DOCS.map(d=>`<li><button class="${S.doc===d.id?'on':''}" data-doc="${esc(d.id)}">${ICON.doc}${esc(d.title||'未命名申请记录')}</button></li>`).join('')}</ul><div class="sidefoot">${statusHtml()}</div></div>`;
+    <div class="lab">简历<button class="more" data-dnew="1" title="新建简历" aria-label="新建简历">${ICON.plus}</button></div><ul class="sub" style="margin-left:0;padding-left:0;border:none">${DOCS.map(d=>`<li><button class="${S.doc===d.id?'on':''}" data-doc="${esc(d.id)}">${ICON.doc}${esc(d.title||'未命名简历')}</button></li>`).join('')}</ul><div class="sidefoot">${statusHtml()}</div></div>`;
 }
 function listCol(fill){
   const cs=visible().sort((a,b)=>String(b.time).localeCompare(String(a.time)));let yr=null,h='';
@@ -1077,10 +1077,10 @@ function detailCol(){
     <div class="tile wk ${c.works.length?'':'miss'}"><div class="lk">${ICON.wk}作品</div><div class="v">${c.works.length?c.works.map(workHtml).join(''):'无'}</div></div></div>
     <div class="sec"><span>已有写法<small>${c.writings.length+(r?1:0)}</small></span>${anyMany?`<button class="tog" data-expall="1">${S.expAll?'全部收起':'全部展开对比'}</button>`:''}</div>${ws||'<div class="empty">还没有写法。回到对话，让 AI 按某次申请的要求生成。</div>'}</div>`;
 }
-const dtitle=d=>d.title||'未命名申请记录';
+const dtitle=d=>d.title||'未命名简历';
 function docView(back){
   const d=DOCS.find(x=>x.id===S.doc);
-  if(!d)return `<div class="col" style="flex:1">${back?`<div class="backrow">${back}</div>`:''}<div class="empty">这份申请记录已经不在了。</div></div>`;
+  if(!d)return `<div class="col" style="flex:1">${back?`<div class="backrow">${back}</div>`:''}<div class="empty">这份简历已经不在了。</div></div>`;
   const ed=S.docEdit===d.id,yr=String(d.date||'').slice(0,4);
   const head=`<div class="backrow">${back}<button class="btn" data-back="1">← 返回卡片</button><span class="grow"></span>${ed?`<button class="btn pri" data-ddone="1">完成</button>`:`<button class="btn" data-dedit="${esc(d.id)}">${ICON.pen2}编辑</button>`}</div>`;
   if(ed){
@@ -1088,7 +1088,7 @@ function docView(back){
     const f=(k,l,ph)=>`<label>${l}<input data-df="${k}" value="${esc(d[k]||'')}" placeholder="${ph}"></label>`;
     return `<div class="col doc detail editing${FX.sel?' fx':''}" style="flex:1;min-width:0">${head}
     <div class="hero"><span class="ghost" aria-hidden="true">${esc(yr)}</span>
-    <div class="htop"><span class="tbadge">申请记录</span><span>编辑中 · ${LIVE?'改动会自动保存':'演示数据不会保存'}</span></div>
+    <div class="htop"><span class="tbadge">简历</span><span>编辑中 · ${LIVE?'改动会自动保存':'演示数据不会保存'}</span></div>
     <input class="din dtitle" data-df="title" value="${esc(d.title||'')}" placeholder="标题，如：某项目 · 自荐信" aria-label="标题">
     <div class="dmeta">${f('kind','类型','自荐信')}${f('target','申请对象','某机构')}${f('scene','场景','实习申请')}${f('date','日期','2026.11')}${f('lang','语言','中文')}</div></div>
     <div class="body dbody">${d.paras.map((p,i)=>`<div class="dpara"><textarea class="dta" data-dp="${i}" rows="2" placeholder="这一段写什么……" aria-label="第 ${i+1} 段">${esc(p.text||'')}</textarea>
@@ -1101,8 +1101,8 @@ function docView(back){
   const mp=(cls,v,pre='')=>`<span class="pill ${cls}"${v?'':' data-empty'}>${pre}${esc(v||'')}</span>`;
   return `<div class="col doc detail${FX.sel?' fx':''}" style="flex:1;min-width:0">${head}
     <div class="hero"><span class="ghost" aria-hidden="true">${esc(yr)}</span>
-    <div class="htop"><span class="tbadge">申请记录</span><span>引用经历的完整文档</span></div>
-    <h1 class="dt">${esc(dtitle(d))} <button class="more" style="font-size:18px;vertical-align:middle" data-dmenu="${esc(d.id)}" aria-label="申请记录操作：复制、删除" title="复制、删除">⋯</button></h1>
+    <div class="htop"><span class="tbadge">简历</span><span>引用经历的完整文档</span></div>
+    <h1 class="dt">${esc(dtitle(d))} <button class="more" style="font-size:18px;vertical-align:middle" data-dmenu="${esc(d.id)}" aria-label="简历操作：复制、删除" title="复制、删除">⋯</button></h1>
     <div class="dm">${mp('solid m-kind',d.kind)}${mp('m-target',d.target,'申请对象：')}${mp('m-scene',d.scene,'场景：')}${mp('m-date',d.date)}${mp('m-lang',d.lang)}</div>
     <div class="kpis"><span class="kpi"><b>${d.paras.length}</b>段</span><span class="kpi"><b>${new Set(d.paras.map(p=>p.card).filter(Boolean)).size}</b>段经历被引用</span></div></div>
     <div class="body">${d.paras.map((p,i)=>`<p class="${S.hit===i?'hit':''}">${esc(p.text)}</p>${p.card&&card(p.card)?`<div class="from"><button data-sel="${esc(p.card)}">用到的经历：${esc(card(p.card).title)}</button></div>`:''}`).join('')||'<p class="dempty">还没有内容。点右上角「编辑」开始写。</p>'}</div>
@@ -1182,8 +1182,8 @@ document.addEventListener('click',e=>{
   if(d.dm){const m=S.menu,x=DOCS.find(o=>o.id===m.doc),i=DOCS.indexOf(x);
     if(!x){S.menu=null;showMenu();return}
     if(d.dm==='del'&&!m.confirm){m.confirm=true;showMenu();return}
-    if(d.dm==='dup'){const n=JSON.parse(JSON.stringify(x));n.id=newId('a',DOCS);n.title=dtitle(x)+' 副本';DOCS.splice(i+1,0,n);S.doc=n.id;S.docEdit=null;S.hit=null;toast('已复制这份申请记录')}
-    else if(d.dm==='del'){DOCS.splice(i,1);if(S.doc===x.id){S.doc=null;S.docEdit=null}toast('已删除这份申请记录')}
+    if(d.dm==='dup'){const n=JSON.parse(JSON.stringify(x));n.id=newId('a',DOCS);n.title=dtitle(x)+' 副本';DOCS.splice(i+1,0,n);S.doc=n.id;S.docEdit=null;S.hit=null;toast('已复制这份简历')}
+    else if(d.dm==='del'){DOCS.splice(i,1);if(S.doc===x.id){S.doc=null;S.docEdit=null}toast('已删除这份简历')}
     S.menu=null;showMenu();render();return}
   if(d.cm){const m=S.menu,c=card(m.card),i=CARDS.indexOf(c);
     if(d.cm==='del'&&!m.confirm){m.confirm=true;showMenu();return}
@@ -1213,9 +1213,9 @@ document.addEventListener('click',e=>{
   else if(d.sel){S.sel=d.sel;S.doc=null;S.docEdit=null;S.edit=null;S.fedit=null;S.show.detail=true;S.pane='detail'}
   else if(d.doc){if(S.docEdit!==d.doc)S.docEdit=null;S.doc=d.doc;S.hit=d.hit!==undefined?+d.hit:null;S.show.detail=true;S.pane='detail'}
   else if(d.back){S.doc=null;S.docEdit=null}
-  else if(d.dnew){const id=newId('a',DOCS);DOCS.push({schema:1,id,title:'',kind:'',target:'',scene:'',date:ym(),lang:'中文',paras:[{text:'',card:null}]});S.doc=id;S.docEdit=id;S.hit=null;S.show.detail=true;S.pane='detail';S.dfocus='title';toast('已新建申请记录')}
+  else if(d.dnew){const id=newId('a',DOCS);DOCS.push({schema:1,id,title:'',kind:'',target:'',scene:'',date:ym(),lang:'中文',paras:[{text:'',card:null}]});S.doc=id;S.docEdit=id;S.hit=null;S.show.detail=true;S.pane='detail';S.dfocus='title';toast('已新建简历')}
   else if(d.dedit){S.docEdit=d.dedit;S.dconf=null;S.hit=null}
-  else if(d.ddone){S.docEdit=null;S.dconf=null;toast(LIVE?'申请记录已保存':'已更新（演示数据不会保存）')}
+  else if(d.ddone){S.docEdit=null;S.dconf=null;toast(LIVE?'简历已保存':'已更新（演示数据不会保存）')}
   else if(d.dadd){const x=DOCS.find(o=>o.id===S.docEdit);if(x){x.paras.push({text:'',card:null});S.dconf=null;S.dfocus=x.paras.length-1}}
   else if(d.dmv){const x=DOCS.find(o=>o.id===S.docEdit),[i,dir]=d.dmv.split(':').map(Number),j=i+dir;if(x&&j>=0&&j<x.paras.length){[x.paras[i],x.paras[j]]=[x.paras[j],x.paras[i]];S.dconf=null}}
   else if(d.ddel){const x=DOCS.find(o=>o.id===S.docEdit),i=+d.ddel;if(!x)return;if(S.dconf!==i)S.dconf=i;else{x.paras.splice(i,1);if(!x.paras.length)x.paras.push({text:'',card:null});S.dconf=null;toast('已删除这一段')}}
@@ -1521,7 +1521,7 @@ document.addEventListener('pointerout',e=>{const bar=e.target.closest&&e.target.
    A typeset LaTeX version is made by the harness AI (skill/recipes/07-导出PDF.md). ---------- */
 function exportPdf(b){
   const d=DOCS.find(x=>x.id===b.dataset.export);if(!d)return;
-  const prev=document.title;document.title=(d.title||'申请记录').replace(/[\\/:*?"<>|]+/g,'_');  // default PDF file name
+  const prev=document.title;document.title=(d.title||'简历').replace(/[\\/:*?"<>|]+/g,'_');  // default PDF file name
   window.addEventListener('afterprint',()=>{document.title=prev},{once:true});
   window.print();
 }

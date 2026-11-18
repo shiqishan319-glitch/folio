@@ -18,7 +18,7 @@ Only 127.0.0.1; Host is checked; writes need the X-Token header. Standard librar
 import argparse, json, mimetypes, os, secrets, signal, socket, subprocess, sys, time, urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import unquote, urlsplit
+from urllib.parse import parse_qs, unquote, urlsplit
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--vault", default=os.environ.get("JINGLIKU_VAULT", "~/经历库"))
@@ -154,6 +154,53 @@ class H(BaseHTTPRequestHandler):
         except (BrokenPipeError, ConnectionResetError):
             pass  # the browser closed or reloaded mid-response; nothing to report
 
+    def send_file(self, path, ctype):
+        """Stream a local file with HTTP Range support so large videos seek without loading into RAM."""
+        total = path.stat().st_size
+        start, end, code = 0, total - 1, 200
+        rng = self.headers.get("Range")
+        if rng and rng.startswith("bytes=") and total > 0:
+            spec = rng[6:].split(",", 1)[0].strip()
+            if "-" in spec:
+                s_part, e_part = spec.split("-", 1)
+                if s_part == "" and e_part:
+                    length = int(e_part)
+                    start = max(0, total - length)
+                elif s_part:
+                    start = int(s_part)
+                    end = int(e_part) if e_part else total - 1
+                if start > end or start >= total:
+                    self.send_response(416)
+                    self.send_header("Content-Range", f"bytes */{total}")
+                    self.send_header(SIGNATURE, "1")
+                    return self.end_headers()
+                end = min(end, total - 1)
+                code = 206
+        length = (end - start + 1) if total > 0 else 0
+        try:
+            self.send_response(code)
+            self.send_header("Content-Type", ctype)
+            self.send_header("Accept-Ranges", "bytes")
+            self.send_header("Content-Length", str(length))
+            if code == 206:
+                self.send_header("Content-Range", f"bytes {start}-{end}/{total}")
+            self.send_header("Cache-Control", "no-store")
+            self.send_header(SIGNATURE, "1")
+            self.end_headers()
+            if length == 0:
+                return
+            with path.open("rb") as f:
+                f.seek(start)
+                rem = length
+                while rem > 0:
+                    chunk = f.read(min(65536, rem))
+                    if not chunk:
+                        break
+                    self.wfile.write(chunk)
+                    rem -= len(chunk)
+        except (BrokenPipeError, ConnectionResetError):
+            pass
+
     def target(self):
         """Map /vault/<rel> to a path inside the vault, or None."""
         rel = unquote(urlsplit(self.path).path)[len("/vault/"):]
@@ -171,7 +218,17 @@ class H(BaseHTTPRequestHandler):
 
     def do_GET(self):
         if not self.guard(): return
-        path = urlsplit(self.path).path
+        parts = urlsplit(self.path)
+        path = parts.path
+        if path == "/resume-print":
+            qs = parse_qs(parts.query)
+            writing = (qs.get("writing") or ["简历条目"])[0]
+            prefer = (qs.get("prefer") or [None])[0]
+            ids = qs["ids"][0].split(",") if qs.get("ids") and qs["ids"][0] else None
+            sys.path.insert(0, str(Path(__file__).resolve().parent))
+            import fill_html
+            html_out = fill_html.resume(VAULT, writing, prefer, ids)
+            return self.send(200, html_out.encode("utf-8"), "text/html; charset=utf-8")
         if path.startswith("/vault/"):
             p, _ = self.target()
             if p and p.is_dir():
@@ -180,7 +237,7 @@ class H(BaseHTTPRequestHandler):
                          if not c.name.startswith(".") and c.exists()]
                 return self.send(200, json.dumps(items, ensure_ascii=False).encode())
             if p and p.is_file():
-                return self.send(200, p.read_bytes(), mimetypes.guess_type(p.name)[0] or "application/octet-stream")
+                return self.send_file(p, mimetypes.guess_type(p.name)[0] or "application/octet-stream")
             return self.send(404, b'{"error":"not found"}')
         f = (APP / (path.lstrip("/") or "index.html")).resolve()
         if APP not in f.parents or not f.is_file():

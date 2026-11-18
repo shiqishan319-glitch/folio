@@ -107,9 +107,11 @@ assets/<卡片id>/<文件名>     作品的快捷方式（软链接），指向�
 | `kind` | `image` / `video` / `pdf` / `slides` / `document` / `archive` / `folder` / `link` / `file` |
 | `url` | 网页链接（`kind: link` 时） |
 | `asset` | 快捷方式在 `assets/` 下的相对路径，即 `<卡片id>/<文件名>`；前端通过 `/vault/assets/<asset>` 打开 |
-| `mode` | `link`（软链接，默认）或 `copy`（复制进来） |
+| `mode` | `link`（软链接，大文件/视频默认）或 `copy`（复制进库，≤ 5 MB 轻文件/证书/小图推荐） |
 | `original` | 原文件绝对路径 |
 | `size`, `mtime` | 挂载时原文件的大小（字节）和修改时间（秒），用来发现文件被移动或改动 |
+| `sha256` | 可选，原文件 SHA-256 指纹；文件被移动或改名时可通过 `scripts/works.py relink` 精准找回 |
+| `summary` | 可选，1–3 句纯文本内容摘要/关键词（推荐所有大文件/PPT/视频/PDF 都填）；用几百字节换取全库搜索与 AI 秒级召回 |
 
 ## applications/<id>.json：申请记录
 
