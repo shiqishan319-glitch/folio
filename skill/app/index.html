@@ -298,7 +298,7 @@ button.on{background:var(--accent-soft);color:var(--accent)}
 .toast.show{opacity:1;transform:translate(-50%,0) scale(1)}
 
 /* ---------- Bento layer: floating tiles on a tinted canvas (v1 craft, v8 composition) ---------- */
-.tc0{--tc:var(--t1)}.tc1{--tc:var(--t2)}.tc2{--tc:var(--t3)}.tc3{--tc:var(--t4)}.tc4{--tc:var(--t5)}
+.tc0{--tc:var(--t1)}.tc1{--tc:var(--t2)}.tc2{--tc:var(--t3)}.tc3{--tc:var(--t4)}.tc4{--tc:var(--t5)}.tc5{--tc:#0891b2}
 body{background:
   radial-gradient(900px 560px at 6% -12%,var(--glow),transparent 62%),
   radial-gradient(760px 560px at 104% 6%,var(--glow-b),transparent 62%),
@@ -834,6 +834,30 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .vdot[data-s="save"],.vdot[data-s="load"],.vdot[data-s="demo"]{background:var(--t4)}
 .vdot[data-s="err"],.vdot[data-s="off"]{background:var(--danger)}
 .sidefoot{margin:20px 4px 2px}
+.prof-btn{width:100%;display:flex;align-items:center;gap:8px;margin-top:12px;padding:7px 10px;border-radius:11px;font-size:12.5px;font-weight:500;color:var(--ink-2);background:var(--track);border:1px solid transparent;transition:background-color .16s var(--ease),border-color .16s var(--ease),color .16s var(--ease);text-align:left;cursor:pointer}
+.prof-btn.on{background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent)}
+.prof-btn span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pdlg{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:20px;background:rgba(16,19,27,.38);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .22s var(--ease)}
+.pdlg.on{opacity:1;pointer-events:auto}
+.pbox{width:min(540px,100%);max-height:86vh;overflow:auto;border-radius:22px;padding:22px 24px;background:var(--tile-top);border:1px solid var(--tile-bd);box-shadow:var(--sh-hi);transform:translateY(10px) scale(.98);transition:transform .28s var(--spring)}
+.pdlg.on .pbox{transform:none}
+.phead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.phead h3{margin:0;font-size:17px;font-weight:700;letter-spacing:-.02em}
+.pgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.pgrid .full{grid-column:1/-1}
+.pfield{display:flex;flex-direction:column;gap:4px;min-width:0;font-size:12px;font-weight:500;color:var(--muted)}
+.pfield input,.pfield textarea{width:100%;min-width:0;box-sizing:border-box;font:inherit;font-size:13px;color:var(--ink);background:var(--track);border:1px solid transparent;border-radius:10px;padding:7px 10px;outline:none;transition:border-color .16s var(--ease),background-color .16s var(--ease)}
+.pfield input:focus,.pfield textarea:focus{border-color:var(--accent-line);background:var(--tile-top);box-shadow:0 0 0 3px var(--accent-soft)}
+.pedu-head{display:flex;align-items:center;justify-content:space-between;margin:16px 0 8px;font-size:12.5px;font-weight:600;color:var(--ink-2)}
+.pedu-item{padding:12px;border-radius:14px;background:var(--sunk);border:1px solid var(--line);margin-bottom:10px;position:relative}
+.pedu-item .pgrid{gap:8px}
+.pfoot{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;padding-top:12px;border-top:1px solid var(--line)}
+.pdrop{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;border:1.5px dashed var(--line-2);background:var(--sunk);cursor:pointer;transition:border-color .16s var(--ease),background-color .16s var(--ease)}
+.pdrop:hover,.pdrop.drag{border-color:var(--accent);background:var(--accent-soft)}
+.pdrop img{width:42px;height:50px;object-fit:cover;border-radius:8px;border:1px solid var(--line);flex:none;background:#fff}
+.pdrop .pdt{flex:1;min-width:0;font-size:12.5px;color:var(--muted);line-height:1.45}
+.pdrop .pdt b{color:var(--ink);font-weight:600;display:block}
+@media (max-width:480px){.pgrid{grid-template-columns:1fr}}
 .vsync[data-s="demo"] i{background:var(--t4)}
 .col.list h2 .htl{flex:none}
 .col.list h2 .hright{display:flex;gap:8px;align-items:center;justify-content:flex-end;min-width:0}
@@ -910,7 +934,9 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 const IC=(d,s=14)=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
 const ICON={chev:IC('<path d="M6 4l4 4-4 4"/>',12),side:IC('<rect x="2.5" y="3" width="11" height="10" rx="2"/><path d="M6.5 3v10"/>',16),
   collapse:IC('<path d="M8.5 4.5 5 8l3.5 3.5M12.5 4.5 9 8l3.5 3.5"/>',14),plus:IC('<path d="M8 3.5v9M3.5 8h9"/>',13),
-  doc:IC('<path d="M4.5 2.5h4.5l2.5 2.5v8.5h-7z"/><path d="M9 2.5V5h2.5"/>',13),pen:IC('<path d="M10.5 3 13 5.5 6 12.5H3.5V10z"/>',11)};
+  doc:IC('<path d="M4.5 2.5h4.5l2.5 2.5v8.5h-7z"/><path d="M9 2.5V5h2.5"/>',13),pen:IC('<path d="M10.5 3 13 5.5 6 12.5H3.5V10z"/>',11),
+  user:IC('<circle cx="8" cy="5.5" r="2.5"/><path d="M3.5 13.5c.6-2.2 2.4-3.3 4.5-3.3s3.9 1.1 4.5 3.3"/>',13)};
+let VAULT_CFG={schema:1,types:['实习','项目','志愿者','获奖','技能','思考'],profile:{name:'',headline:'',location:'',email:'',phone:'',links:[],photo:'',education:[],skills:[]}};
 /* presentation-only: remembers what was on screen last render so entry animations play only on real changes */
 const FX={k:null,sig:null,sel:false,pv:{},pe:{}};
 Object.assign(ICON,{fact:IC('<path d="M4.5 2.5h4.5l2.5 2.5v8.5h-7z"/><path d="M6.5 8.5h3M6.5 11h2"/>',14),
@@ -921,7 +947,7 @@ Object.assign(ICON,{fact:IC('<path d="M4.5 2.5h4.5l2.5 2.5v8.5h-7z"/><path d="M6
   pen2:IC('<path d="M10.5 3 13 5.5 6 12.5H3.5V10z"/>',13),
   pdf:IC('<path d="M8 2.5v7"/><path d="M5 7l3 3 3-3"/><path d="M3 11v2.5h10V11"/>',13)});
 /* presentation-only Bento helpers: derived from the data on every render, never stored */
-const tc=t=>{const i=TYPES.indexOf(t);return 'tc'+(i<0?0:i)};
+const tc=t=>{const i=TYPES.indexOf(t);return 'tc'+(i<0?0:i%6)};
 const nVers=c=>c.writings.reduce((n,w)=>n+w.versions.length,0);
 function bigNum(s){let best=null;String(s||'').replace(/(\d[\d,]*(?:\.\d+)?)\s*(%|人次|万元|个|条|元|场|次|人|项|万|倍|篇|位|天|周|名)?/g,(m,n,u)=>{const v=parseFloat(n.replace(/,/g,''));if(!best||v>best.v)best={v,n,u:u||''}});return best}
 function statsHtml(){
@@ -946,7 +972,7 @@ const statusHtml=()=>`<span class="vsync" data-s="${VST.s}" title="${VST.t}" rol
 const EMPTY_VAULT='经历库还是空的——在左边对话里把素材发给 AI，或点 ＋新增';
 const KEYH=/Mac|iPhone|iPad/.test(navigator.platform)?'⌘↩ 保存 · Esc 取消':'Ctrl+↩ 保存 · Esc 取消';
 const autoGrow=t=>{t.style.height='auto';t.style.height=t.scrollHeight+'px'};
-const TYPES=['实习','项目','志愿者','获奖','思考'];
+const TYPES=['实习','项目','志愿者','获奖','技能','思考'];
 const CARDS=[
  {id:'ali',type:'实习',org:'阿里巴巴',title:'阿里巴巴 · AI 产品实习',time:'2026.03 – 2026.06',year:2026,role:'产品实习生',tags:['实习相关','AI 产品'],
   fact:'参与一个面向创作者的 AI 工具，负责 Skill 的评测与体验走查。',result:'整理出 40 条评测用例，其中 12 条进入回归集。',thought:'评测标准写清楚之前，讨论效果好坏没有意义。',works:['评测用例表（链接）','走查报告.pdf（快捷方式）'],
@@ -1005,7 +1031,9 @@ function filterCol(open){
     <div class="brandrow"><span class="brand"><span class="logo" aria-hidden="true">${LOGO}</span>经历库</span>${S.mode==='single'?`<button data-pane="list" title="返回时间线" aria-label="返回时间线">${ICON.collapse}</button>`:`<button data-toggle="filter" title="收起筛选栏" aria-label="收起筛选栏">${ICON.collapse}</button>`}</div>
     <div class="trow"><button class="name allt ${S.type?'':'on'}" data-alltypes="1" title="显示全部类型">类型 · 全部</button><span class="cnt">${CARDS.length}</span></div>
     <ul class="tree">${tree}</ul>
-    <div class="lab">申请记录<button class="more" data-dnew="1" title="新建申请记录" aria-label="新建申请记录">${ICON.plus}</button></div><ul class="sub" style="margin-left:0;padding-left:0;border:none">${DOCS.map(d=>`<li><button class="${S.doc===d.id?'on':''}" data-doc="${esc(d.id)}">${ICON.doc}${esc(d.title||'未命名申请记录')}</button></li>`).join('')}</ul><div class="sidefoot">${statusHtml()}</div></div>`;
+    <div class="lab">申请记录<button class="more" data-dnew="1" title="新建申请记录" aria-label="新建申请记录">${ICON.plus}</button></div><ul class="sub" style="margin-left:0;padding-left:0;border:none">${DOCS.map(d=>`<li><button class="${S.doc===d.id?'on':''}" data-doc="${esc(d.id)}">${ICON.doc}${esc(d.title||'未命名申请记录')}</button></li>`).join('')}</ul>
+    <button type="button" class="prof-btn ${S.sel==='__profile__'&&!S.doc?'on':''}" data-prof="1" title="查看与编辑姓名、联系方式与教育背景">${ICON.user}<span>${esc((VAULT_CFG.profile&&VAULT_CFG.profile.name)?'个人信息 · '+VAULT_CFG.profile.name:'填写个人信息 / 教育背景')}</span></button>
+    <div class="sidefoot">${statusHtml()}</div></div>`;
 }
 function listCol(fill){
   const cs=visible().sort((a,b)=>String(b.time).localeCompare(String(a.time)));let yr=null,h='';
@@ -1017,6 +1045,14 @@ function listCol(fill){
     h+=S.rename==='card#'+c.id
       ?`<div class="card on ${tc(c.type)}">${top}<input id="rn" class="rn" style="width:100%;border-radius:8px;font-size:14px;padding:3px 9px" value="${esc(c.title)}" aria-label="经历名称">${inner}</div>`
       :`<button class="card ${tc(c.type)} ${S.sel===c.id&&!S.doc?'on'+(FX.sel?' fx':''):''}" data-sel="${c.id}" data-ck="${c.id}" title="右键可重命名、复制、删除">${top}<div class="t">${esc(c.title)}</div>${inner}</button>`});
+  const prof=VAULT_CFG.profile||{},edus=Array.isArray(prof.education)?prof.education:[];
+  const pmeta=[prof.headline,prof.location,edus.length?`教育背景 ${edus.length} 段`:''].filter(Boolean).join(' · ')||'点击填写姓名、联系方式与教育背景';
+  const pcard=`<div class="yr"><b>个人概况</b><span class="yc">置底</span></div>
+    <button class="card tc5 ${S.sel==='__profile__'&&!S.doc?'on'+(FX.sel?' fx':''):''}" data-sel="__profile__">
+      <div class="ctop"><span class="tbadge">个人信息</span><span class="cnum"><b>${edus.length}</b>段学历</span></div>
+      <div class="t">${esc(prof.name||'个人信息与教育背景')}</div>
+      <div class="m">${esc(pmeta)}</div>
+    </button>`;
   const add=S.adding?`<form class="add" id="addf"><input id="add-title" placeholder="经历名称，如：某公司 · 某岗位" aria-label="经历名称" required>
       <div style="display:flex;gap:6px;flex-wrap:wrap"><select id="add-type" aria-label="类型">${TYPES.map(t=>`<option ${t===S.type?'selected':''}>${t}</option>`).join('')}</select>
       <input id="add-time" placeholder="时间，如 2026.09" aria-label="时间" style="flex:1;min-width:110px"></div>
@@ -1026,7 +1062,7 @@ function listCol(fill){
     ${statsHtml()}
     <h2><span class="hleft">${S.mode==='single'||!(S.show.filter&&S.mode==='wide')?`<button class="hexp" data-toggle="filter" title="展开筛选栏" aria-label="展开筛选栏${activeCount()?`（已选 ${activeCount()} 项）`:''}">${ICON.side}${activeCount()?`<i class="hn">${activeCount()}</i>`:''}</button><span class="brand mark hmark" title="经历库 · ${VST.t}"><span class="logo" aria-hidden="true">${LOGO}</span><i class="vdot" data-s="${VST.s}" title="${VST.t}"></i></span>`:''}<span class="htl">时间线</span></span> <span class="hright"><span class="hcnt">${cs.length} 段${S.type?' · '+S.type:''}</span><span class="qslot"></span><button class="btn" data-add="1" title="新增经历">${ICON.plus}<span class="bt">新增</span></button></span></h2>
     <div class="chips tagbar" role="group" aria-label="按标签筛选">${tags.map(t=>`<button class="${S.tag===t?'on':''}" data-tag="${esc(t)}">${esc(t)}</button>`).join('')}</div>
-    ${add}${h?`<div class="tl">${h}</div>`:`<div class="empty">${CARDS.length?'没有符合条件的经历。换一个类型或标签，或点「新增」。':EMPTY_VAULT}</div>`}</div>`;
+    ${add}<div class="tl">${h||`<div class="empty">${CARDS.length?'没有符合条件的经历。换一个类型或标签，或点「新增」。':EMPTY_VAULT}</div>`}${pcard}</div></div>`;
 }
 function vcell(key,w,vi,ref){
   const v=w.versions[vi],ek=key+'#'+vi;
@@ -1054,9 +1090,72 @@ function refsOf(c){
   const vs=DOCS.flatMap(d=>d.paras.map((p,pi)=>p.card===c.id?{name:d.title,text:p.text,doc:d.id,pi}:null).filter(Boolean));
   return vs.length?{type:'动机信段落',versions:vs}:null;
 }
+function profileView(back){
+  const p=VAULT_CFG.profile||{},edus=Array.isArray(p.education)?p.education:[];
+  const skills=Array.isArray(p.skills)?p.skills:[];
+  if(S.profEdit){
+    const eRows=S.profEdus||JSON.parse(JSON.stringify(edus));
+    S.profEdus=eRows;
+    return `<div class="col detail tc5" style="flex:1">${back?`<div class="backrow">${back}</div>`:''}
+      <div class="hero">
+        <div class="htop"><span class="tbadge">个人信息</span><span>编辑中 · ${LIVE?'保存后写入 config.json':'演示模式'}</span></div>
+        <h1 class="dt">${esc(p.name||'个人信息与教育背景')}</h1>
+        <div class="pgrid" style="margin-top:12px">
+          <label class="pfield">姓名<input id="pf-name" value="${esc(p.name||'')}"></label>
+          <label class="pfield">头衔 / 求职方向<input id="pf-head" placeholder="如：传播学 · 本科三年级" value="${esc(p.headline||'')}"></label>
+          <label class="pfield">所在城市 / 到岗时间<input id="pf-loc" placeholder="如：北京 · 可立即到岗" value="${esc(p.location||'')}"></label>
+          <label class="pfield">邮箱<input id="pf-email" value="${esc(p.email||'')}"></label>
+          <label class="pfield">电话<input id="pf-phone" value="${esc(p.phone||'')}"></label>
+          <label class="pfield">个人主页 / 链接（逗号隔开）<input id="pf-links" value="${esc((p.links||[]).join(', '))}"></label>
+          <label class="pfield full">证件照（支持拖拽或点击上传，自动存到 ~/经历库/assets/）
+            <div class="pdrop" id="pf-drop" tabindex="0" role="button" aria-label="拖拽或点击上传证件照">
+              ${p.photo?`<img id="pf-pimg" src="/vault/${esc(p.photo)}?t=${Date.now()}" alt="证件照">`:'<img id="pf-pimg" hidden alt="证件照">'}
+              <div class="pdt"><b>${p.photo?'已上传证件照（拖入新图可替换）':'拖入证件照图片，或点击选择文件'}</b><span>支持 JPG / PNG / WebP，导出简历 PDF 时显示在右上角</span></div>
+              <input id="pf-file" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+            </div>
+            <input id="pf-photo" placeholder="assets/portrait.jpg" value="${esc(p.photo||'')}" style="margin-top:4px">
+          </label>
+        </div>
+        <div class="pedu-head"><span>教育背景</span><button type="button" class="btn" data-peduadd="1">+ 添加学历</button></div>
+        <div id="pf-edus">${eRows.length?eRows.map((ed,i)=>`<div class="pedu-item" data-ei="${i}">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:12px;color:var(--muted)">
+            <span>教育经历 ${i+1}</span><button type="button" class="btn" style="padding:2px 8px;font-size:11px" data-pedudel="${i}">删除</button>
+          </div>
+          <div class="pgrid">
+            <label class="pfield">学校<input data-ef="school" value="${esc(ed.school||'')}"></label>
+            <label class="pfield">专业<input data-ef="major" value="${esc(ed.major||'')}"></label>
+            <label class="pfield">学历（本科 / 硕士）<input data-ef="degree" value="${esc(ed.degree||'')}"></label>
+            <label class="pfield">时间（2023.09 – 2027.06）<input data-ef="time" value="${esc(ed.time||'')}"></label>
+            <label class="pfield full">成绩 / 主修课程（每行一条）<textarea rows="2" data-ef="details">${esc((ed.details||[]).join('\n'))}</textarea></label>
+          </div></div>`).join(''):'<div style="font-size:12.5px;color:var(--muted);padding:4px 0">暂无教育背景，点右上角「+ 添加学历」录入。</div>'}</div>
+        <div class="pedu-head"><span>技能与语言兜底（多版本建议新建「技能」卡片）</span></div>
+        <label class="pfield"><textarea id="pf-skills" rows="2" placeholder="语言：IELTS 7.0&#10;工具：Python、SQL">${esc(skills.join('\n'))}</textarea></label>
+        <div class="pfoot"><button type="button" class="btn" data-pcancel="1">取消</button><button type="button" class="btn pri" data-psave="1">保存</button></div>
+      </div></div>`;
+  }
+  const contacts=[p.location,p.phone?'电话：'+p.phone:'',p.email?'邮箱：'+p.email:'',...(p.links||[])].filter(Boolean);
+  return `<div class="col detail tc5" style="flex:1">${back?`<div class="backrow">${back}</div>`:''}
+    <div class="hero">
+      <div class="htop"><span class="tbadge">个人信息</span><span>置底基础卡片 · 导出简历 PDF 时使用</span></div>
+      <h1 class="dt">${esc(p.name||'未填写姓名')} <button class="btn" style="font-size:12px;vertical-align:middle;margin-left:8px" data-pedit="1">${ICON.pen} 编辑</button></h1>
+      ${p.headline?`<div class="dm"><span class="pill">${esc(p.headline)}</span></div>`:''}
+      <div class="kpis">
+        <span class="kpi"><b>${edus.length}</b>教育背景</span>
+        <span class="kpi"><b>${contacts.length}</b>联系方式</span>
+        ${p.photo?`<span class="kpi">已设证件照</span>`:''}
+      </div>
+    </div>
+    <div class="bento">
+      <div class="tile fact"><div class="lk"><span class="ic">${ICON.user}</span>联系方式与基础信息</div>
+        <div class="v">${contacts.length?contacts.map(x=>esc(x)).join(' · '):'<span style="color:var(--muted)">暂未填写联系方式，点击上方「编辑」补充。</span>'}</div></div>
+      <div class="tile wk"><div class="lk"><span class="ic">${ICON.doc}</span>教育背景</div>
+        <div class="v">${edus.length?edus.map(ed=>`<div style="margin-bottom:8px"><strong>${esc([ed.school,ed.major,ed.degree].filter(Boolean).join(' · '))}</strong> <span style="color:var(--muted);font-size:12.5px">${esc(ed.time||'')}</span>${(ed.details&&ed.details.length)?`<div style="color:var(--muted);font-size:13px;margin-top:2px">${ed.details.map(d=>esc(d)).join(' / ')}</div>`:''}</div>`).join(''):'<span style="color:var(--muted)">暂未填写教育背景，点击上方「编辑」添加。</span>'}</div></div>
+    </div></div>`;
+}
 function detailCol(){
   const back=S.mode==='single'?'<button class="btn" data-pane="list">← 时间线</button>':'';
   if(S.doc)return docView(back);
+  if(S.sel==='__profile__')return profileView(back);
   const c=card(S.sel);
   if(!c)return `<div class="col" style="flex:1">${back?`<div class="backrow">${back}</div>`:''}<div class="empty">${CARDS.length?'从左侧选一段经历。':EMPTY_VAULT}</div></div>`;
   const fe=S.fedit&&S.fedit.id===c.id?S.fedit.f:null;
@@ -1226,6 +1325,25 @@ document.addEventListener('click',e=>{
   else if(d.cancel)S.edit=null;
   else if(d.save){const{w,vi}=wv(d.save);w.versions[vi].text=$('ta').value;S.edit=null;toast('已保存到当前版本')}
   else if(d.savenew){const{key,w}=wv(d.savenew);w.versions.push({name:'v'+(w.versions.length+1)+' 新版本',text:$('ta').value});S.ver[key]=w.versions.length-1;S.edit=null;toast('已另存为新版本')}
+  else if(d.prof){S.sel='__profile__';S.doc=null;S.docEdit=null;S.edit=null;S.fedit=null;S.profEdit=false;S.profEdus=null;S.show.detail=true;S.pane='detail'}
+  else if(d.pedit){S.profEdit=true;S.profEdus=JSON.parse(JSON.stringify((VAULT_CFG.profile&&VAULT_CFG.profile.education)||[]))}
+  else if(d.pcancel){S.profEdit=false;S.profEdus=null}
+  else if(d.peduadd){syncProfDraft();S.profEdus=S.profEdus||[];S.profEdus.push({school:'',major:'',degree:'',time:'',details:[]})}
+  else if(d.pedudel!==undefined){syncProfDraft();S.profEdus.splice(+d.pedudel,1)}
+  else if(d.psave){
+    syncProfDraft();
+    const prof={
+      name:$('pf-name').value.trim(),headline:$('pf-head').value.trim(),location:$('pf-loc').value.trim(),
+      email:$('pf-email').value.trim(),phone:$('pf-phone').value.trim(),
+      links:$('pf-links').value.split(',').map(s=>s.trim()).filter(Boolean),
+      photo:$('pf-photo').value.trim(),
+      education:(S.profEdus||[]).filter(x=>x.school||x.major||x.degree||x.time||(x.details&&x.details.length)),
+      skills:$('pf-skills').value.split('\n').map(s=>s.trim()).filter(Boolean)
+    };
+    S.profEdit=false;S.profEdus=null;
+    if(window.saveProfileConfig)window.saveProfileConfig(prof);
+    return;
+  }
   else if(d.copy){const{w,vi}=wv(d.copy);copy(w.versions[vi].text);return}
   else if(d.copytext){copy(d.copytext);return}
   else return;
@@ -1593,6 +1711,7 @@ document.addEventListener('focusout',()=>{if(deferred)setTimeout(()=>{if(deferre
 async function boot(){
   try{
     const [cfg,el,al]=await Promise.all([getJSON('/vault/config.json').catch(()=>null),getJSON('/vault/experiences/').catch(()=>[]),getJSON('/vault/applications/').catch(()=>[])]);
+    if(cfg&&typeof cfg==='object'){VAULT_CFG={schema:cfg.schema||1,...cfg,profile:{name:'',headline:'',location:'',email:'',phone:'',links:[],photo:'',education:[],skills:[],...(cfg.profile||{})}}}
     if(cfg&&Array.isArray(cfg.types)&&cfg.types.length){TYPES.length=0;TYPES.push(...cfg.types.map(String))}
     const load=async(k,list)=>(await Promise.all(list.filter(f=>!f.dir&&/\.json$/.test(f.name)).map(f=>
       getJSON(`/vault/${DIR[k]}/${encodeURIComponent(f.name)}`).then(o=>{mt[k].set(f.name,f.mtime);return NORM[k](o,f.name.slice(0,-5))}).catch(()=>null)))).filter(Boolean);
@@ -1713,8 +1832,126 @@ document.addEventListener('error',e=>{const t=e.target;if(t&&(t.tagName==='IMG'|
   const box=t.closest('.wimg,.wvid');if(box)box.classList.add('noload');  // clean placeholder instead of the broken-image icon
   const s=t.dataset.asset,i=s.lastIndexOf('/');listAssets(i>0?s.slice(0,i):'',true)}},true);
 
+window.saveProfileConfig=async function(prof){
+  VAULT_CFG.profile=prof;
+  if(!LIVE){render();toast('已更新（演示数据不会保存）');return}
+  busy(1);
+  try{await send('PUT','/vault/config.json',VAULT_CFG);render();toast('已保存个人信息与教育背景')}
+  catch(e){status('err','保存失败');toast('保存失败：'+e.message)}
+  finally{busy(-1)}
+};
+
+async function uploadPortrait(file){
+  if(!file)return;
+  const ext=(file.name.split('.').pop()||'').toLowerCase().replace('jpeg','jpg');
+  const ok=['png','jpg','webp'].includes(ext)?ext:(file.type==='image/png'?'png':file.type==='image/webp'?'webp':'jpg');
+  const rel='assets/portrait.'+ok;
+  if(!LIVE){toast('演示模式下无法写入本地文件');return}
+  busy(1);
+  try{
+    const r=await fetch('/vault/'+rel,{method:'PUT',headers:{'X-Token':TOKEN},body:file});
+    if(!r.ok)throw new Error(String(r.status));
+    const inp=$('pf-photo'),img=$('pf-pimg'),txtEl=document.querySelector('#pf-drop .pdt b');
+    if(inp)inp.value=rel;
+    if(img){img.src='/vault/'+rel+'?t='+Date.now();img.hidden=false}
+    if(txtEl)txtEl.textContent='已上传证件照（点击「保存」生效）';
+    toast('证件照已上传到 '+rel);
+  }catch(e){toast('上传失败：'+e.message)}
+  finally{busy(-1)}
+}
+document.addEventListener('click',e=>{const dz=e.target.closest&&e.target.closest('#pf-drop');if(dz&&e.target.id!=='pf-file')$('pf-file')?.click()});
+document.addEventListener('change',e=>{if(e.target&&e.target.id==='pf-file'&&e.target.files[0])uploadPortrait(e.target.files[0])});
+document.addEventListener('dragover',e=>{const dz=e.target.closest&&e.target.closest('#pf-drop');if(dz){e.preventDefault();dz.classList.add('drag')}});
+document.addEventListener('dragleave',e=>{const dz=e.target.closest&&e.target.closest('#pf-drop');if(dz&&!dz.contains(e.relatedTarget))dz.classList.remove('drag')});
+document.addEventListener('drop',e=>{const dz=e.target.closest&&e.target.closest('#pf-drop');if(!dz)return;e.preventDefault();dz.classList.remove('drag');const f=e.dataTransfer&&e.dataTransfer.files[0];if(f)uploadPortrait(f)});
+
 boot();
 })();
+
+function syncProfDraft(){
+  const box=$('pf-edus');if(!box)return;
+  S.profEdus=[...box.querySelectorAll('.pedu-item')].map(el=>({
+    school:el.querySelector('[data-ef="school"]').value.trim(),
+    major:el.querySelector('[data-ef="major"]').value.trim(),
+    degree:el.querySelector('[data-ef="degree"]').value.trim(),
+    time:el.querySelector('[data-ef="time"]').value.trim(),
+    details:el.querySelector('[data-ef="details"]').value.split('\n').map(s=>s.trim()).filter(Boolean)
+  }));
+}
+function openProfileModal(){
+  let dlg=document.getElementById('prof-dlg');
+  if(dlg)dlg.remove();
+  const p=VAULT_CFG.profile||{};
+  const edus=Array.isArray(p.education)?JSON.parse(JSON.stringify(p.education)):[];
+  dlg=document.createElement('div');dlg.id='prof-dlg';dlg.className='pdlg';dlg.setAttribute('role','dialog');dlg.setAttribute('aria-label','个人信息与教育背景');
+  const eduHtml=()=>edus.length?edus.map((ed,i)=>`<div class="pedu-item" data-ei="${i}">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:12px;color:var(--muted)">
+      <span>教育经历 ${i+1}</span><button type="button" class="btn" style="padding:2px 8px;font-size:11px" data-edudel="${i}">删除</button>
+    </div>
+    <div class="pgrid">
+      <label class="pfield">学校<input data-ef="school" value="${esc(ed.school||'')}"></label>
+      <label class="pfield">专业<input data-ef="major" value="${esc(ed.major||'')}"></label>
+      <label class="pfield">学历（如 本科 / 硕士）<input data-ef="degree" value="${esc(ed.degree||'')}"></label>
+      <label class="pfield">时间（如 2023.09 – 2027.06）<input data-ef="time" value="${esc(ed.time||'')}"></label>
+      <label class="pfield full">成绩 / 主修课程（每行一条，导出简历时会展示）<textarea rows="2" data-ef="details">${esc((ed.details||[]).join('\n'))}</textarea></label>
+    </div></div>`).join(''):'<div style="font-size:12.5px;color:var(--muted);padding:8px 2px">还没有填写教育背景，点右上角「+ 添加学历」即可录入。</div>';
+
+  dlg.innerHTML=`<div class="pbox">
+    <div class="phead"><h3>个人信息与教育背景</h3><button type="button" class="btn" data-pclose="1">关闭</button></div>
+    <div class="pgrid">
+      <label class="pfield">姓名<input id="pf-name" value="${esc(p.name||'')}"></label>
+      <label class="pfield">头衔 / 求职方向<input id="pf-head" placeholder="如：传播学 · 本科三年级" value="${esc(p.headline||'')}"></label>
+      <label class="pfield">邮箱<input id="pf-email" value="${esc(p.email||'')}"></label>
+      <label class="pfield">电话<input id="pf-phone" value="${esc(p.phone||'')}"></label>
+      <label class="pfield">所在城市 / 到岗时间<input id="pf-loc" placeholder="如：北京 · 可立即到岗" value="${esc(p.location||'')}"></label>
+      <label class="pfield">个人主页 / 链接（逗号隔开）<input id="pf-links" value="${esc((p.links||[]).join(', '))}"></label>
+      <label class="pfield full">证件照路径（建议让 AI 复制到 ~/经历库/assets/portrait.jpg）<input id="pf-photo" placeholder="assets/portrait.jpg" value="${esc(p.photo||'')}"></label>
+    </div>
+    <div class="pedu-head"><span>教育背景</span><button type="button" class="btn" data-eduadd="1">+ 添加学历</button></div>
+    <div id="pf-edus">${eduHtml()}</div>
+    <div class="pedu-head"><span>技能与语言（每行一条，导出简历时显示在底部）</span></div>
+    <label class="pfield"><textarea id="pf-skills" rows="3" placeholder="语言：IELTS 7.0（口语 7.0）、CET-6 610&#10;工具：Python、SQL、Figma">${esc((p.skills||[]).join('\n'))}</textarea></label>
+    <div class="pfoot"><button type="button" class="btn" data-pclose="1">取消</button><button type="button" class="btn pri" id="pf-save">保存</button></div>
+  </div>`;
+  document.body.append(dlg);
+  requestAnimationFrame(()=>dlg.classList.add('on'));
+
+  const syncEdus=()=>{
+    dlg.querySelectorAll('.pedu-item').forEach(el=>{
+      const i=+el.dataset.ei;
+      edus[i]={
+        school:el.querySelector('[data-ef="school"]').value.trim(),
+        major:el.querySelector('[data-ef="major"]').value.trim(),
+        degree:el.querySelector('[data-ef="degree"]').value.trim(),
+        time:el.querySelector('[data-ef="time"]').value.trim(),
+        details:el.querySelector('[data-ef="details"]').value.split('\n').map(s=>s.trim()).filter(Boolean)
+      };
+    });
+  };
+  const close=()=>{dlg.classList.remove('on');setTimeout(()=>dlg.remove(),200)};
+  dlg.addEventListener('click',e=>{
+    if(e.target===dlg||e.target.closest('[data-pclose]')){close();return}
+    if(e.target.closest('[data-eduadd]')){syncEdus();edus.push({school:'',major:'',degree:'',time:'',details:[]});document.getElementById('pf-edus').innerHTML=eduHtml();return}
+    const del=e.target.closest('[data-edudel]');
+    if(del){syncEdus();edus.splice(+del.dataset.edudel,1);document.getElementById('pf-edus').innerHTML=eduHtml();return}
+    if(e.target.id==='pf-save'){
+      syncEdus();
+      const prof={
+        name:document.getElementById('pf-name').value.trim(),
+        headline:document.getElementById('pf-head').value.trim(),
+        location:document.getElementById('pf-loc').value.trim(),
+        email:document.getElementById('pf-email').value.trim(),
+        phone:document.getElementById('pf-phone').value.trim(),
+        links:document.getElementById('pf-links').value.split(',').map(s=>s.trim()).filter(Boolean),
+        photo:document.getElementById('pf-photo').value.trim(),
+        education:edus.filter(x=>x.school||x.major||x.degree||x.time||(x.details&&x.details.length)),
+        skills:document.getElementById('pf-skills').value.split('\n').map(s=>s.trim()).filter(Boolean)
+      };
+      close();
+      if(window.saveProfileConfig)window.saveProfileConfig(prof);
+    }
+  });
+}
 </script>
 </body>
 </html>

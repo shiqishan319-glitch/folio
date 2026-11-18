@@ -3,6 +3,11 @@
 本目录每个子目录对应一个 AI 工具（harness），里面是**那个工具专属**的安装步骤和坑。
 装之前先看这张表找到你的工具，再去对应的 README；表里没有就按「通用」那一节装。
 
+> **给 AI（当用户让你读本文件来安装经历库时）：**
+> 1. 先确定你当前运行在哪个工具里（看下表；不确定就问用户一句）。
+> 2. 读对应子目录的 `README.md`，把其中的 `/path/to/Sqs经历库/skill` 替换成本文件上级目录（即 `SKILL.md` 所在目录）的真实绝对路径，照步骤完成安装。
+> 3. 安装完成后，紧接着读 `../recipes/01-启动.md`，按步骤确认数据目录、启动 `serve.py --ensure`，并在右半屏打开经历库网页。
+
 | 工具 | 用户级安装位置 | 安装方式 | 右半屏前端 | 详细 |
 |---|---|---|---|---|
 | Claude Code（桌面版 / CLI） | `~/.claude/skills/jingliku` | 软链接 | 内置浏览器（预览面板） | [`claude-code/README.md`](claude-code/README.md) |
@@ -10,6 +15,8 @@
 | Qoder（桌面版 / CLI） | `~/.qoder/skills/jingliku` | 打包成 `.skill` 再安装 | 内置浏览器 / browser-use | [`qoder/README.md`](qoder/README.md) |
 | WorkBuddy（腾讯） | `~/.workbuddy/skills/jingliku` | 复制 | 内置预览面板 | [`workbuddy/README.md`](workbuddy/README.md) |
 | DeepSeek Harness（DSH） | `~/.agents/skills/jingliku`（或 `~/.dsh/skills/jingliku`） | 软链接 | 右侧栏 Browser 标签页 | [`dsh/README.md`](dsh/README.md) |
+| Google Antigravity（AGY） | `~/.gemini/config/skills/jingliku` | 软链接 | 内置浏览器（`browser` subagent） | [`antigravity/README.md`](antigravity/README.md) |
+| 豆包（Doubao 桌面版） | `.../workspace/.user_skills/jingliku` | 复制 | 右侧工作区 browser 标签页 | [`doubao/README.md`](doubao/README.md) |
 
 ## 通用做法（表里没有你的工具时）
 
@@ -25,7 +32,7 @@
 
 | 安装方式 | 工具 | 更新 |
 |---|---|---|
-| 软链接到 git 仓库 | Claude Code、DSH | 自动：`check_update.py --apply`（等于 `git pull --ff-only`），然后 `serve.py --restart` |
+| 软链接到 git 仓库 | Claude Code、DSH、Antigravity | 自动：`check_update.py --apply`（等于 `git pull --ff-only`），然后 `serve.py --restart` |
 | 复制一份 | WorkBuddy、豆包、Qoder | 只能提示：按对应 README 重新复制 / 打包安装 |
 
 复制安装靠比对 `skill/VERSION` 判断新旧，所以**维护者每次改了 skill，都要把 `VERSION` 的版本号加一**。仓库是私有的时候，复制安装读不到 GitHub 上的版本号，会安静地跳过检查。

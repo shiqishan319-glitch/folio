@@ -47,7 +47,11 @@ python3 "<SKILL>/scripts/fill_tex.py" resume "<VAULT>" /tmp/jingliku-pdf/out.tex
 - `--writing 英文简历条目`：用另一种写法类型（默认 `简历条目`）。
 - `--ids xhs-2025,fair-2024`：只放这几段经历，并按这个顺序。
 
-简历顶部的姓名、邮箱来自 `<VAULT>/config.json` 的 `profile`。如果 `name` 是空的，先问用户名字和联系方式，写进 `profile`（改完校验 JSON），再生成。
+简历顶部的姓名、联系方式、教育背景和技能来自 `<VAULT>/config.json` 的 `profile`：
+- 如果 `profile.name` 或 `profile.education` 是空的：可以先问用户姓名、所在城市/到岗时间（`location`）、联系方式（邮箱/电话）及教育背景（学校、专业、学历、时间、GPA/主修课程），写进 `<VAULT>/config.json` 并校验（见 `recipes/06-修改删除.md`）；也可以提醒用户直接在右半屏左侧栏点「个人信息」自己填好保存。用户不需要放教育背景就留空 `[]`。
+- 如果用户提供了**证件照**（`photo`）：证件照体积很小且随时要用于导出简历，**鼓励直接复制一份放进 `<VAULT>/assets/portrait.<扩展名>`**，并在 `config.json` 里写相对路径 `"photo": "assets/portrait.<扩展名>"`，避免原图被清理后失效。
+- 如果用户需要展示**技能与语言**、**所在城市 / 到岗时间**且希望按不同岗位/语言切换版本：鼓励建一张 `type: "技能"` 的经历卡片（如 `skills.json`、`availability.json`），把不同侧重的版本放进 `writings` 的「简历条目」里，导出时就能用 `--prefer 英文` / `--prefer 数据` 自动选版，不需要在 `config.json` 里写死。
+- 如果用户只在 `config.json` 的 `profile.skills` 里写了纯列表，脚本也会作为兜底在简历底部渲染「技能与语言」板块。
 
 - 期望结果：命令打印出 `.tex` 文件的路径。
 - 报错 `No such file`：id 写错了，用 `ls "<VAULT>/applications/"` 看看正确的名字。

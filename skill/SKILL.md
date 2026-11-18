@@ -44,12 +44,15 @@ description: "经历库——住在本地、由 AI 维护的个人经历数据�
 | 「把这个文件/视频/PPT 加到某段经历里」「附上这个链接」 | `recipes/03-挂作品.md` |
 | 「我要申请 XX，帮我写一段」「这个网申题怎么答」「找一下我关于 XX 的经历」 | `recipes/04-申请与写法.md` |
 | 「帮我写一封自荐信/动机信/cover letter」 | `recipes/05-整篇文档.md` |
-| 「改一下」「删掉这段」「改个名字」 | `recipes/06-修改删除.md` |
+| 「改一下」「删掉这段」「改个名字」「填个人信息 / 教育背景 / 证件照 / 技能」 | `recipes/06-修改删除.md` |
 | 「导出 PDF」「生成简历」 | `recipes/07-导出PDF.md` |
 | 「文件打不开了」「检查一下作品还在不在」 | `recipes/08-检查快捷方式.md` |
 | 出错了、命令失败 | `recipes/09-踩坑与解决.md` |
 
 数据格式的完整说明（字段含义）在 `references/data-format.md`；菜谱里已经给了模板，一般不用读它。
+
+**当用户想改右半屏前端界面（如改样式、加筛选或新视图）时：**
+前端是单文件 `<SKILL>/app/index.html`。修改前先备份一份到 `<VAULT>/.trash/index.html.bak`；改的时候保持 `<meta name="jingliku-token">` 以及对 `/vault/` 的 `GET`/`PUT`/`DELETE` 调用约定不变；改完提醒用户刷新右半屏即可（若用户是复制安装的，改的是安装目录里的 `app/index.html`，必要时跑一次 `serve.py --vault "<VAULT>" --restart`）。
 
 ## 说话方式
 

@@ -19,14 +19,26 @@ assets/<卡片id>/<文件名>     作品的快捷方式（软链接），指向�
 ```json
 {
   "schema": 1,
-  "types": ["实习", "项目", "志愿者", "获奖", "思考"],
-  "resume_types": ["实习", "项目", "志愿者", "获奖"],
+  "types": ["实习", "项目", "志愿者", "获奖", "技能", "思考"],
+  "resume_types": ["实习", "项目", "志愿者", "获奖", "技能"],
   "profile": {
     "name": "姓名",
     "headline": "专业 · 年级",
+    "location": "北京 · 可立即到岗",
     "email": "",
     "phone": "",
-    "links": []
+    "links": [],
+    "photo": "assets/portrait.jpg",
+    "education": [
+      {
+        "school": "XX 大学",
+        "major": "专业",
+        "degree": "本科",
+        "time": "2023.09 – 2027.06",
+        "details": ["GPA：3.87/4.0", "主修课程：……"]
+      }
+    ],
+    "skills": ["语言能力：IELTS 7.0", "工具与技术：Python、SQL"]
   }
 }
 ```

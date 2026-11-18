@@ -43,7 +43,8 @@ def running_url():
     """The URL in .runtime.json, but only if OUR server answers there."""
     try:
         u = runtime()["url"]
-        with urllib.request.urlopen(u + "vault/config.json", timeout=2) as r:
+        opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+        with opener.open(u + "vault/config.json", timeout=2) as r:
             return u if r.status == 200 and r.headers.get(SIGNATURE) else None
     except Exception:
         return None
@@ -192,6 +193,16 @@ class H(BaseHTTPRequestHandler):
     def do_PUT(self):
         if not self.guard(write=True): return
         p, rel = self.target()
+        if p and rel in ("assets/portrait.png", "assets/portrait.jpg", "assets/portrait.jpeg", "assets/portrait.webp"):
+            size = int(self.headers.get("Content-Length") or 0)
+            if size <= 0 or size > 10 * 1024 * 1024:
+                return self.send(400, b'{"error":"invalid size"}')
+            raw = self.rfile.read(size)
+            p.parent.mkdir(parents=True, exist_ok=True)
+            tmp = p.with_name(f".{p.name}.tmp")
+            tmp.write_bytes(raw)
+            os.replace(tmp, p)
+            return self.send(200, json.dumps({"ok": True, "path": rel}).encode())
         if not p or not rel.endswith(".json") or not rel.startswith(WRITABLE):
             return self.send(403, b'{"error":"not writable"}')
         try:

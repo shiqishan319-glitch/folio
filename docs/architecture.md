@@ -29,6 +29,11 @@ skill/                       ← Skill 包（装进 harness）
 ├── examples/sample-vault/   示例数据（Demo 里的虚构经历）
 └── adapters/                各 harness 的安装与打开方式
     ├── claude-code/
+    ├── antigravity/
+    ├── dsh/
+    ├── qoder/
+    ├── workbuddy/
+    ├── doubao/
     └── codex/               （待验证）
 
 ~/经历库/                    ← 用户数据，和 skill 分开放，升级 skill 不会动到
@@ -49,18 +54,25 @@ skill/                       ← Skill 包（装进 harness）
 
 ## 各 harness 的打开方式
 
+详见 [`skill/adapters/README.md`](../skill/adapters/README.md)：
+
 | Harness | 安装 | 右半屏 | 状态 |
 |---|---|---|---|
-| Claude Code 桌面版 | 软链到 `~/.claude/skills/jingliku` | 内置浏览器打开 localhost | 已验证能打开 localhost |
+| Claude Code 桌面版 | 软链到 `~/.claude/skills/jingliku` | 内置浏览器打开 localhost | 已实测 |
 | Claude Code CLI | 同上 | 无内置浏览器，用系统浏览器 | 可用 |
+| Google Antigravity | 软链到 `~/.gemini/config/skills/jingliku` | 内置 `browser` subagent 打开 localhost | 已实测 |
+| DeepSeek Harness (DSH) | 软链到 `~/.agents/skills/jingliku` | 右侧栏 Browser 标签页打开 localhost | 已实测 |
+| Qoder 桌面版 | `pack.py` 打包成 `.skill` 安装到 `~/.qoder/skills/jingliku` | 内置浏览器（`browser-use`）打开 localhost | 已实测 |
+| WorkBuddy（腾讯） | 复制到 `~/.workbuddy/skills/jingliku` | 内置预览面板打开 localhost | 已实测 |
+| 豆包桌面版（Agent 模式） | 复制到 `.../workspace/.user_skills/jingliku` | 右侧工作区 browser 标签页打开 localhost | 已实测 |
 | Codex | AGENTS.md 指向 SKILL.md | 待验证 | 待验证 |
-| WorkBuddy / 豆包办公 / 千问办公 | 待定 | 待定 | 待调研（PRD 需求 D2） |
 
 ## 下一步
 
-- **C1 前端接真实数据：** 把 v10 里写死的 `CARDS` / `DOCS` 换成读取 `/vault/`，编辑操作改成 `PUT` / `DELETE`，并轮询目录列表自动刷新。
-- **前端显示作品：** 图片缩略图（C2）和本地视频（C3）。视频拖动进度条需要管子支持 Range 请求，到时再加。
-- **试用：** sqs 用自己的真实素材走一遍「入库 → 申请 → 回存」。
+- **已完成**：C1 前端接入本地真实数据（`/vault/` 读写 + 轮询自动刷新）、C2 图片缩略图展示、LaTeX PDF 导出（`fill_tex.py`）、GitHub 自动更新检查（`check_update.py`）、主流 AI 工具适配（`skill/adapters/`）。
+- **待推进**：
+  - 本地视频拖动进度条所需的 Range 请求支持（C3）。
+  - 用真实素材走完一个周期的「入库 → 申请 → 回存」持续试用。
 
 ## 已删除的方案（v0.1）
 
