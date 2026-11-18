@@ -199,12 +199,9 @@ button.on{background:var(--accent-soft);color:var(--accent)}
 .card{display:block;width:100%;text-align:left;border:1px solid transparent;border-radius:11px;padding:10px 12px 11px;margin-bottom:4px;position:relative;transition:background-color .18s var(--ease),border-color .18s var(--ease),box-shadow .22s var(--ease),transform .18s var(--ease)}
 .card::before{content:"";position:absolute;left:-20px;top:18px;width:7px;height:7px;border-radius:50%;background:color-mix(in srgb,var(--line-2) 55%,var(--faint));box-shadow:0 0 0 3px var(--panel);transition:background-color .18s var(--ease),box-shadow .2s var(--ease)}
 .card:hover{background:var(--hover)}
-.card:hover::before{background:var(--faint)}
 .card:active{transform:scale(.995)}
 .card.on{background:var(--raised);border-color:var(--line);box-shadow:var(--shadow);color:inherit}
-.card.on::before{background:var(--accent);box-shadow:0 0 0 3px var(--panel),0 0 0 6px var(--accent-soft)}
 .card.on.fx{animation:lift .32s var(--ease) both}
-.card.on.fx::before{animation:ping .5s var(--ease) both}
 .card .t{font-weight:600;overflow-wrap:anywhere;font-size:14px;letter-spacing:-.003em;line-height:1.5}
 .card .m{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:1px}
 .card .ps{margin-top:8px;display:flex;flex-wrap:wrap;gap:4px}
@@ -590,7 +587,7 @@ body:has(> .amb){background:var(--bg)}
 /* cursor spotlight: border glow (::before ring) + soft fill (::after), positioned by --mx/--my */
 .card,.tile,.w,.hero{isolation:isolate}
 .w,.stats{position:relative}
-.card::before,.tile::before,.w::before,.hero::before,.stats::before{content:"";display:block;position:absolute;inset:0;border-radius:inherit;padding:1.2px;pointer-events:none;z-index:2;
+.card::before,.tile::before,.w::before,.hero::before,.stats::before{content:"";display:block;position:absolute;inset:0;box-shadow:none;border-radius:inherit;padding:1.2px;pointer-events:none;z-index:2;
   background:radial-gradient(200px circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,var(--tc,var(--accent)) 90%,transparent),transparent 72%);
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;
   opacity:0;transition:opacity .35s var(--ease)}
@@ -598,7 +595,7 @@ body:has(> .amb){background:var(--bg)}
 .tile:not(.th):not(.res)::after,.w::after{content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,var(--tc,var(--accent)) 10%,transparent),transparent 70%);opacity:0;transition:opacity .35s var(--ease)}
 .lit::after{opacity:1}
 /* selected card: rotating conic border */
-.card.on::before,.card.on.fx::before{opacity:1;padding:1.5px;background:conic-gradient(from var(--ang),var(--tc),color-mix(in srgb,var(--tc) 0%,transparent) 22%,var(--g2) 50%,color-mix(in srgb,var(--g2) 0%,transparent) 78%,var(--tc));animation:spin 4.5s linear infinite}
+.card.on::before,.card.on.fx::before{opacity:1;padding:1.5px;box-shadow:none;background:conic-gradient(from var(--ang),var(--tc),color-mix(in srgb,var(--tc) 0%,transparent) 22%,var(--g2) 50%,color-mix(in srgb,var(--g2) 0%,transparent) 78%,var(--tc));animation:spin 4.5s linear infinite}
 .card.on.lit::before{background:radial-gradient(200px circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,var(--tc) 90%,transparent),transparent 72%),conic-gradient(from var(--ang),var(--tc),color-mix(in srgb,var(--tc) 0%,transparent) 22%,var(--g2) 50%,color-mix(in srgb,var(--g2) 0%,transparent) 78%,var(--tc))}
 @keyframes spin{to{--ang:360deg}}
 /* 结果: light sweep on hover */
@@ -1409,7 +1406,7 @@ document.addEventListener('submit',e=>{if(e.target.id!=='addf')return;e.preventD
   CARDS.push(c);S.sel=c.id;S.doc=null;S.adding=false;if(S.type&&S.type!==c.type)S.type=null;S.tag=null;toast('已新增一段经历');render()});
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){if(S.menu){S.menu=null;showMenu()}if(S.rename){S.rename=null;render()}}
-  if(e.key==='Enter'&&e.target.id==='rn'){commitRename(e.target);render()}});
+  if(e.key==='Enter'&&!e.isComposing&&e.keyCode!==229&&e.target.id==='rn'){commitRename(e.target);render()}});
 document.addEventListener('focusout',e=>{if(e.target.id==='rn'&&S.rename){commitRename(e.target);render()}});
 document.addEventListener('input',e=>{const t=e.target;if(!t.dataset)return;
   if(t.dataset.fedit!==undefined){if(S.fedit)S.fedit.v=t.value;if(t.tagName==='TEXTAREA')autoGrow(t);return}
