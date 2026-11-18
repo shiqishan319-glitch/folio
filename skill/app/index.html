@@ -1212,14 +1212,16 @@ function docView(back){
     <div class="foot"><button class="btn pri" data-ddone="1">完成</button></div></div>`;
   }
   const mp=(cls,v,pre='')=>`<span class="pill ${cls}"${v?'':' data-empty'}>${pre}${esc(v||'')}</span>`;
+  const linkedIds=[...new Set(d.paras.map(p=>p.card).filter(id=>id&&card(id)))];
+  const rprintBtn=linkedIds.length?`<a class="btn" style="text-decoration:none" href="/resume-print?ids=${encodeURIComponent(linkedIds.join(','))}" target="_blank" rel="noopener" data-rprint="1" title="只用这份简历关联的 ${linkedIds.length} 段经历生成 A4 打印版简历">${ICON.pdf}关联经历打印版</a>`:'';
   return `<div class="col doc detail${FX.sel?' fx':''}" style="flex:1;min-width:0">${head}
     <div class="hero"><span class="ghost" aria-hidden="true">${esc(yr)}</span>
     <div class="htop"><span class="tbadge">简历</span><span>可包含自荐信 / 动机信 / 经历段落</span></div>
     ${S.rename==='doc#'+d.id?`<input id="rn" class="rn" style="width:100%;font-size:20px;font-weight:600;padding:4px 10px;border-radius:10px;margin:4px 0 8px" value="${esc(d.title||'')}" aria-label="简历名称">`:`<h1 class="dt">${esc(dtitle(d))} <button class="more" style="font-size:18px;vertical-align:middle" data-dmenu="${esc(d.id)}" aria-label="简历操作：重命名、复制、删除" title="重命名、复制、删除">⋯</button></h1>`}
     <div class="dm">${mp('solid m-kind',d.kind)}${mp('m-target',d.target,'投递对象：')}${mp('m-scene',d.scene,'场景：')}${mp('m-date',d.date)}${mp('m-lang',d.lang)}</div>
-    <div class="kpis"><span class="kpi"><b>${d.paras.length}</b>段</span><span class="kpi"><b>${new Set(d.paras.map(p=>p.card).filter(Boolean)).size}</b>段经历被引用</span></div></div>
+    <div class="kpis"><span class="kpi"><b>${d.paras.length}</b>段</span><span class="kpi"><b>${linkedIds.length}</b>段经历被引用</span></div></div>
     <div class="body" data-pdrop="end">${d.paras.map((p,i)=>`<p class="${S.hit===i?'hit':''}">${esc(p.text)}</p>${p.card&&card(p.card)?`<div class="from"><button data-sel="${esc(p.card)}">用到的经历：${esc(card(p.card).title)}</button></div>`:''}`).join('')||'<p class="dempty">还没有内容。点右上角「编辑」，或直接从中间栏拖入经历卡片。</p>'}</div>
-    <div class="foot"><button class="btn" data-copytext="${esc(d.paras.map(p=>p.text).join('\n\n'))}">复制全文</button><button class="btn" data-export="${esc(d.id)}" title="导出为 PDF">${ICON.pdf}导出 PDF</button><span class="wcount">全文 ${countStats(d.paras.map(p=>p.text).join('\n\n'))}</span></div></div>`;
+    <div class="foot"><button class="btn" data-copytext="${esc(d.paras.map(p=>p.text).join('\n\n'))}">复制全文</button><button class="btn" data-export="${esc(d.id)}" title="导出为 PDF">${ICON.pdf}导出 PDF</button>${rprintBtn}<span class="wcount">全文 ${countStats(d.paras.map(p=>p.text).join('\n\n'))}</span></div></div>`;
 }
 const WK_KIND={image:'图片',video:'视频',pdf:'PDF',slides:'幻灯片',document:'文档',archive:'压缩包',folder:'文件夹',file:'文件',link:'链接'};
 function workHtml(w){
