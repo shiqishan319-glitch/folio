@@ -104,3 +104,20 @@ python3 -m http.server 8765 --bind 127.0.0.1 --directory demo
 - 分支策略：`main` 用于稳定发布，`dev` 用于日常开发与记录开发日志 / TODO。
 - 改了 `skill/` 下的任何东西，提交前把 `skill/VERSION` 的版本号加一（复制安装的用户靠它发现新版本）。
 - 原始思考与设计文档见 `docs/PRD.md`、`docs/architecture.md` 和 `docs/notes/`。
+
+---
+
+## 开发日志（dev）
+
+- **2026-11-18 · v0.3.0**
+  - 新增 Google Antigravity 专属适配（`skill/adapters/antigravity/README.md`），补充沙箱权限、回环探测授权、`browser` subagent 打开方式与 AI 一句话自安装引导。
+  - `serve.py` 自检请求显式绕过系统代理（`ProxyHandler({})`），并新增白名单二进制上传接口 `PUT /vault/assets/portrait.*`。
+  - 参照 `sqs-resume` 风格升级 `skill/templates/latex/resume.tex` 与 `fill_tex.py`：支持灰底黑条分节栏、可选右上角证件照、教育背景、`location` 与多版本「技能」卡片。
+  - 前端 `skill/app/index.html` 在时间线底部新增置底「个人信息」卡片与右侧 Bento 详情页（支持内联编辑与证件照拖拽/点击上传）。
+
+## TODO
+
+- [ ] `serve.py` 支持 HTTP Range 请求，实现右半屏本地视频拖动进度条（PRD 需求 C3）。
+- [ ] Codex 适配实测与状态更新（`skill/adapters/codex/README.md`）。
+- [ ] 真实素材连续试用一个月（入库 → 申请 → 回存），打磨标签归纳与默认版本召回体验。
+- [ ] 探索用户自定义前端视图/小插件的打包与去中心化分享格式（PRD 需求 D5）。
