@@ -397,10 +397,8 @@ body{background:
 .yr .yc{font-size:12px;font-weight:500;color:var(--muted);white-space:nowrap}
 .yr::after{content:"";flex:1;height:1px;align-self:center;background:linear-gradient(90deg,var(--line-2),transparent)}
 .card{display:flex;flex-direction:column;margin:0;border-radius:20px;padding:14px 16px 15px;overflow:hidden;color:inherit;transition:transform .3s var(--ease),box-shadow .3s var(--ease),border-color .2s var(--ease),background .2s var(--ease)}
-.card::after{content:"";position:absolute;right:-50px;top:-60px;width:160px;height:160px;border-radius:50%;background:radial-gradient(closest-side,color-mix(in srgb,var(--tc) 16%,transparent),transparent);opacity:0;transition:opacity .3s var(--ease);pointer-events:none}
 .card > *{position:relative}
 .card:hover{background:linear-gradient(180deg,var(--tile-top),var(--tile-bot));border-color:var(--tile-bd);transform:translateY(-3px) rotate(-.3deg);box-shadow:var(--sh-hi),var(--tile-hl)}
-.card:hover::after,.card.on::after{opacity:1}
 .card:active{transform:translateY(-1px) scale(.995)}
 .card.on{background:linear-gradient(180deg,color-mix(in srgb,var(--tc) 8%,var(--tile-top)),var(--tile-bot));border-color:color-mix(in srgb,var(--tc) 48%,transparent);box-shadow:0 0 0 3px color-mix(in srgb,var(--tc) 15%,transparent),var(--sh-hi),var(--tile-hl)}
 .card.on.fx{animation:lift .34s var(--ease) both}
@@ -545,6 +543,8 @@ body{background:
 .w .hd{padding:11px 14px 0 16px}
 .w .bd{padding:9px 16px}
 .w .acts{padding:0 16px 12px}
+.wcount{margin-left:auto;align-self:center;font-size:11.5px;color:var(--faint);font-variant-numeric:tabular-nums;white-space:nowrap}
+a.prof-btn{text-decoration:none;box-sizing:border-box}
 .cmp{padding:10px}
 .backrow{margin-bottom:10px}
 
@@ -595,7 +595,6 @@ body:has(> .amb){background:var(--bg)}
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;
   opacity:0;transition:opacity .35s var(--ease)}
 .lit::before{opacity:1}
-.card::after{inset:0;width:auto;height:auto;border-radius:inherit;z-index:-1;background:radial-gradient(240px circle at var(--mx,88%) var(--my,0%),color-mix(in srgb,var(--tc) 15%,transparent),transparent 70%)}
 .tile:not(.th):not(.res)::after,.w::after{content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,var(--tc,var(--accent)) 10%,transparent),transparent 70%);opacity:0;transition:opacity .35s var(--ease)}
 .lit::after{opacity:1}
 /* selected card: rotating conic border */
@@ -763,6 +762,8 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .tile.wk a.pill{text-decoration:none;color:var(--ink);cursor:pointer}
 .tile.wk a.pill:hover{background:var(--press)}
 .wk-k{margin-left:auto;padding-left:8px;font-size:11px;font-weight:500;color:var(--muted);white-space:nowrap}
+.wk-item{display:flex;flex-direction:column;gap:3px}
+.wk-sum{font-size:11.5px;line-height:1.45;color:var(--muted);padding:0 4px}
 .tile.wk .pill.wmiss{color:var(--faint);background:transparent;border:1px dashed var(--line-2);cursor:help}
 .tile.wk .pill.wmiss::before{background:var(--faint)}
 .tile.wk .pill.wmiss .wk-k{color:var(--danger);opacity:.8}
@@ -801,6 +802,10 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .dctl .ib:disabled{opacity:.35;cursor:default}
 .dctl .ib.del:hover,.dctl .ib.del.confirm{color:var(--danger);background:var(--danger-soft);border-color:transparent}
 .dadd{align-self:flex-start;margin:6px 8px 4px}
+.card[draggable="true"]{cursor:grab}
+.card.dragging{opacity:.48}
+.dpara.drag-over,.ddrop.drag-over,.doc .body.drag-over{outline:2px dashed var(--accent);outline-offset:-2px;background:var(--accent-soft)!important}
+.ddrop{border:1.5px dashed var(--line-2);border-radius:12px;padding:10px 12px;text-align:center;font-size:12.5px;color:var(--muted);margin:8px 8px 4px;transition:border-color .15s var(--ease),background-color .15s var(--ease)}
 .detail.editing .hero{box-shadow:0 0 0 3px var(--accent-soft),var(--sh-tile),var(--tile-hl)}
 /* double-click editing of 事实 / 结果 / 思考 and the title */
 .tile[data-dbl],.dt[data-dbl]{cursor:text}
@@ -956,7 +961,7 @@ function statsHtml(){
   return `<div class="stats" aria-label="经历库概览"><div class="sts">
     <div class="st st-main" title="经历${span?' · '+span:''}"><span class="sn">${CARDS.length}</span><span class="sk">经历${span?`<span class="wo"> · ${span}</span>`:''}</span></div>
     <div class="st" title="写法版本"><span class="sn">${CARDS.reduce((n,c)=>n+nVers(c),0)}</span><span class="sk">写法</span></div>
-    <div class="st" title="申请记录"><span class="sn">${DOCS.length}</span><span class="sk">申请<span class="wo2">记录</span></span></div></div>
+    <div class="st" title="简历"><span class="sn">${DOCS.length}</span><span class="sk">简<span class="wo2">历</span></span></div></div>
     <div class="st-mix" title="类型分布"><div class="bar" aria-hidden="true">${per.map(p=>p.n?`<i class="${tc(p.t)}" style="flex:${p.n}" title="${p.t} ${p.n}"></i>`:'').join('')}</div>
       <div class="lg">${per.map(p=>`<span class="${tc(p.t)}${p.n?'':' zero'}"><i></i>${p.t}<b>${p.n}</b></span>`).join('')}</div></div></div>`;
 }
@@ -1019,7 +1024,7 @@ const pct=k=>(S.f[k]*100).toFixed(2)+'%';
 function visible(){
   const q=S.q.trim().toLowerCase();
   return CARDS.filter(c=>(!S.type||c.type===S.type)&&(!S.tag||c.tags.includes(S.tag))&&
-    (!q||[c.title,c.fact,c.result,c.thought,c.tags.join(' ')].join(' ').toLowerCase().includes(q)));
+    (!q||[c.title,c.fact,c.result,c.thought,c.tags.join(' '),c.works.map(w=>typeof w==='string'?w:[w.label,w.summary].filter(Boolean).join(' ')).join(' ')].join(' ').toLowerCase().includes(q)));
 }
 function filterCol(open){
   if(!open)return '';   // collapsed: no rail — the expand control lives in the timeline header
@@ -1031,8 +1036,8 @@ function filterCol(open){
     <div class="brandrow"><span class="brand"><span class="logo" aria-hidden="true">${LOGO}</span>经历库</span>${S.mode==='single'?`<button data-pane="list" title="返回时间线" aria-label="返回时间线">${ICON.collapse}</button>`:`<button data-toggle="filter" title="收起筛选栏" aria-label="收起筛选栏">${ICON.collapse}</button>`}</div>
     <div class="trow"><button class="name allt ${S.type?'':'on'}" data-alltypes="1" title="显示全部类型">类型 · 全部</button><span class="cnt">${CARDS.length}</span></div>
     <ul class="tree">${tree}</ul>
-    <div class="lab">申请记录<button class="more" data-dnew="1" title="新建申请记录" aria-label="新建申请记录">${ICON.plus}</button></div><ul class="sub" style="margin-left:0;padding-left:0;border:none">${DOCS.map(d=>`<li><button class="${S.doc===d.id?'on':''}" data-doc="${esc(d.id)}">${ICON.doc}${esc(d.title||'未命名申请记录')}</button></li>`).join('')}</ul>
-    <button type="button" class="prof-btn ${S.sel==='__profile__'&&!S.doc?'on':''}" data-prof="1" title="查看与编辑姓名、联系方式与教育背景">${ICON.user}<span>${esc((VAULT_CFG.profile&&VAULT_CFG.profile.name)?'个人信息 · '+VAULT_CFG.profile.name:'填写个人信息 / 教育背景')}</span></button>
+    <div class="lab">简历<button class="more" data-dnew="1" title="新建简历" aria-label="新建简历">${ICON.plus}</button></div><ul class="sub" style="margin-left:0;padding-left:0;border:none">${DOCS.map(d=>S.rename==='doc#'+d.id?`<li><input id="rn" class="rn" style="width:100%;font-size:13px;padding:4px 8px;border-radius:7px" value="${esc(d.title||'')}" aria-label="简历名称"></li>`:`<li><button class="${S.doc===d.id?'on':''}" data-doc="${esc(d.id)}" data-dk="${esc(d.id)}" title="右键可重命名、复制、删除">${ICON.doc}${esc(d.title||'未命名简历')}</button></li>`).join('')}</ul>
+    <a class="prof-btn" href="/resume-print" target="_blank" rel="noopener" data-rprint="1" title="一键生成零依赖 A4 打印版简历（浏览器 Cmd/Ctrl+P 存为 PDF）">${ICON.pdf}<span>打印版简历</span></a>
     <div class="sidefoot">${statusHtml()}</div></div>`;
 }
 function listCol(fill){
@@ -1044,10 +1049,10 @@ function listCol(fill){
       ${c.tags.length?`<div class="ps">${c.tags.map(t=>`<span class="pill">${esc(t)}</span>`).join('')}</div>`:''}`;
     h+=S.rename==='card#'+c.id
       ?`<div class="card on ${tc(c.type)}">${top}<input id="rn" class="rn" style="width:100%;border-radius:8px;font-size:14px;padding:3px 9px" value="${esc(c.title)}" aria-label="经历名称">${inner}</div>`
-      :`<button class="card ${tc(c.type)} ${S.sel===c.id&&!S.doc?'on'+(FX.sel?' fx':''):''}" data-sel="${c.id}" data-ck="${c.id}" title="右键可重命名、复制、删除">${top}<div class="t">${esc(c.title)}</div>${inner}</button>`});
+      :`<button class="card ${tc(c.type)} ${S.sel===c.id&&!S.doc?'on'+(FX.sel?' fx':''):''}" draggable="true" data-sel="${c.id}" data-ck="${c.id}" title="可拖动到右侧简历；右键可重命名、复制、删除">${top}<div class="t">${esc(c.title)}</div>${inner}</button>`});
   const prof=VAULT_CFG.profile||{},edus=Array.isArray(prof.education)?prof.education:[];
   const pmeta=[prof.headline,prof.location,edus.length?`教育背景 ${edus.length} 段`:''].filter(Boolean).join(' · ')||'点击填写姓名、联系方式与教育背景';
-  const pcard=`<div class="yr"><b>个人概况</b><span class="yc">置底</span></div>
+  const pcard=`<div class="yr"><b>个人概况</b></div>
     <button class="card tc5 ${S.sel==='__profile__'&&!S.doc?'on'+(FX.sel?' fx':''):''}" data-sel="__profile__">
       <div class="ctop"><span class="tbadge">个人信息</span><span class="cnum"><b>${edus.length}</b>段学历</span></div>
       <div class="t">${esc(prof.name||'个人信息与教育背景')}</div>
@@ -1064,11 +1069,18 @@ function listCol(fill){
     <div class="chips tagbar" role="group" aria-label="按标签筛选">${tags.map(t=>`<button class="${S.tag===t?'on':''}" data-tag="${esc(t)}">${esc(t)}</button>`).join('')}</div>
     ${add}<div class="tl">${h||`<div class="empty">${CARDS.length?'没有符合条件的经历。换一个类型或标签，或点「新增」。':EMPTY_VAULT}</div>`}${pcard}</div></div>`;
 }
+function countStats(s){
+  const t=String(s||''),chars=t.length,noSpace=t.replace(/\s+/g,'').length;
+  const cjk=(t.match(/[\u4e00-\u9fff\u3400-\u4dbf]/g)||[]).length;
+  const words=(t.match(/[A-Za-z0-9]+(?:['’-][A-Za-z0-9]+)*/g)||[]).length;
+  if(!chars)return '0 字';
+  return cjk>0?`${noSpace} 字 · ${chars} 字符`:`${words} 词 · ${chars} 字符`;
+}
 function vcell(key,w,vi,ref){
-  const v=w.versions[vi],ek=key+'#'+vi;
-  if(ref)return `<div class="bd">${esc(v.text)}</div><div class="acts"><button class="btn" data-copytext="${esc(v.text)}">复制</button><button class="btn" data-doc="${v.doc}" data-hit="${v.pi}">展开完整文档 →</button></div>`;
-  return S.edit===ek?`<div class="bd"><textarea id="ta" aria-label="编辑写法">${esc(v.text)}</textarea></div><div class="acts"><button class="btn pri" data-save="${ek}">保存到当前版本</button><button class="btn" data-savenew="${ek}">另存为新版本</button><button data-cancel="1">取消</button></div>`
-    :`<div class="bd">${esc(v.text)}</div><div class="acts"><button class="btn" data-copy="${ek}">复制</button><button class="btn" data-edit="${ek}">编辑</button></div>`;
+  const v=w.versions[vi],ek=key+'#'+vi,cnt=countStats(v.text);
+  if(ref)return `<div class="bd">${esc(v.text)}</div><div class="acts"><button class="btn" data-copytext="${esc(v.text)}">复制</button><button class="btn" data-doc="${v.doc}" data-hit="${v.pi}">展开完整文档 →</button><span class="wcount">${cnt}</span></div>`;
+  return S.edit===ek?`<div class="bd"><textarea id="ta" aria-label="编辑写法">${esc(v.text)}</textarea></div><div class="acts"><button class="btn pri" data-save="${ek}">保存到当前版本</button><button class="btn" data-savenew="${ek}">另存为新版本</button><button data-cancel="1">取消</button><span class="wcount" id="ta-count">${cnt}</span></div>`
+    :`<div class="bd">${esc(v.text)}</div><div class="acts"><button class="btn" data-copy="${ek}">复制</button><button class="btn" data-edit="${ek}">编辑</button><span class="wcount">${cnt}</span></div>`;
 }
 function vname(key,w,vi,ref,tab,on){
   const n=w.versions[vi].name,rn=S.rename===key+'#'+vi;
@@ -1137,7 +1149,7 @@ function profileView(back){
   return `<div class="col detail tc5" style="flex:1">${back?`<div class="backrow">${back}</div>`:''}
     <div class="hero">
       <div class="htop"><span class="tbadge">个人信息</span><span>置底基础卡片 · 导出简历 PDF 时使用</span></div>
-      <h1 class="dt">${esc(p.name||'未填写姓名')} <button class="btn" style="font-size:12px;vertical-align:middle;margin-left:8px" data-pedit="1">${ICON.pen} 编辑</button></h1>
+      <h1 class="dt">${esc(p.name||'未填写姓名')} <button class="btn" style="font-size:12px;vertical-align:middle;margin-left:8px" data-pedit="1">${ICON.pen} 编辑</button><a class="btn" style="font-size:12px;vertical-align:middle;margin-left:6px;text-decoration:none" href="/resume-print" target="_blank" rel="noopener" data-rprint="1">${ICON.pdf} 打印版简历</a></h1>
       ${p.headline?`<div class="dm"><span class="pill">${esc(p.headline)}</span></div>`:''}
       <div class="kpis">
         <span class="kpi"><b>${edus.length}</b>教育背景</span>
@@ -1176,47 +1188,51 @@ function detailCol(){
     <div class="tile wk ${c.works.length?'':'miss'}"><div class="lk">${ICON.wk}作品</div><div class="v">${c.works.length?c.works.map(workHtml).join(''):'无'}</div></div></div>
     <div class="sec"><span>已有写法<small>${c.writings.length+(r?1:0)}</small></span>${anyMany?`<button class="tog" data-expall="1">${S.expAll?'全部收起':'全部展开对比'}</button>`:''}</div>${ws||'<div class="empty">还没有写法。回到对话，让 AI 按某次申请的要求生成。</div>'}</div>`;
 }
-const dtitle=d=>d.title||'未命名申请记录';
+const dtitle=d=>d.title||'未命名简历';
 function docView(back){
   const d=DOCS.find(x=>x.id===S.doc);
-  if(!d)return `<div class="col" style="flex:1">${back?`<div class="backrow">${back}</div>`:''}<div class="empty">这份申请记录已经不在了。</div></div>`;
+  if(!d)return `<div class="col" style="flex:1">${back?`<div class="backrow">${back}</div>`:''}<div class="empty">这份简历已经不在了。</div></div>`;
   const ed=S.docEdit===d.id,yr=String(d.date||'').slice(0,4);
-  const head=`<div class="backrow">${back}<button class="btn" data-back="1">← 返回卡片</button><span class="grow"></span>${ed?`<button class="btn pri" data-ddone="1">完成</button>`:`<button class="btn" data-dedit="${esc(d.id)}">${ICON.pen2}编辑</button>`}</div>`;
+  const delBtn=`<button class="btn ${S.docDelConf===d.id?'danger':''}" style="${S.docDelConf===d.id?'color:var(--danger);border-color:var(--danger)':''}" data-ddocdel="${esc(d.id)}">${S.docDelConf===d.id?'再点一次确认删除':'删除'}</button>`;
+  const head=`<div class="backrow">${back}<button class="btn" data-back="1">← 返回卡片</button><span class="grow"></span>${ed?`${delBtn}<button class="btn pri" data-ddone="1">完成</button>`:`<button class="btn" data-dedit="${esc(d.id)}">${ICON.pen2}编辑</button>`}</div>`;
   if(ed){
     const opts=sel=>`<option value="">无</option>`+CARDS.map(c=>`<option value="${esc(c.id)}"${c.id===sel?' selected':''}>${esc(c.title||c.id)}</option>`).join('')+(sel&&!card(sel)?`<option value="${esc(sel)}" selected>（找不到这段经历）</option>`:'');
     const f=(k,l,ph)=>`<label>${l}<input data-df="${k}" value="${esc(d[k]||'')}" placeholder="${ph}"></label>`;
     return `<div class="col doc detail editing${FX.sel?' fx':''}" style="flex:1;min-width:0">${head}
     <div class="hero"><span class="ghost" aria-hidden="true">${esc(yr)}</span>
-    <div class="htop"><span class="tbadge">申请记录</span><span>编辑中 · ${LIVE?'改动会自动保存':'演示数据不会保存'}</span></div>
-    <input class="din dtitle" data-df="title" value="${esc(d.title||'')}" placeholder="标题，如：某项目 · 自荐信" aria-label="标题">
-    <div class="dmeta">${f('kind','类型','自荐信')}${f('target','申请对象','某机构')}${f('scene','场景','实习申请')}${f('date','日期','2026.11')}${f('lang','语言','中文')}</div></div>
-    <div class="body dbody">${d.paras.map((p,i)=>`<div class="dpara"><textarea class="dta" data-dp="${i}" rows="2" placeholder="这一段写什么……" aria-label="第 ${i+1} 段">${esc(p.text||'')}</textarea>
+    <div class="htop"><span class="tbadge">简历</span><span>编辑中 · ${LIVE?'改动会自动保存':'演示数据不会保存'}</span></div>
+    <input class="din dtitle" data-df="title" value="${esc(d.title||'')}" placeholder="标题，如：某公司 · 自荐信 / 动机信" aria-label="标题">
+    <div class="dmeta">${f('kind','类型','自荐信 / 动机信')}${f('target','投递对象','某机构')}${f('scene','场景','实习申请')}${f('date','日期','2026.11')}${f('lang','语言','中文')}</div></div>
+    <div class="body dbody">${d.paras.map((p,i)=>`<div class="dpara" data-pdrop="${i}"><textarea class="dta" data-dp="${i}" rows="2" placeholder="这一段写什么……（也可从中间栏拖入经历卡片）" aria-label="第 ${i+1} 段">${esc(p.text||'')}</textarea>
       <div class="dctl"><span class="dno">${i+1}</span><label>用到的经历<select data-dc="${i}" aria-label="第 ${i+1} 段用到的经历">${opts(p.card)}</select></label>
       <button class="ib" data-dmv="${i}:-1" ${i?'':'disabled'} title="上移" aria-label="上移">↑</button><button class="ib" data-dmv="${i}:1" ${i<d.paras.length-1?'':'disabled'} title="下移" aria-label="下移">↓</button>
       <button class="ib del${S.dconf===i?' confirm':''}" data-ddel="${i}" title="删除这一段">${S.dconf===i?'再点一次删除':'删除'}</button></div></div>`).join('')}
+      <div class="ddrop" data-pdrop="end">将中间栏的经历卡片拖到这里，自动填入内容并关联</div>
       <button class="btn dadd" data-dadd="1">${ICON.plus}添加段落</button></div>
     <div class="foot"><button class="btn pri" data-ddone="1">完成</button></div></div>`;
   }
   const mp=(cls,v,pre='')=>`<span class="pill ${cls}"${v?'':' data-empty'}>${pre}${esc(v||'')}</span>`;
   return `<div class="col doc detail${FX.sel?' fx':''}" style="flex:1;min-width:0">${head}
     <div class="hero"><span class="ghost" aria-hidden="true">${esc(yr)}</span>
-    <div class="htop"><span class="tbadge">申请记录</span><span>引用经历的完整文档</span></div>
-    <h1 class="dt">${esc(dtitle(d))} <button class="more" style="font-size:18px;vertical-align:middle" data-dmenu="${esc(d.id)}" aria-label="申请记录操作：复制、删除" title="复制、删除">⋯</button></h1>
-    <div class="dm">${mp('solid m-kind',d.kind)}${mp('m-target',d.target,'申请对象：')}${mp('m-scene',d.scene,'场景：')}${mp('m-date',d.date)}${mp('m-lang',d.lang)}</div>
+    <div class="htop"><span class="tbadge">简历</span><span>可包含自荐信 / 动机信 / 经历段落</span></div>
+    ${S.rename==='doc#'+d.id?`<input id="rn" class="rn" style="width:100%;font-size:20px;font-weight:600;padding:4px 10px;border-radius:10px;margin:4px 0 8px" value="${esc(d.title||'')}" aria-label="简历名称">`:`<h1 class="dt">${esc(dtitle(d))} <button class="more" style="font-size:18px;vertical-align:middle" data-dmenu="${esc(d.id)}" aria-label="简历操作：重命名、复制、删除" title="重命名、复制、删除">⋯</button></h1>`}
+    <div class="dm">${mp('solid m-kind',d.kind)}${mp('m-target',d.target,'投递对象：')}${mp('m-scene',d.scene,'场景：')}${mp('m-date',d.date)}${mp('m-lang',d.lang)}</div>
     <div class="kpis"><span class="kpi"><b>${d.paras.length}</b>段</span><span class="kpi"><b>${new Set(d.paras.map(p=>p.card).filter(Boolean)).size}</b>段经历被引用</span></div></div>
-    <div class="body">${d.paras.map((p,i)=>`<p class="${S.hit===i?'hit':''}">${esc(p.text)}</p>${p.card&&card(p.card)?`<div class="from"><button data-sel="${esc(p.card)}">用到的经历：${esc(card(p.card).title)}</button></div>`:''}`).join('')||'<p class="dempty">还没有内容。点右上角「编辑」开始写。</p>'}</div>
-    <div class="foot"><button class="btn" data-copytext="${esc(d.paras.map(p=>p.text).join('\n\n'))}">复制全文</button><button class="btn" data-export="${esc(d.id)}" title="导出为 PDF">${ICON.pdf}导出 PDF</button></div></div>`;
+    <div class="body" data-pdrop="end">${d.paras.map((p,i)=>`<p class="${S.hit===i?'hit':''}">${esc(p.text)}</p>${p.card&&card(p.card)?`<div class="from"><button data-sel="${esc(p.card)}">用到的经历：${esc(card(p.card).title)}</button></div>`:''}`).join('')||'<p class="dempty">还没有内容。点右上角「编辑」，或直接从中间栏拖入经历卡片。</p>'}</div>
+    <div class="foot"><button class="btn" data-copytext="${esc(d.paras.map(p=>p.text).join('\n\n'))}">复制全文</button><button class="btn" data-export="${esc(d.id)}" title="导出为 PDF">${ICON.pdf}导出 PDF</button><span class="wcount">全文 ${countStats(d.paras.map(p=>p.text).join('\n\n'))}</span></div></div>`;
 }
 const WK_KIND={image:'图片',video:'视频',pdf:'PDF',slides:'幻灯片',document:'文档',archive:'压缩包',folder:'文件夹',file:'文件',link:'链接'};
 function workHtml(w){
   if(!w||typeof w!=='object')return `<span class="pill solid">${esc(w==null?'':w)}</span>`;
   const label=esc(w.label||w.asset||w.url||'作品'),src=w.asset?VAULT.url(w.asset):'';
-  if(w.asset&&LIVE&&VAULT.missing(w.asset))return `<span class="pill solid wmiss" title="原文件可能被移动、改名或删除了。可以让 AI 帮你「检查快捷方式」。">${label}<span class="wk-k">原文件找不到了</span></span>`;
-  if(w.kind==='image'&&src&&LIVE)return `<button class="wimg" data-zoom="${esc(src)}" title="点击放大"><img src="${esc(src)}" alt="${label}" loading="lazy" data-asset="${esc(w.asset)}"><span>${label}</span></button>`;
-  if(w.kind==='video'&&src&&LIVE)return `<div class="wvid"><video src="${esc(src)}" controls preload="metadata" playsinline data-asset="${esc(w.asset)}"></video><span>${label}</span></div>`;
-  if(w.kind==='link'&&/^(https?:|mailto:)/i.test(w.url||''))return `<a class="pill solid wlink" href="${esc(w.url)}" target="_blank" rel="noopener noreferrer">${label}<span class="wk-k">链接 ↗</span></a>`;
-  if(src&&LIVE)return `<a class="pill solid wlink" href="${esc(src)}" target="_blank" rel="noopener">${label}<span class="wk-k">${WK_KIND[w.kind]||'文件'} ↗</span></a>`;
-  return `<span class="pill solid">${label}</span>`;
+  const sum=w.summary?`<div class="wk-sum">${esc(w.summary)}</div>`:'';
+  const wrap=inner=>sum?`<div class="wk-item">${inner}${sum}</div>`:inner;
+  if(w.asset&&LIVE&&VAULT.missing(w.asset))return wrap(`<span class="pill solid wmiss" title="原文件可能被移动、改名或删除了。可以让 AI 帮你运行「relink」自动找回。">${label}<span class="wk-k">原文件找不到了</span></span>`);
+  if(w.kind==='image'&&src&&LIVE)return wrap(`<button class="wimg" data-zoom="${esc(src)}" title="点击放大"><img src="${esc(src)}" alt="${label}" loading="lazy" data-asset="${esc(w.asset)}"><span>${label}</span></button>`);
+  if(w.kind==='video'&&src&&LIVE)return wrap(`<div class="wvid"><video src="${esc(src)}" controls preload="metadata" playsinline data-asset="${esc(w.asset)}"></video><span>${label}</span></div>`);
+  if(w.kind==='link'&&/^(https?:|mailto:)/i.test(w.url||''))return wrap(`<a class="pill solid wlink" href="${esc(w.url)}" target="_blank" rel="noopener noreferrer">${label}<span class="wk-k">链接 ↗</span></a>`);
+  if(src&&LIVE)return wrap(`<a class="pill solid wlink" href="${esc(src)}" target="_blank" rel="noopener">${label}<span class="wk-k">${WK_KIND[w.kind]||'文件'} ↗</span></a>`);
+  return wrap(`<span class="pill solid">${label}</span>`);
 }
 function render(){
   if(typeof persist==='function')persist();
@@ -1262,7 +1278,7 @@ function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');cle
 function copy(text){try{navigator.clipboard.writeText(text).then(()=>toast('已复制'),()=>toast('复制被浏览器拒绝，请手动选中文字'))}catch(e){toast('复制被浏览器拒绝，请手动选中文字')}}
 function wv(ek){const[key,v]=ek.split('#'),[cid,i]=key.split(':');return{key,w:card(cid).writings[+i],vi:+v}}
 function menuHtml(){const m=S.menu;if(!m)return '';
-  if(m.doc)return `<button data-dm="dup">复制这份记录</button><button data-dm="del" class="${m.confirm?'danger':''}">${m.confirm?'再点一次确认删除':'删除这份记录'}</button>`;
+  if(m.doc)return `<button data-dm="rename">重命名</button><button data-dm="dup">复制这份简历</button><button data-dm="del" class="${m.confirm?'danger':''}">${m.confirm?'再点一次确认删除':'删除这份简历'}</button>`;
   if(m.card)return `<button data-cm="rename">重命名</button><button data-cm="dup">复制为新经历</button><button data-cm="del" class="${m.confirm?'danger':''}">${m.confirm?'再点一次确认删除':'删除'}</button>`;
   const{w}=wv(m.ek);
   return `<button data-m="rename">重命名</button><button data-m="dup">复制为新版本</button><button data-m="del" ${w.versions.length<2?'disabled title="至少保留一个版本"':''} class="${m.confirm?'danger':''}">${m.confirm?'再点一次确认删除':'删除'}</button>`}
@@ -1270,8 +1286,12 @@ function showMenu(){const el=$('menu'),m=S.menu;if(!m){el.hidden=true;return}
   el.innerHTML=menuHtml();el.hidden=false;const W=el.offsetWidth,H=el.offsetHeight;
   el.style.left=Math.max(8,Math.min(innerWidth-W-8,m.x))+'px';el.style.top=Math.max(8,Math.min(innerHeight-H-8,m.y))+'px';
   if(!m.confirm)el.querySelector('button').focus()}
-function commitRename(inp){if(!S.rename)return;const n=inp.value.trim();if(S.rename.startsWith('card#')){const c=card(S.rename.slice(5));if(n&&c)c.title=n}else{const{w,vi}=wv(S.rename);if(n)w.versions[vi].name=n}S.rename=null}
+function commitRename(inp){if(!S.rename)return;const n=inp.value.trim();if(S.rename.startsWith('card#')){const c=card(S.rename.slice(5));if(n&&c)c.title=n}else if(S.rename.startsWith('doc#')){const d=DOCS.find(o=>o.id===S.rename.slice(4));if(n&&d)d.title=n}else{const{w,vi}=wv(S.rename);if(n)w.versions[vi].name=n}S.rename=null}
+document.addEventListener('input',e=>{
+  if(e.target&&e.target.id==='ta'){const c=$('ta-count');if(c)c.textContent=countStats(e.target.value)}
+});
 document.addEventListener('click',e=>{
+  if(e.target.closest('[data-rprint]')&&!LIVE){e.preventDefault();toast('演示模式暂不支持生成简历，连接本地经历库后即可一键生成');return}
   const b=e.target.closest('button');
   if(S.menu&&!(b&&(b.dataset.m||b.dataset.cm||b.dataset.menu||b.dataset.cmenu||b.dataset.dm||b.dataset.dmenu))){S.menu=null;showMenu()}
   if(!b)return;const d=b.dataset,single=S.mode==='single';
@@ -1281,8 +1301,9 @@ document.addEventListener('click',e=>{
   if(d.dm){const m=S.menu,x=DOCS.find(o=>o.id===m.doc),i=DOCS.indexOf(x);
     if(!x){S.menu=null;showMenu();return}
     if(d.dm==='del'&&!m.confirm){m.confirm=true;showMenu();return}
-    if(d.dm==='dup'){const n=JSON.parse(JSON.stringify(x));n.id=newId('a',DOCS);n.title=dtitle(x)+' 副本';DOCS.splice(i+1,0,n);S.doc=n.id;S.docEdit=null;S.hit=null;toast('已复制这份申请记录')}
-    else if(d.dm==='del'){DOCS.splice(i,1);if(S.doc===x.id){S.doc=null;S.docEdit=null}toast('已删除这份申请记录')}
+    if(d.dm==='rename'){S.rename='doc#'+x.id}
+    else if(d.dm==='dup'){const n=JSON.parse(JSON.stringify(x));n.id=newId('a',DOCS);n.title=dtitle(x)+' 副本';DOCS.splice(i+1,0,n);S.doc=n.id;S.docEdit=null;S.hit=null;toast('已复制这份简历')}
+    else if(d.dm==='del'){DOCS.splice(i,1);if(S.doc===x.id){S.doc=null;S.docEdit=null}toast('已删除这份简历')}
     S.menu=null;showMenu();render();return}
   if(d.cm){const m=S.menu,c=card(m.card),i=CARDS.indexOf(c);
     if(d.cm==='del'&&!m.confirm){m.confirm=true;showMenu();return}
@@ -1310,11 +1331,12 @@ document.addEventListener('click',e=>{
   else if(d.add){S.adding=!S.adding}
   else if(d.addcancel){S.adding=false}
   else if(d.sel){S.sel=d.sel;S.doc=null;S.docEdit=null;S.edit=null;S.fedit=null;S.show.detail=true;S.pane='detail'}
-  else if(d.doc){if(S.docEdit!==d.doc)S.docEdit=null;S.doc=d.doc;S.hit=d.hit!==undefined?+d.hit:null;S.show.detail=true;S.pane='detail'}
-  else if(d.back){S.doc=null;S.docEdit=null}
-  else if(d.dnew){const id=newId('a',DOCS);DOCS.push({schema:1,id,title:'',kind:'',target:'',scene:'',date:ym(),lang:'中文',paras:[{text:'',card:null}]});S.doc=id;S.docEdit=id;S.hit=null;S.show.detail=true;S.pane='detail';S.dfocus='title';toast('已新建申请记录')}
-  else if(d.dedit){S.docEdit=d.dedit;S.dconf=null;S.hit=null}
-  else if(d.ddone){S.docEdit=null;S.dconf=null;toast(LIVE?'申请记录已保存':'已更新（演示数据不会保存）')}
+  else if(d.doc){if(S.docEdit!==d.doc)S.docEdit=null;S.docDelConf=null;S.doc=d.doc;S.hit=d.hit!==undefined?+d.hit:null;S.show.detail=true;S.pane='detail'}
+  else if(d.back){S.doc=null;S.docEdit=null;S.docDelConf=null}
+  else if(d.dnew){const id=newId('a',DOCS);DOCS.push({schema:1,id,title:'',kind:'',target:'',scene:'',date:ym(),lang:'中文',paras:[{text:'',card:null}]});S.doc=id;S.docEdit=id;S.docDelConf=null;S.hit=null;S.show.detail=true;S.pane='detail';S.dfocus='title';toast('已新建简历')}
+  else if(d.dedit){S.docEdit=d.dedit;S.dconf=null;S.docDelConf=null;S.hit=null}
+  else if(d.ddone){S.docEdit=null;S.dconf=null;S.docDelConf=null;toast(LIVE?'简历已保存':'已更新（演示数据不会保存）')}
+  else if(d.ddocdel){const id=d.ddocdel,i=DOCS.findIndex(o=>o.id===id);if(i<0)return;if(S.docDelConf!==id){S.docDelConf=id}else{DOCS.splice(i,1);S.doc=null;S.docEdit=null;S.docDelConf=null;toast('已删除这份简历')}}
   else if(d.dadd){const x=DOCS.find(o=>o.id===S.docEdit);if(x){x.paras.push({text:'',card:null});S.dconf=null;S.dfocus=x.paras.length-1}}
   else if(d.dmv){const x=DOCS.find(o=>o.id===S.docEdit),[i,dir]=d.dmv.split(':').map(Number),j=i+dir;if(x&&j>=0&&j<x.paras.length){[x.paras[i],x.paras[j]]=[x.paras[j],x.paras[i]];S.dconf=null}}
   else if(d.ddel){const x=DOCS.find(o=>o.id===S.docEdit),i=+d.ddel;if(!x)return;if(S.dconf!==i)S.dconf=i;else{x.paras.splice(i,1);if(!x.paras.length)x.paras.push({text:'',card:null});S.dconf=null;toast('已删除这一段')}}
@@ -1349,8 +1371,36 @@ document.addEventListener('click',e=>{
   else return;
   render();
 });
-document.addEventListener('contextmenu',e=>{const t=e.target.closest('[data-vk],[data-ck]');if(!t)return;e.preventDefault();
-  S.menu=t.dataset.vk?{ek:t.dataset.vk,x:e.clientX,y:e.clientY}:{card:t.dataset.ck,x:e.clientX,y:e.clientY};showMenu()});
+document.addEventListener('contextmenu',e=>{const t=e.target.closest('[data-vk],[data-ck],[data-dk]');if(!t)return;e.preventDefault();
+  S.menu=t.dataset.vk?{ek:t.dataset.vk,x:e.clientX,y:e.clientY}:t.dataset.dk?{doc:t.dataset.dk,x:e.clientX,y:e.clientY}:{card:t.dataset.ck,x:e.clientX,y:e.clientY};showMenu()});
+let dragCid=null;
+function cardDraftText(c){
+  if(!c)return '';
+  const w=(c.writings||[]).find(x=>x.type==='简历条目'&&x.versions&&x.versions.length)
+    ||(c.writings||[]).find(x=>x.type==='动机信段落'&&x.versions&&x.versions.length)
+    ||(c.writings||[]).find(x=>x.versions&&x.versions.length);
+  if(w){const vi=Math.min(S.ver[c.id+':'+c.writings.indexOf(w)]||0,w.versions.length-1);if(w.versions[vi]&&w.versions[vi].text)return w.versions[vi].text}
+  return [c.fact,c.result].filter(Boolean).join('\n');
+}
+document.addEventListener('dragstart',e=>{const el=e.target.closest('.card[data-ck]');if(!el)return;dragCid=el.dataset.ck;el.classList.add('dragging');try{e.dataTransfer.setData('text/plain',dragCid);e.dataTransfer.effectAllowed='copy'}catch{}});
+document.addEventListener('dragend',()=>{dragCid=null;document.querySelectorAll('.card.dragging').forEach(x=>x.classList.remove('dragging'));document.querySelectorAll('.drag-over').forEach(x=>x.classList.remove('drag-over'))});
+document.addEventListener('dragover',e=>{const dz=e.target.closest('[data-pdrop]');if(!dz||!S.doc)return;e.preventDefault();if(!dz.classList.contains('drag-over'))dz.classList.add('drag-over')});
+document.addEventListener('dragleave',e=>{const dz=e.target.closest('[data-pdrop]');if(dz&&!dz.contains(e.relatedTarget))dz.classList.remove('drag-over')});
+document.addEventListener('drop',e=>{
+  const dz=e.target.closest('[data-pdrop]');if(!dz||!S.doc)return;e.preventDefault();dz.classList.remove('drag-over');
+  let cid=dragCid;if(!cid)try{cid=e.dataTransfer.getData('text/plain')}catch{}
+  const c=card(cid),doc=DOCS.find(o=>o.id===S.doc);if(!c||!doc)return;
+  const text=cardDraftText(c),pos=dz.dataset.pdrop;
+  if(pos==='end'){
+    if(doc.paras.length===1&&!doc.paras[0].text.trim()&&!doc.paras[0].card){doc.paras[0]={text,card:c.id}}
+    else{doc.paras.push({text,card:c.id})}
+  }else{
+    const idx=+pos,cur=doc.paras[idx];
+    if(cur&&!cur.text.trim()&&!cur.card){doc.paras[idx]={text,card:c.id}}
+    else{doc.paras.splice(idx+1,0,{text,card:c.id})}
+  }
+  toast('已将「'+(c.title||c.id)+'」加入简历');render();
+});
 document.addEventListener('submit',e=>{if(e.target.id!=='addf')return;e.preventDefault();const title=$('add-title').value.trim();if(!title)return;
   const time=$('add-time').value.trim()||'2026.11',y=parseInt(time,10);
   const c={schema:1,id:newId('e',CARDS),type:$('add-type').value,org:title.split(/[·・]/)[0].trim(),title,time,year:y>1900?y:2026,role:'',tags:[],fact:'',result:'',thought:'',works:[],writings:[]};
@@ -1639,7 +1689,7 @@ document.addEventListener('pointerout',e=>{const bar=e.target.closest&&e.target.
    A typeset LaTeX version is made by the harness AI (skill/recipes/07-导出PDF.md). ---------- */
 function exportPdf(b){
   const d=DOCS.find(x=>x.id===b.dataset.export);if(!d)return;
-  const prev=document.title;document.title=(d.title||'申请记录').replace(/[\\/:*?"<>|]+/g,'_');  // default PDF file name
+  const prev=document.title;document.title=(d.title||'简历').replace(/[\\/:*?"<>|]+/g,'_');  // default PDF file name
   window.addEventListener('afterprint',()=>{document.title=prev},{once:true});
   window.print();
 }

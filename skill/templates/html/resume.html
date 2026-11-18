@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>%%TITLE%%</title>
+<style>
+  @page {
+    size: A4;
+    margin: 11mm 13mm;
+  }
+  * {
+    box-sizing: border-box;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 9.2pt;
+    line-height: 1.45;
+    color: #18181b;
+    background: #f4f4f5;
+  }
+  .print-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 20px;
+    background: #18181b;
+    color: #fafafa;
+    font-size: 13px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+  .print-bar .tip {
+    color: #a1a1aa;
+    font-size: 12px;
+  }
+  .print-btn {
+    appearance: none;
+    border: none;
+    background: #ffffff;
+    color: #18181b;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .print-btn:hover {
+    background: #e4e4e7;
+  }
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 18px auto 32px;
+    padding: 11mm 13mm;
+    background: #ffffff;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 6px;
+  }
+  .header-main {
+    flex: 1;
+    min-width: 0;
+  }
+  .name-row {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .name {
+    font-size: 16pt;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #111111;
+    margin: 0;
+  }
+  .headline {
+    font-size: 9.5pt;
+    color: #52525b;
+  }
+  .contact {
+    margin-top: 4px;
+    font-size: 8.8pt;
+    color: #3f3f46;
+    word-break: break-word;
+  }
+  .portrait {
+    width: 21mm;
+    height: 25.2mm;
+    object-fit: cover;
+    border-radius: 2px;
+    flex-shrink: 0;
+    border: 1px solid #e4e4e7;
+  }
+  .sec-bar {
+    background: #f2f2f2;
+    border-left: 3.5px solid #111111;
+    padding: 3px 10px;
+    font-size: 10.2pt;
+    font-weight: 700;
+    color: #111111;
+    margin: 9px 0 5px;
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+  .entry {
+    margin-bottom: 5px;
+  }
+  .entry-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-top: 4px;
+    margin-bottom: 2px;
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+  .entry-title {
+    font-weight: 700;
+    color: #111111;
+  }
+  .entry-time {
+    font-size: 8.8pt;
+    color: #52525b;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  ul.points {
+    margin: 0 0 3px 0;
+    padding-left: 15px;
+  }
+  ul.points li {
+    margin: 1.5px 0;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  ul.points li strong {
+    color: #111111;
+  }
+  @media print {
+    body {
+      background: #ffffff;
+    }
+    .print-bar {
+      display: none !important;
+    }
+    .page {
+      width: auto;
+      min-height: auto;
+      margin: 0;
+      padding: 0;
+      box-shadow: none;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="print-bar">
+    <div>
+      <strong>经历库 · 打印版简历</strong>
+      <span class="tip">（打印时建议开启「背景图形」以保留灰底分节栏，页眉页脚可取消勾选）</span>
+    </div>
+    <button class="print-btn" onclick="window.print()">打印 / 存为 PDF (Cmd/Ctrl + P)</button>
+  </div>
+  <main class="page">
+    %%CONTENT%%
+  </main>
+</body>
+</html>

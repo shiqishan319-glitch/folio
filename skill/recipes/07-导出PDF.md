@@ -3,10 +3,10 @@
 有两种 PDF：**申请记录**（自荐信、动机信，用 `letter` 模板）和**简历**（用 `resume` 模板）。
 
 两条路：
-- **快速版：** 右半屏打开某份申请记录，点「导出 PDF」按钮，浏览器会打印成 PDF。不需要你做任何事，适合急用。
-- **排版版（本文件）：** 用 LaTeX 排版，效果更正式。需要电脑上装了 `xelatex` 和中文宏包 `ctex`。
+- **排版版（默认，推荐）：** 用 LaTeX（`xelatex` + `ctex`）排版，效果最正式稳定。AI 收到导出请求时**默认先走这条路**。
+- **网页打印版（零依赖兜底 / 右半屏快捷按钮）：** 当电脑未安装 LaTeX 时作为降级方案；右半屏也提供了「打印版简历」和申请记录「导出 PDF」快捷按钮，直接调用浏览器打印成 PDF。
 
-**为什么用脚本填模板：** LaTeX 里 `& % $ # _ { } ~ ^ \` 这些字符有特殊含义，正文里出现就会编译失败。`fill_tex.py` 会自动处理它们，所以不要自己手写 `.tex` 正文。
+**为什么用脚本填模板：** 脚本会自动处理特殊字符转义（如 LaTeX 里的 `& % $ # _ { } ~ ^ \`）、证件照内嵌和字段排版，不要自己手写模板正文。
 
 ---
 
@@ -16,11 +16,11 @@
 which xelatex && kpsewhich ctex.sty && echo READY
 ```
 
-- 输出里有 `READY`：继续第 2 步。
+- 输出里有 `READY`：继续第 2 步（走 LaTeX 导出）。
 - 没有 `READY`：
-  - 告诉用户：「排版版 PDF 需要安装 LaTeX（体积较大，几百 MB 到几 GB）。现在可以先用右半屏的『导出 PDF』按钮出一份简单版。要我帮你装 LaTeX 吗？」
-  - 用户同意才装。macOS：`brew install --cask mactex-no-gui`（大）；或装 TinyTeX 后执行 `tlmgr install ctex`。其他系统请用户去 tug.org/texlive 下载。
-  - 用户不同意：停在这里。
+  - 告诉用户：「电脑上还没装 LaTeX（体积几百 MB 到几 GB）。我可以先帮你生成**零依赖网页打印版简历**（浏览器 `Cmd/Ctrl + P` 即可存为 A4 PDF），或者现在安装 LaTeX。你想先用打印版，还是装 LaTeX？」
+  - 用户选打印版：跳到文末「备选：零依赖网页打印版简历」。
+  - 用户同意装 LaTeX 才装。macOS：`brew install --cask mactex-no-gui`（大）；或装 TinyTeX 后执行 `tlmgr install ctex`。其他系统请用户去 tug.org/texlive 下载。
 
 ## 第 2 步：准备一个临时文件夹
 
@@ -79,3 +79,13 @@ cp /tmp/jingliku-pdf/out.pdf "$HOME/Downloads/<文档标题>.pdf" && echo SAVED
 
 - 只改这一次：在第 3 步和第 4 步之间，编辑 `/tmp/jingliku-pdf/out.tex`（字号、页边距在文件开头），再做第 4 步。
 - 以后都这样：改 `<SKILL>/templates/latex/` 里的模板。模板里 `%%NAME%%` 这类占位符不要删。
+
+---
+
+## 备选：零依赖网页打印版简历（无 LaTeX 时兜底）
+
+```bash
+python3 "<SKILL>/scripts/fill_html.py" resume "<VAULT>" "$HOME/Downloads/简历-打印版.html"
+```
+
+可选参数与 `fill_tex.py` 一致（`--prefer`、`--writing`、`--ids`）。生成后在系统浏览器打开该 `.html` 文件，点击右上角「打印 / 存为 PDF」（或 `Cmd/Ctrl + P`），勾选「背景图形」即可保存为 A4 PDF。用户也可以直接在右半屏左侧栏点「打印版简历」快捷打开。

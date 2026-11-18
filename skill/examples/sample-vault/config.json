@@ -5,14 +5,31 @@
     "项目",
     "志愿者",
     "获奖",
+    "技能",
     "思考"
   ],
   "profile": {
     "name": "示例同学",
     "headline": "社会人类学 · 本科三年级",
+    "location": "北京 / 上海（可随时到岗）",
     "email": "student@example.com",
-    "phone": "",
-    "links": []
+    "phone": "138-0000-0000",
+    "photo": "",
+    "links": [
+      "github.com/example-student"
+    ],
+    "education": [
+      {
+        "school": "示例大学",
+        "major": "社会人类学",
+        "degree": "本科",
+        "time": "2023.09 – 2027.06",
+        "details": [
+          "GPA：3.8 / 4.0（专业前 10%）",
+          "核心课程：社会研究方法、质性访谈、数据统计分析"
+        ]
+      }
+    ]
   },
   "created": "2026-11-16T10:00:00+08:00"
 }
