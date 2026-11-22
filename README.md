@@ -67,7 +67,7 @@ AI 会按你正在用的工具找到对应的安装说明，完成安装、确�
 ├── docs/
 │   ├── PRD.md                经历库 PRD v0.1（需求背景、目标、流程、需求 List、待解决问题）
 │   ├── architecture.md       Skill 架构：AI 就是后端，代码只有一根细管子
-│   ├── resume-design.md      简历功能设计草案（待确认）
+│   ├── resume-design.md      简历功能设计（分工、数据格式、前端交互；第九节问题已定）
 │   └── notes/
 │       └── 2026-11-11-思考.md  原始头脑风暴笔记
 ├── skill/                    经历库 Skill 包（装进 Claude Code / Codex / Qoder / WorkBuddy / DSH 等）
