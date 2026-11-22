@@ -62,14 +62,14 @@ ls: /Users/you/.gemini/config/: Operation not permitted
 这是启动时最容易踩的坑。在默认沙箱（`BypassSandbox: false`）里运行：
 
 ```bash
-python3 "$HOME/.gemini/config/skills/jingliku/scripts/serve.py" --vault "$HOME/经历库" --ensure
+python3 "$HOME/.gemini/config/skills/jingliku/scripts/serve.py" --vault "$HOME/folio" --ensure
 ```
 
 会等待约 10 秒后退出（exit 1），输出：
 
 ```text
 There were sandbox errors that may or may not be related to the failure...
-FAILED to start; read /Users/you/经历库/.serve.log
+FAILED to start; read /Users/you/folio/.serve.log
 ```
 
 - **原因：** `serve.py --ensure` 需要通过 `urllib.request.urlopen("http://127.0.0.1:PORT/vault/config.json")` 探测本地端口并拉起后台常驻 HTTP 服务，而默认沙箱限制了本地回环 HTTP 探测/系统代理读取。
@@ -88,14 +88,14 @@ SKIPPED cannot reach GitHub: Warning: Identity file /Users/you/.ssh/... not acce
 
 ### 坑 4：双引号里的 `~` 不会展开
 
-和其它把 skill 装在 `~` 下的工具一样，命令里路径加英文双引号时，不要写 `"~/.gemini/..."` 或 `"~/经历库"`：
+和其它把 skill 装在 `~` 下的工具一样，命令里路径加英文双引号时，不要写 `"~/.gemini/..."` 或 `"~/folio"`：
 
 ```bash
 # ✗ 错：双引号里的 ~ 不展开
-python3 "~/.gemini/config/skills/jingliku/scripts/serve.py" --vault "~/经历库" --ensure
+python3 "~/.gemini/config/skills/jingliku/scripts/serve.py" --vault "~/folio" --ensure
 
 # ✓ 对：用 $HOME 或完整绝对路径
-python3 "$HOME/.gemini/config/skills/jingliku/scripts/serve.py" --vault "$HOME/经历库" --ensure
+python3 "$HOME/.gemini/config/skills/jingliku/scripts/serve.py" --vault "$HOME/folio" --ensure
 ```
 
 ---
@@ -103,7 +103,7 @@ python3 "$HOME/.gemini/config/skills/jingliku/scripts/serve.py" --vault "$HOME/�
 ## 两个路径（先弄清楚）
 
 - **`<SKILL>`** = 安装后的绝对路径，用户级是 `$HOME/.gemini/config/skills/jingliku`（如 `/Users/你的用户名/.gemini/config/skills/jingliku`）。
-- **`<VAULT>`** = 数据目录，默认 `$HOME/经历库`（如 `/Users/你的用户名/经历库`）。
+- **`<VAULT>`** = 数据目录，默认 `$HOME/folio`（如 `/Users/你的用户名/folio`）。
 
 ---
 
@@ -133,7 +133,7 @@ Antigravity 桌面版 / IDE 右侧辅助面板（HTML Auxiliary Pane）内置了
 | 项目级位置 | `<项目>/.claude/skills/jingliku` | `<项目>/.agents/skills/jingliku` |
 | 斜杠命令 | `/jingliku` | `/jingliku` |
 | 右半屏打开方式 | 内置预览面板 / `.claude/launch.json` | 调用内置 `browser` subagent 打开 `http://127.0.0.1:XXXX/` |
-| 终端沙箱影响 | 视权限模式而定 | `serve.py --ensure` 需 `BypassSandbox: true` 授权一次；读写 `~/经历库` JSON 与创建 `~/.gemini/config/skills` 软链在沙箱内直接可用 |
+| 终端沙箱影响 | 视权限模式而定 | `serve.py --ensure` 需 `BypassSandbox: true` 授权一次；读写 `~/folio` JSON 与创建 `~/.gemini/config/skills` 软链在沙箱内直接可用 |
 
 ---
 
@@ -141,7 +141,7 @@ Antigravity 桌面版 / IDE 右侧辅助面板（HTML Auxiliary Pane）内置了
 
 - **安装软链：** 在默认沙箱内执行 `mkdir -p "$HOME/.gemini/config/skills" && ln -sfn ... "$HOME/.gemini/config/skills/jingliku"` 直接成功（尽管 `ls ~/.gemini/config/` 会被沙箱拒绝）。
 - **检查更新：** 沙箱内 `check_update.py` 因无法访问 `~/.ssh` 输出 `SKIPPED ...` 并正常退出（exit 0），不阻塞后续启动。
-- **数据目录读写：** 即使当前会话没有打开任何工作区（no active workspace），沙箱内对 `/Users/<you>/经历库` 的存在性检查（`test -f`）和写入测试（`touch` / `rm`）均直接通过。
+- **数据目录读写：** 即使当前会话没有打开任何工作区（no active workspace），沙箱内对 `/Users/<you>/folio` 的存在性检查（`test -f`）和写入测试（`touch` / `rm`）均直接通过。
 - **启动本地服务：** 默认沙箱内 `serve.py --ensure` 会因本地网络探测限制报 `FAILED to start`；改为 `BypassSandbox: true` 后立即成功返回 `RUNNING http://127.0.0.1:8766/`（8765 被占用时自动顺延到 8766）。
 - **内置浏览器渲染：** 通过 `invoke_subagent(TypeName="browser", Model="flash")` 打开 `http://127.0.0.1:8766/`，右侧内置浏览器正常渲染三栏界面（左侧类型筛选与「已同步」状态、中间时间线、右侧经历详情与写法），HTTP 200 无连接报错。
 
@@ -152,7 +152,7 @@ Antigravity 桌面版 / IDE 右侧辅助面板（HTML Auxiliary Pane）内置了
 ```bash
 python3 --version                                                    # 需要 3.9+
 test -f "$HOME/.gemini/config/skills/jingliku/SKILL.md" && echo INSTALLED
-python3 -m json.tool "$HOME/经历库/config.json" > /dev/null && echo VAULT_OK
+python3 -m json.tool "$HOME/folio/config.json" > /dev/null && echo VAULT_OK
 ```
 
 `VAULT_OK` 没出来就按 `<SKILL>/recipes/01-启动.md` 第 2 步初始化数据目录（空库或带示例数据）。

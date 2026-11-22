@@ -3,12 +3,16 @@
 (Escaping by hand is the step small models get wrong, so it lives here.)
 
     python3 fill_tex.py letter <VAULT> <application-id> <out.tex>
-    python3 fill_tex.py resume <VAULT> <out.tex> [--writing 简历条目] [--prefer 英文] [--ids a,b,c]
+    python3 fill_tex.py resume <VAULT> <out.tex> --from <简历id>      # a saved resume (resumes/<id>.json)
+    python3 fill_tex.py resume <VAULT> <out.tex> [--writing 简历条目] [--prefer 英文] [--ids a,b,c]   # quick look: all cards
 
 Then compile:  cd <dir of out.tex> && xelatex -interaction=nonstopmode -halt-on-error <out.tex>
 """
-import argparse, json, re
+import argparse, json, re, sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import resume_model  # noqa: E402  (shared with fill_html.py)
 
 TPL = Path(__file__).resolve().parent.parent / "templates" / "latex"
 ESC = {"\\": r"\textbackslash{}", "&": r"\&", "%": r"\%", "$": r"\$", "#": r"\#", "_": r"\_",
@@ -38,102 +42,36 @@ def letter(vault, did):
     return fill("letter.tex", {"TITLE": tex(d.get("title")), "META": meta, "BODY": body or "~", "SIGNATURE": tex(name) or "~"})
 
 
-def pick(card, wtype, prefer):
-    for w in card.get("writings", []):
-        if w.get("type") == wtype and w.get("versions"):
-            for v in w["versions"]:
-                if prefer and prefer in v.get("name", ""):
-                    return v.get("text")
-            return w["versions"][0].get("text")
+def line_tex(kind, lead, text):
+    if kind == "summary":
+        return f"\\summaryline{{{tex(text)}}}"
+    return f"\\{'plainline' if kind == 'plain' else 'point'}{{{tex(lead)}}}{{{tex(text)}}}"
 
 
-def format_point(line):
-    line = line.strip(" -•·")
-    for sep in ("：", ": "):
-        if sep in line:
-            prefix, rest = line.split(sep, 1)
-            if 1 <= len(prefix.strip()) <= 16 and rest.strip():
-                return f"\\point{{{tex(prefix.strip() + sep.strip())}}}{{{tex(rest.strip())}}}"
-    return f"\\point{{}}{{{tex(line)}}}"
+def entry_tex(e):
+    out = []
+    if e.get("parts"):  # education: 「学校 - 专业 学历」; \enspace keeps the gap xeCJK would drop between Chinese words
+        school, major, degree = e["parts"]
+        right = "\\enspace ".join(tex(x) for x in [major, degree] if x)
+        left = " - ".join(x for x in [tex(school) if school else "", right] if x)
+        out.append(f"\\entry{{{left}}}{{{tex(e.get('time'))}}}")
+    elif e.get("heading") or e.get("time"):
+        out.append(f"\\entry{{{tex(e.get('heading'))}}}{{{tex(e.get('time'))}}}")
+    out += [line_tex(*l) for l in e.get("lines", [])]
+    return "\n".join(out)
 
 
-def resume(vault, wtype, prefer, ids):
-    cfg = load(vault / "config.json") if (vault / "config.json").exists() else {}
-    p = cfg.get("profile") or {}
-    cards = [load(f) for f in sorted((vault / "experiences").glob("*.json"))]
-    if ids:
-        cards = [c for i in ids for c in cards if c.get("id") == i]
-    else:
-        cards.sort(key=lambda c: (c.get("year") or 0, str(c.get("time", ""))), reverse=True)
-
-    sec_blocks = []
-
-    # Optional education section at the top
-    edu_list = p.get("education") or []
-    if edu_list:
-        edu_lines = []
-        for ed in edu_list:
-            left = " · ".join(x for x in [ed.get("school"), ed.get("major"), ed.get("degree")] if x)
-            edu_lines.append(f"\\entry{{{tex(left)}}}{{{tex(ed.get('time'))}}}")
-            for det in ed.get("details") or []:
-                if str(det).strip():
-                    edu_lines.append(format_point(str(det)))
-        sec_blocks.append(("教育背景", "\n".join(edu_lines)))
-
-    types = cfg.get("resume_types") or [t for t in cfg.get("types", ["实习", "项目", "志愿者", "获奖", "技能"]) if t != "思考"]
-    for t in types:
-        entries = []
-        for c in cards:
-            text = pick(c, wtype, prefer) or c.get("result") or c.get("fact") if c.get("type") == t else None
-            if text:
-                pts = "\n".join(format_point(l) for l in str(text).splitlines() if l.strip(" -•·"))
-                if t == "技能" and not c.get("org") and not c.get("role") and not c.get("time"):
-                    entries.append(pts)
-                else:
-                    heading = " · ".join(x for x in [c.get("org") or c.get("title"), c.get("role")] if x)
-                    entries.append(f"\\entry{{{tex(heading)}}}{{{tex(c.get('time'))}}}\n{pts}")
-        if entries:
-            sec_blocks.append((t, "\n".join(entries)))
-
-    # Contact line: 城市 · 电话 · 邮箱 · 链接
-    contact_parts = []
-    if p.get("location"):
-        contact_parts.append(tex(p["location"]))
-    if p.get("phone"):
-        contact_parts.append(f"电话：{tex(p['phone'])}")
-    if p.get("email"):
-        contact_parts.append(f"邮箱：{tex(p['email'])}")
-    for lk in p.get("links") or []:
-        if lk:
-            contact_parts.append(tex(lk))
-    contact = " \\quad|\\quad ".join(contact_parts)
-
-    # Optional skills / languages section at the bottom
-    skills_list = [str(s).strip() for s in (p.get("skills") or []) if str(s).strip()]
-    if skills_list:
-        sec_blocks.append(("技能与语言", "\n".join(format_point(s) for s in skills_list)))
-
-    photo_path = ""
-    if p.get("photo"):
-        cand = Path(p["photo"]).expanduser()
-        if not cand.is_absolute():
-            cand = vault / cand
-        if cand.is_file():
-            photo_path = str(cand.resolve())
-
-    if not sec_blocks:
-        sec_blocks = [("经历", "\\point{}{还没有可用的简历条目}")]
-
-    first_title, first_body = sec_blocks[0]
-    body_parts = [
-        f"\\resumeheader{{{tex(p.get('name') or '姓名')}}}{{{tex(p.get('headline'))}}}{{{contact}}}{{{photo_path}}}{{{tex(first_title)}}}",
-        first_body,
-    ]
-    for sec_title, sec_body in sec_blocks[1:]:
-        body_parts.append(f"\\resumesection{{{tex(sec_title)}}}")
-        body_parts.append(sec_body)
-
-    return fill("resume.tex", {"CONTENT": "\n\n".join(body_parts)})
+def resume(vault, wtype="简历条目", prefer=None, ids=None, resume_id=None):
+    m = resume_model.build(vault, resume_id, wtype, prefer, ids)
+    blocks = [(s["title"], "\n".join(entry_tex(e) for e in s["entries"])) for s in m["sections"]]
+    if not blocks:
+        blocks = [("经历", "\\point{}{还没有可用的简历条目}")]
+    contact = "\\enspace|\\enspace\\allowbreak ".join(tex(x) for x in m["contact"])  # a wrapped line never starts with 「|」
+    first_title, first_body = blocks[0]
+    parts = [f"\\resumeheader{{{tex(m['name'])}}}{{{tex(m['headline'])}}}{{{contact}}}{{{m['photo']}}}{{{tex(first_title)}}}", first_body]
+    for title, body in blocks[1:]:
+        parts += [f"\\resumesection{{{tex(title)}}}", body]
+    return fill("resume.tex", {"CONTENT": "\n\n".join(parts)})
 
 
 if __name__ == "__main__":
@@ -141,9 +79,13 @@ if __name__ == "__main__":
     sub = ap.add_subparsers(dest="kind", required=True)
     a1 = sub.add_parser("letter"); a1.add_argument("vault"); a1.add_argument("id"); a1.add_argument("out")
     a2 = sub.add_parser("resume"); a2.add_argument("vault"); a2.add_argument("out")
+    a2.add_argument("--from", dest="resume_id", help="简历 id in resumes/ (recommended); without it: all cards")
     a2.add_argument("--writing", default="简历条目"); a2.add_argument("--prefer"); a2.add_argument("--ids")
     a = ap.parse_args()
     v = Path(a.vault).expanduser()
-    src = letter(v, a.id) if a.kind == "letter" else resume(v, a.writing, a.prefer, a.ids.split(",") if a.ids else None)
+    if a.kind == "letter":
+        src = letter(v, a.id)
+    else:
+        src = resume(v, a.writing, a.prefer, a.ids.split(",") if a.ids else None, a.resume_id)
     Path(a.out).write_text(src, encoding="utf-8")
     print(Path(a.out).resolve())

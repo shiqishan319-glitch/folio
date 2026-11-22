@@ -42,16 +42,16 @@ test -f ~/.qoder/skills/jingliku/SKILL.md && echo INSTALLED
 ## 两个路径（先弄清楚）
 
 - **`<SKILL>`** = 安装后的绝对路径，用户级是 `$HOME/.qoder/skills/jingliku`。
-- **`<VAULT>`** = 数据目录，默认 `$HOME/经历库`。
+- **`<VAULT>`** = 数据目录，默认 `$HOME/folio`。
 
 SKILL.md 里的命令都用英文双引号包路径，但双引号里的 `~` 不会展开。写 `"~/.qoder/..."` 会报 `No such file or directory`，改用 `"$HOME/..."` 或完整绝对路径：
 
 ```bash
 # ✗ 双引号里的 ~ 不展开
-python3 "~/.qoder/skills/jingliku/scripts/serve.py" --vault "~/经历库" --ensure
+python3 "~/.qoder/skills/jingliku/scripts/serve.py" --vault "~/folio" --ensure
 
 # ✓ 用 $HOME（在双引号里会展开）
-python3 "$HOME/.qoder/skills/jingliku/scripts/serve.py" --vault "$HOME/经历库" --ensure
+python3 "$HOME/.qoder/skills/jingliku/scripts/serve.py" --vault "$HOME/folio" --ensure
 ```
 
 ## 在右半屏打开前端

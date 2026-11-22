@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>简历编辑器原型</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* 简历编辑器交互原型（静态，示例数据，不保存）。视觉沿用 v10 精致 Bento 的 token；A4 预览参照 sqs 的真实简历版式。 */
+:root{
+  /* layout: three proportional columns (filter / timeline / detail) with draggable dividers; collapses to rail, then to one pane, as the page narrows */
+  /* style: 精致 Bento — v1 精致产品感 craft and layout with Bento tiles, in the Bento 卡片墙 (v8) palette */
+  /* palette: Bento 卡片墙 (v8) — blue→violet accent, soft multi-glow canvas, per-type colours */
+  --bg:#eceef4; --glow:rgba(99,118,255,.20); --glow-b:rgba(255,148,96,.16); --glow-c:rgba(32,190,140,.10);
+  --tile-top:#ffffff; --tile-bot:#fbfbfe; --tile-bd:rgba(17,22,40,.06); --tile-hl:inset 0 1px 0 rgba(255,255,255,.9);
+  --sh-tile:0 1px 1px rgba(16,24,40,.03),0 2px 6px -2px rgba(16,24,40,.06),0 12px 28px -12px rgba(16,24,40,.14);
+  --sh-hi:0 2px 4px rgba(16,24,40,.05),0 22px 44px -16px rgba(16,24,40,.26);
+  --g1:#4a5cff; --g2:#9b5cff; --hi-bg:#121521; --hi-ink:#f1f3f9; --hi-muted:rgba(241,243,249,.62); --tint:20%;
+  --panel:#ffffff; --raised:#ffffff; --sunk:#f2f3f8; --canvas:#f7f8fb; --tile:#ffffff; --r:16px; --r-sm:13px; --track:#f2f3f8;
+  --hover:rgba(17,22,40,.045); --press:rgba(17,22,40,.08);
+  --line:#e2e5ee; --line-2:#d3d7e2;
+  --ink:#10131b; --ink-2:#343a4a; --muted:#5f6779; --faint:#9aa0ae;
+  --accent:#4354ff; --accent-solid:#4a5cff; --accent-solid-2:#9b5cff; --on-accent:#ffffff;
+  --accent-soft:#eceeff; --accent-line:rgba(67,84,255,.28); --ring:rgba(67,84,255,.5);
+  --warn:#9a5b00; --warn-soft:#fdf1dc; --danger:#d23a2c; --danger-soft:#fdecea;
+  --toast:#171b25; --toast-ink:#eceef4;
+  --hl:inset 0 1px 0 rgba(255,255,255,.9);
+  --topbar:linear-gradient(180deg,#ffffff 0%,#fbfbfe 100%);
+  --shadow-xs:0 1px 1px rgba(16,24,40,.04);
+  --shadow-sm:0 1px 2px rgba(16,24,40,.06),0 1px 1px rgba(16,24,40,.03);
+  --shadow:0 1px 1px rgba(16,24,40,.03),0 2px 6px -2px rgba(16,24,40,.06),0 12px 28px -12px rgba(16,24,40,.14);
+  --shadow-lg:0 2px 4px rgba(16,24,40,.05),0 22px 44px -16px rgba(16,24,40,.26);
+  --t1:#4f6bff; --t2:#f26b1d; --t3:#0f9f6e; --t4:#d99a00; --t5:#b14fe0;
+  --ease:cubic-bezier(.2,.8,.2,1); --spring:cubic-bezier(.3,1.35,.5,1);
+  --font:"Inter","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",-apple-system,BlinkMacSystemFont,sans-serif;
+  --display:"Inter","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",-apple-system,BlinkMacSystemFont,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#07080c; --glow:rgba(92,108,255,.20); --glow-b:rgba(190,92,255,.12); --glow-c:rgba(30,200,150,.07);
+    --tile-top:#191c26; --tile-bot:#12141b; --tile-bd:rgba(255,255,255,.07); --tile-hl:inset 0 1px 0 rgba(255,255,255,.06);
+    --sh-tile:0 1px 0 rgba(255,255,255,.02),0 14px 34px -14px rgba(0,0,0,.8);
+    --sh-hi:0 26px 50px -18px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.06);
+    --g1:#4b55f0; --g2:#8e44e8; --hi-bg:#1b1f2c; --hi-ink:#f4f5fa; --hi-muted:rgba(244,245,250,.6); --tint:30%;
+    --panel:#14161e; --raised:#232736; --sunk:#1c1f2a; --canvas:#0e1016; --tile:#14161e; --track:#1c1f2a;
+    --hover:rgba(255,255,255,.045); --press:rgba(255,255,255,.08);
+    --line:#2a2e3b; --line-2:#363b4a;
+    --ink:#eef0f6; --ink-2:#c9cdd8; --muted:#9aa1b2; --faint:#646b7c;
+    --accent:#8f9bff; --accent-solid:#4b55f0; --accent-solid-2:#8e44e8; --on-accent:#ffffff;
+    --accent-soft:rgba(143,155,255,.15); --accent-line:rgba(143,155,255,.34); --ring:rgba(143,155,255,.6);
+    --warn:#e7b25a; --warn-soft:#3a2c12; --danger:#ff7b7b; --danger-soft:rgba(255,110,110,.12);
+    --toast:#e2e5ee; --toast-ink:#07080c;
+    --hl:inset 0 1px 0 rgba(255,255,255,.06);
+    --topbar:linear-gradient(180deg,#191c26 0%,#12141b 100%);
+    --shadow-xs:0 1px 1px rgba(0,0,0,.3);
+    --shadow-sm:0 1px 2px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.04);
+    --shadow:0 1px 0 rgba(255,255,255,.02),0 14px 34px -14px rgba(0,0,0,.8);
+    --shadow-lg:0 26px 50px -18px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.06);
+    --t1:#8197ff; --t2:#ff9a5c; --t3:#3fd3a0; --t4:#ffc84a; --t5:#d88cff;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#07080c; --glow:rgba(92,108,255,.20); --glow-b:rgba(190,92,255,.12); --glow-c:rgba(30,200,150,.07);
+    --tile-top:#191c26; --tile-bot:#12141b; --tile-bd:rgba(255,255,255,.07); --tile-hl:inset 0 1px 0 rgba(255,255,255,.06);
+    --sh-tile:0 1px 0 rgba(255,255,255,.02),0 14px 34px -14px rgba(0,0,0,.8);
+    --sh-hi:0 26px 50px -18px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.06);
+    --g1:#4b55f0; --g2:#8e44e8; --hi-bg:#1b1f2c; --hi-ink:#f4f5fa; --hi-muted:rgba(244,245,250,.6); --tint:30%;
+    --panel:#14161e; --raised:#232736; --sunk:#1c1f2a; --canvas:#0e1016; --tile:#14161e; --track:#1c1f2a;
+    --hover:rgba(255,255,255,.045); --press:rgba(255,255,255,.08);
+    --line:#2a2e3b; --line-2:#363b4a;
+    --ink:#eef0f6; --ink-2:#c9cdd8; --muted:#9aa1b2; --faint:#646b7c;
+    --accent:#8f9bff; --accent-solid:#4b55f0; --accent-solid-2:#8e44e8; --on-accent:#ffffff;
+    --accent-soft:rgba(143,155,255,.15); --accent-line:rgba(143,155,255,.34); --ring:rgba(143,155,255,.6);
+    --warn:#e7b25a; --warn-soft:#3a2c12; --danger:#ff7b7b; --danger-soft:rgba(255,110,110,.12);
+    --toast:#e2e5ee; --toast-ink:#07080c;
+    --hl:inset 0 1px 0 rgba(255,255,255,.06);
+    --topbar:linear-gradient(180deg,#191c26 0%,#12141b 100%);
+    --shadow-xs:0 1px 1px rgba(0,0,0,.3);
+    --shadow-sm:0 1px 2px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.04);
+    --shadow:0 1px 0 rgba(255,255,255,.02),0 14px 34px -14px rgba(0,0,0,.8);
+    --shadow-lg:0 26px 50px -18px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.06);
+    --t1:#8197ff; --t2:#ff9a5c; --t3:#3fd3a0; --t4:#ffc84a; --t5:#d88cff;
+    color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:var(--font);font-size:13px;color:var(--ink);background:var(--bg);background-image:radial-gradient(900px 520px at 8% -10%,var(--glow),transparent 60%),radial-gradient(700px 480px at 100% 0%,var(--glow-b),transparent 60%),radial-gradient(800px 600px at 60% 120%,var(--glow-c),transparent 60%);-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer}
+.tile{background:linear-gradient(180deg,var(--tile-top),var(--tile-bot));border:1px solid var(--tile-bd);box-shadow:var(--sh-tile),var(--tile-hl);border-radius:var(--r)}
+.btn{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:var(--raised);box-shadow:var(--shadow-xs);font-size:12.5px;font-weight:500;white-space:nowrap;transition:background-color .15s var(--ease),transform .2s var(--spring)}
+.btn:hover{background:var(--hover)}.btn:active{transform:scale(.97)}
+.btn.pri{border:0;color:var(--on-accent);background:linear-gradient(135deg,var(--accent-solid),var(--accent-solid-2));box-shadow:0 6px 14px -8px var(--accent-solid)}
+.btn.ghost{border-color:transparent;background:transparent;box-shadow:none}
+.btn svg{width:14px;height:14px;flex:none}
+.ic{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;border:0;background:transparent;color:var(--muted)}
+.ic:hover{background:var(--hover);color:var(--ink)}
+.ic svg{width:15px;height:15px}
+
+/* ---------- three-column frame (matches the app: sidebar | middle column | detail) ---------- */
+.app{display:grid;grid-template-columns:224px 300px minmax(0,1fr);gap:14px;height:100vh;padding:14px}
+.side,.src{display:flex;flex-direction:column;min-height:0}
+.side{padding:12px 10px}
+.brand{display:flex;align-items:center;gap:9px;padding:2px 6px 12px;font-weight:700;font-size:14px}
+.brand i{width:24px;height:24px;border-radius:8px;background:linear-gradient(140deg,var(--g1),var(--g2));box-shadow:0 4px 10px -5px var(--g2)}
+.grp{display:flex;align-items:center;justify-content:space-between;padding:10px 6px 6px;font-size:11.5px;font-weight:600;color:var(--muted);letter-spacing:.02em}
+.rl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.rl button{width:100%;display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:8px 10px;border:0;border-radius:11px;background:transparent;text-align:left}
+.rl button:hover{background:var(--hover)}
+.rl button.on{background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent-line)}
+.rl .t{font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;max-width:100%}
+.rl .t span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rl .m{font-size:11.5px;color:var(--muted)}
+.dot{width:7px;height:7px;border-radius:50%;flex:none;background:var(--faint)}
+.dot.draft{background:var(--warn)}.dot.sent{background:var(--t3)}
+.rl.letters button .t{font-weight:500}
+.sidefoot{margin-top:auto;padding:10px 6px 2px;font-size:12px;color:var(--muted)}
+.sidefoot a{color:inherit;text-decoration:none}.sidefoot a:hover{color:var(--ink)}
+
+/* ---------- source column: experience cards to drag in ---------- */
+.src{padding:12px}
+.srch{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 2px 10px}
+.srch b{font-size:14px}
+.srch small{color:var(--muted);font-size:11.5px}
+.search{display:flex;align-items:center;gap:6px;height:32px;padding:0 10px;border-radius:10px;background:var(--sunk);border:1px solid var(--line);margin-bottom:8px}
+.search input{flex:1;min-width:0;border:0;background:transparent;font:inherit;color:inherit;outline:none}
+.search svg{width:14px;height:14px;color:var(--faint)}
+.sort{display:flex;gap:4px;margin-bottom:10px}
+.sort button{flex:1;height:26px;border-radius:8px;border:1px solid var(--line);background:transparent;font-size:11.5px;color:var(--muted)}
+.sort button.on{background:var(--raised);color:var(--ink);box-shadow:var(--shadow-xs)}
+.cards{flex:1;overflow:auto;display:flex;flex-direction:column;gap:8px;padding:2px 2px 8px;margin:0 -2px}
+.cd{position:relative;padding:10px 12px 10px 14px;border-radius:13px;background:var(--panel);border:1px solid var(--tile-bd);box-shadow:var(--shadow-sm);cursor:grab;transition:transform .25s var(--spring),box-shadow .2s var(--ease),opacity .2s}
+.cd::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:0 3px 3px 0;background:var(--tc)}
+.cd:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+.cd.in{opacity:.55;cursor:default}
+.cd.in:hover{transform:none;box-shadow:var(--shadow-sm)}
+.cd.dragging{opacity:.35}
+.cd .ct{display:flex;align-items:center;gap:6px;font-weight:600;font-size:13px;padding-right:28px}
+.cd .ty{font-size:10.5px;font-weight:600;padding:1px 6px;border-radius:6px;color:var(--tc);background:color-mix(in srgb,var(--tc) 12%,transparent);flex:none}
+.cd .cm{font-size:11.5px;color:var(--muted);margin-top:3px}
+.cd .kws{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.cd .kws span{font-size:10.5px;padding:1px 6px;border-radius:6px;background:var(--accent-soft);color:var(--accent)}
+.cd .add{position:absolute;right:8px;top:8px}
+.cd .ok{position:absolute;right:10px;top:10px;font-size:11px;color:var(--t3);font-weight:600}
+.cd.none{cursor:default;opacity:.5}
+
+/* ---------- workspace ---------- */
+.ws{display:flex;flex-direction:column;min-width:0;min-height:0;gap:10px}
+.bar{display:flex;align-items:center;gap:10px;padding:10px 12px 10px 16px;flex-wrap:wrap}
+.ttl{flex:1 1 150px;min-width:0}
+.ttl h1{margin:0;font-size:17px;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:6px;outline:none;min-width:0}
+.ttl h1 span{border-radius:6px;padding:0 2px;margin:0 -2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ttl h1 span:focus{white-space:normal}
+.ttl .meta{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ttl h1 span[contenteditable="true"]:hover{background:var(--hover)}
+.ttl .meta{font-size:12px;color:var(--muted);margin-top:2px}
+.seg{display:inline-flex;padding:2px;border-radius:10px;background:var(--sunk);border:1px solid var(--line)}
+.seg button{height:24px;padding:0 10px;border:0;border-radius:8px;background:transparent;font-size:12px;color:var(--muted);display:inline-flex;align-items:center;gap:5px}
+.seg button.on{background:var(--raised);color:var(--ink);box-shadow:var(--shadow-xs);font-weight:600}
+.meter{display:flex;flex-direction:column;gap:4px;width:132px}
+.meter .mt{font-size:11.5px;color:var(--muted);display:flex;justify-content:space-between}
+.meter .mt b{color:var(--ink);font-weight:600}
+.meter .track{height:6px;border-radius:999px;background:var(--track);overflow:hidden}
+.meter .fill{height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--g1),var(--g2));transition:width .45s var(--ease)}
+.meter.warn .fill{background:var(--warn)}.meter.over .fill{background:var(--danger)}
+.meter.over .mt b{color:var(--danger)}
+.drawerbtn,.switch{display:none}
+
+.jd{padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.jd .lab{font-size:12px;font-weight:600;color:var(--ink-2);display:flex;align-items:center;gap:6px}
+.jd .kw{display:flex;flex-wrap:wrap;gap:5px;flex:1;min-width:200px}
+.jd .kw span{font-size:11.5px;padding:2px 8px;border-radius:999px;border:1px dashed var(--line-2);color:var(--muted);transition:all .3s var(--ease)}
+.jd .kw span.on{border-style:solid;border-color:transparent;background:var(--accent-soft);color:var(--accent);font-weight:500}
+.jd .kw span.on::before{content:"✓ "}
+.jd .cov{font-size:12px;color:var(--muted);white-space:nowrap}
+.jd .cov b{color:var(--ink)}
+.jd .raw{flex-basis:100%;font-size:12px;line-height:1.6;color:var(--ink-2);background:var(--sunk);border-radius:10px;padding:8px 10px;white-space:pre-wrap;display:none}
+.jd.open .raw{display:block}
+
+.frozen{display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:13px;background:color-mix(in srgb,var(--t3) 10%,var(--panel));border:1px solid color-mix(in srgb,var(--t3) 30%,transparent);font-size:12.5px;color:var(--ink-2)}
+.frozen svg{width:16px;height:16px;color:var(--t3);flex:none}
+.frozen .grow{flex:1}
+
+.canvas{flex:1;min-height:0;overflow:auto;border-radius:var(--r);background:color-mix(in srgb,var(--sunk) 70%,transparent);border:1px solid var(--tile-bd);padding:22px 20px 40px;position:relative}
+.pagebox{margin:0 auto;position:relative;width:calc(794px * var(--s,1));height:calc(var(--h,1123px) * var(--s,1))}
+.page{position:absolute;left:0;top:0;width:794px;min-height:1123px;transform:scale(var(--s,1));transform-origin:0 0;background:#fff;color:#18181b;border-radius:3px;box-shadow:0 1px 2px rgba(16,24,40,.06),0 18px 40px -18px rgba(16,24,40,.35);padding:38px 46px 40px;font:12.3px/1.42 "PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",sans-serif;color-scheme:light}
+.pbreak{position:absolute;left:-14px;right:-14px;top:1123px;border-top:1.5px dashed #ef4444;pointer-events:none;z-index:3}
+.pbreak span{position:absolute;right:14px;top:-19px;font:600 11px var(--font);color:#ef4444;background:#fff;padding:1px 6px;border-radius:5px}
+.pbreak.fit{border-top-color:transparent}.pbreak.fit span{display:none}
+
+/* the page itself: modelled on sqs's resume (bold name, rule-underlined section titles, bold lead-ins) */
+.ph{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:6px}
+.pname{font-size:25px;font-weight:700;letter-spacing:.04em;margin-top:6px}
+.phl{color:#52525b;margin-top:3px}
+.pct{margin-top:6px;color:#27272a}
+.photo{width:80px;height:100px;border-radius:3px;flex:none;background:linear-gradient(160deg,#e4e4e7,#d4d4d8);display:grid;place-items:center;color:#71717a;font-size:11px}
+.sec{position:relative;border-radius:6px;transition:background-color .2s}
+.sec h3{position:relative;margin:11px 0 4px;padding:0 0 2px;font-size:14.5px;font-weight:700;border-bottom:1.3px solid #18181b;display:flex;align-items:center;gap:6px}
+.sec.drop-target{background:rgba(67,84,255,.05);box-shadow:0 0 0 2px rgba(67,84,255,.35)}
+.ihead{display:flex;justify-content:space-between;gap:14px;font-weight:700}
+.ihead span{font-weight:400;white-space:nowrap;color:#27272a}
+.pt{position:relative;padding-left:14px;margin:0}
+.pt::before{content:"•";position:absolute;left:3px}
+.sum,.ln{margin:0}
+.it{position:relative;padding:2px 6px 3px;margin:0 -6px 1px;border-radius:6px;transition:background-color .15s,box-shadow .15s}
+.editable .it:hover,.it.sel{background:rgba(67,84,255,.045);box-shadow:inset 0 0 0 1px rgba(67,84,255,.28)}
+.it.dragging{opacity:.3}
+.it.ins-before::before,.it.ins-after::after{content:"";position:absolute;left:0;right:0;height:2.5px;border-radius:2px;background:#4354ff;z-index:4}
+.it.ins-before::before{top:-2px}.it.ins-after::after{bottom:-2px}
+.sec.ins-end .items::after{content:"";display:block;height:2.5px;border-radius:2px;background:#4354ff;margin-top:2px}
+.ibody[contenteditable="true"]{outline:2px solid #4354ff;outline-offset:2px;border-radius:3px;white-space:pre-wrap;background:#fff;cursor:text}
+.it .vtag{display:none}
+/* hover tools float on the item's top-right, outside the text flow */
+.tools{position:absolute;right:0;top:-27px;display:none;align-items:center;gap:2px;padding:2px;border-radius:9px;background:var(--toast);color:var(--toast-ink);box-shadow:0 8px 20px -8px rgba(0,0,0,.45);font:500 11.5px var(--font);z-index:5;white-space:nowrap}
+.editable .it:hover .tools,.it.sel .tools{display:flex}
+.tools button{height:22px;padding:0 7px;border:0;border-radius:7px;background:transparent;color:inherit;display:inline-flex;align-items:center;gap:4px;font-size:11.5px}
+.tools button:hover{background:rgba(255,255,255,.14)}
+.tools .grip{cursor:grab;opacity:.7;padding:0 4px}
+.tools .ver{background:rgba(255,255,255,.12)}
+.tools svg{width:12px;height:12px}
+.sec h3 .stool{display:none;margin-left:auto;gap:2px;font:500 11px var(--font)}
+.editable .sec:hover h3 .stool{display:inline-flex}
+.stool button{border:0;background:transparent;color:#a1a1aa;border-radius:6px;padding:1px 6px}
+.stool button:hover{background:#f4f4f5;color:#18181b}
+.savebar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:6px 0 4px;padding:7px 8px;border-radius:9px;background:#f4f5ff;border:1px solid rgba(67,84,255,.25);font:12px var(--font);color:#343a4a}
+.savebar b{font-weight:600}
+.savebar button{height:24px;padding:0 9px;border-radius:7px;border:1px solid #d3d7e2;background:#fff;font-size:11.5px;color:#10131b}
+.savebar button.p{border:0;color:#fff;background:linear-gradient(135deg,#4a5cff,#9b5cff)}
+.empty-sec{font:12px var(--font);color:#a1a1aa;padding:4px 0}
+.pageend{height:1px}
+
+/* ---------- popover, toast ---------- */
+.pop{position:fixed;z-index:60;width:340px;max-height:70vh;overflow:auto;padding:6px;border-radius:14px;background:color-mix(in srgb,var(--tile-top) 94%,transparent);-webkit-backdrop-filter:blur(16px) saturate(1.3);backdrop-filter:blur(16px) saturate(1.3);border:1px solid var(--tile-bd);box-shadow:var(--sh-hi);opacity:0;transform:translateY(-4px) scale(.98);pointer-events:none;transition:opacity .16s var(--ease),transform .3s var(--spring)}
+.pop.show{opacity:1;transform:none;pointer-events:auto}
+.pop svg{width:15px;height:15px;flex:none}
+.pop .ai svg{color:var(--accent)}
+.pop h4{margin:4px 8px 6px;font-size:11.5px;color:var(--muted);font-weight:600}
+.vo{display:block;width:100%;text-align:left;border:0;background:transparent;border-radius:10px;padding:8px 10px}
+.vo:hover{background:var(--hover)}
+.vo.on{background:var(--accent-soft)}
+.vo .vn{display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:12.5px}
+.vo .vn small{font-weight:400;color:var(--muted);font-size:11px}
+.vo .vx{font-size:12px;color:var(--ink-2);line-height:1.5;margin-top:3px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.pop .sep{height:1px;background:var(--line);margin:6px 4px}
+.pop .ai{display:flex;align-items:center;gap:8px;width:100%;border:0;background:transparent;border-radius:10px;padding:8px 10px;text-align:left;font-size:12.5px;color:var(--accent);font-weight:500}
+.pop .ai:hover{background:var(--accent-soft)}
+.pop .ai small{display:block;color:var(--muted);font-weight:400;font-size:11px}
+.pop .mi{display:flex;align-items:center;gap:8px;width:100%;border:0;background:transparent;border-radius:10px;padding:8px 10px;text-align:left;font-size:12.5px}
+.pop .mi:hover{background:var(--hover)}
+.pop .mi small{display:block;color:var(--muted);font-size:11px}
+.toast{position:fixed;left:50%;bottom:22px;z-index:80;transform:translate(-50%,12px);opacity:0;padding:9px 14px;border-radius:12px;background:var(--toast);color:var(--toast-ink);font-size:12.5px;box-shadow:var(--sh-hi);transition:opacity .2s var(--ease),transform .35s var(--spring);pointer-events:none;max-width:min(560px,calc(100vw - 32px))}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+:focus-visible{outline:2px solid var(--ring);outline-offset:2px}
+.page :focus-visible{outline-color:#4354ff}
+.hist{display:inline-flex;align-items:center;gap:2px}
+.hist .ic:disabled{opacity:.35;cursor:default}.hist .ic:disabled:hover{background:transparent;color:var(--muted)}
+.saved{font-size:11.5px;color:var(--muted);display:inline-flex;align-items:center;gap:5px;white-space:nowrap;margin-right:4px}
+.saved i{width:6px;height:6px;border-radius:50%;background:var(--t3);transition:background-color .2s}
+.saved.busy i{background:var(--warn)}
+.phl[contenteditable="true"],.pname-edit{border-radius:4px;outline:none;cursor:text}
+.editable .phl:hover{background:rgba(67,84,255,.06)}
+.phl[contenteditable="true"]:focus{background:#fff;box-shadow:0 0 0 2px #4354ff}
+.phl.ph-empty{color:#a1a1aa}
+.photo{position:relative;cursor:default}
+.editable .photo button,.ph-add{position:absolute;inset:auto 4px 4px 4px;height:22px;border:0;border-radius:6px;background:rgba(24,24,27,.78);color:#fff;font:500 11px var(--font);opacity:0;transition:opacity .15s}
+.editable .photo:hover button{opacity:1}
+.ph-add{position:static;opacity:1;display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 9px;background:#f4f4f5;color:#71717a;border:1px dashed #d4d4d8;flex:none;align-self:flex-start;margin-top:8px}
+.ph-add:hover{color:#18181b;border-color:#a1a1aa}
+.jd .kw span{position:relative}
+.jd .kw span i{display:none;font-style:normal;margin-left:4px;opacity:.6;cursor:pointer}
+.jd .kw span:hover i{display:inline}
+.jd .kw span i:hover{opacity:1}
+.jd .kw .kadd{border-style:dashed;color:var(--faint)}
+.jd .kw .kadd::before{content:none}
+.vo .vu{font-size:11px;color:var(--t3);margin-top:3px}
+.tip-kb{font-size:11px;color:var(--faint);padding:2px 10px 6px}
+.tip-kb kbd{font:inherit;padding:0 4px;border-radius:4px;border:1px solid var(--line);background:var(--sunk);color:var(--muted)}
+.toast.act{pointer-events:auto;display:flex;align-items:center;gap:12px}
+.toast button{border:0;background:rgba(255,255,255,.16);color:inherit;border-radius:8px;height:24px;padding:0 10px;font-size:12px;font-weight:600}
+.meter{border:0;background:transparent;padding:4px 6px;margin:-4px -6px;border-radius:10px;text-align:left;cursor:pointer}
+.meter:hover{background:var(--hover)}
+.meter.over .mt b::after{content:" ›"}
+.meter .mt{white-space:nowrap}
+.jd .kw span{cursor:pointer}
+.jd .kw span:hover{border-color:var(--accent-line);color:var(--accent)}
+.it.flash{animation:flash 1.6s var(--ease)}
+.it.hit{background:rgba(250,204,21,.22)!important;box-shadow:inset 0 0 0 1px rgba(202,138,4,.45)!important;transition:background-color .2s}
+@keyframes flash{0%{background:rgba(67,84,255,.22);box-shadow:inset 0 0 0 1.5px rgba(67,84,255,.6)}100%{background:transparent;box-shadow:inset 0 0 0 1px transparent}}
+.guide{margin:26px 0 0;padding:22px 20px;border:1.5px dashed #d4d4d8;border-radius:12px;text-align:center;font:13px/1.6 var(--font);color:#52525b}
+.guide b{display:block;font-size:15px;color:#18181b;margin-bottom:4px}
+.guide .gb{display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+.guide button{height:32px;padding:0 14px;border-radius:10px;border:1px solid #d3d7e2;background:#fff;font-size:12.5px;color:#10131b;display:inline-flex;align-items:center;gap:6px}
+.guide button.p{border:0;color:#fff;background:linear-gradient(135deg,#4a5cff,#9b5cff)}
+.guide svg{width:14px;height:14px}
+.srcnote{font-size:11.5px;color:var(--muted);background:var(--sunk);border-radius:10px;padding:7px 10px;margin-bottom:8px;line-height:1.5}
+.cd.in{cursor:pointer}
+.fixo{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;border:0;background:transparent;border-radius:10px;padding:8px 10px;text-align:left;font-size:12.5px}
+.fixo:hover{background:var(--hover)}
+.fixo small{display:block;color:var(--muted);font-size:11px}
+.fixo em{font-style:normal;font-size:11.5px;color:var(--t3);font-weight:600;white-space:nowrap}
+@media print{.guide,.ph-add,.phl.ph-empty,.empty-sec,.photo button{display:none!important}}
+.scrim{display:none}
+
+/* ---------- half screen (the usual width beside an AI chat): sidebar → switcher, source → drawer ---------- */
+@media (max-width:1099px){
+  .app{grid-template-columns:minmax(0,1fr);padding:10px;gap:10px}
+  .side{display:none}
+  .src{position:fixed;z-index:50;top:10px;bottom:10px;left:10px;width:min(320px,calc(100vw - 20px));transform:translateX(calc(-100% - 20px));transition:transform .4s var(--spring)}
+  .app.drawer .src{transform:none}
+  .app.drawer .scrim{display:block;position:fixed;inset:0;z-index:40;background:rgba(16,19,27,.25);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+  .drawerbtn,.switch{display:inline-flex}
+  /* two deliberate rows: [menu · title · 导出]  /  [状态 · 篇幅 · 添加经历 · 问 AI] */
+  .bar{row-gap:10px}
+  .switch{order:1}.ttl{order:2;flex:1 1 calc(100% - 200px)}.exp{order:3}
+  .seg{order:4}.meter{order:5;flex:1 1 120px;width:auto;max-width:220px}.drawerbtn{order:6;margin-left:auto}.bar [data-act="askai"]{order:7}.hist{order:8}
+  .canvas{padding:14px 10px 30px}
+}
+@media (max-width:520px){
+  .bar{padding:10px}
+  .meter{max-width:none;flex-basis:100%;order:9}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{
+  @page{size:A4;margin:0}
+  body{background:#fff}
+  body *{visibility:hidden}
+  .page,.page *{visibility:visible}
+  .page{position:fixed;left:0;top:0;transform:none;box-shadow:none;border-radius:0}
+  .tools,.stool,.pbreak,.savebar{display:none!important}
+  .it{background:none!important;box-shadow:none!important}
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <aside class="side tile" id="side"></aside>
+  <section class="src tile" id="src"></section>
+  <main class="ws" id="ws"></main>
+  <div class="scrim" data-act="drawer"></div>
+</div>
+<div class="pop" id="pop"></div>
+<div class="toast" id="toast"></div>
+<script>
+const V = {"config": {"schema": 1, "types": ["实习", "项目", "志愿者", "获奖", "技能", "思考"], "profile": {"name": "示例同学", "headline": "社会人类学 · 本科三年级", "location": "北京 / 上海（可随时到岗）", "email": "student@example.com", "phone": "138-0000-0000", "photo": "", "links": ["github.com/example-student"], "education": [{"school": "示例大学", "major": "社会人类学", "degree": "本科", "time": "2023.09 – 2027.06", "details": ["GPA：3.8 / 4.0（专业前 10%）", "核心课程：社会研究方法、质性访谈、数据统计分析"]}]}, "created": "2026-11-16T10:00:00+08:00"}, "cards": [{"schema": 1, "id": "ali", "type": "实习", "org": "阿里巴巴", "title": "阿里巴巴 · AI 产品实习", "time": "2026.03 – 2026.06", "year": 2026, "role": "产品实习生", "tags": ["实习相关", "AI 产品"], "fact": "参与一个面向创作者的 AI 工具，负责 Skill 的评测与体验走查。", "result": "整理出 40 条评测用例，其中 12 条进入回归集。", "thought": "评测标准写清楚之前，讨论效果好坏没有意义。", "works": ["评测用例表（链接）", "走查报告.pdf（快捷方式）"], "writings": [{"type": "简历条目", "versions": [{"name": "v1 通用", "text": "参与创作者 AI 工具的 Skill 评测，设计 40 条评测用例，其中 12 条纳入回归集。"}, {"name": "v2 偏 Agent 岗位", "text": "负责 Agent Skill 的评测方案：定义评测维度，设计 40 条用例并推动 12 条进入回归集，支撑两次版本迭代的质量判断。"}]}, {"type": "网申短描述", "versions": [{"name": "v1 150 字", "text": "在阿里巴巴实习期间，我负责一款创作者 AI 工具的 Skill 评测。我先和研发对齐了“好”的标准，再把它拆成可执行的用例，最终有 12 条进入团队的回归集。这段经历让我习惯先定义标准再讨论效果。"}]}], "created": "2026-11-16T10:00:00+08:00", "updated": "2026-11-16T10:00:00+08:00"}, {"schema": 1, "id": "award", "type": "获奖", "org": "校级", "title": "校级优秀学生干部", "time": "2025.05", "year": 2025, "role": "获奖人", "tags": ["荣誉"], "fact": "因社团工作获评校级优秀学生干部。", "result": "", "thought": "", "works": ["获奖证书.jpg"], "writings": [], "created": "2026-11-16T10:00:00+08:00", "updated": "2026-11-16T10:00:00+08:00"}, {"schema": 1, "id": "fair", "type": "项目", "org": "校园公益市集", "title": "校园公益市集策划", "time": "2024.10 – 2024.12", "year": 2024, "role": "总策划", "tags": ["活动策划", "公益"], "fact": "牵头策划一场校园公益市集，负责招商、宣传和现场统筹。", "result": "18 个摊位参与，筹得善款 6,200 元。", "thought": "", "works": [{"label": "策划案.pptx（示例摘要）", "kind": "slides", "summary": "24 页完整策划案：含市集招商方案、预算拆解表、动线规划图与雨天应急预案。"}, "现场照片 ×8", "回顾视频（链接）"], "writings": [{"type": "简历条目", "versions": [{"name": "v1 通用", "text": "牵头策划校园公益市集，统筹招商、宣传与现场，18 个摊位参与，筹得善款 6,200 元。"}]}], "created": "2026-11-16T10:00:00+08:00", "updated": "2026-11-16T10:00:00+08:00"}, {"schema": 1, "id": "museum", "type": "志愿者", "org": "社区博物馆", "title": "社区博物馆讲解志愿者", "time": "2024.03 – 2024.06", "year": 2024, "role": "讲解员", "tags": ["志愿服务", "公共表达"], "fact": "每周末为参观者做展厅讲解，面向儿童团体调整讲解内容。", "result": "累计讲解 24 场，服务约 600 人次。", "thought": "给孩子讲明白一件事，比给大人讲难得多，也更能检验自己是否真的懂。", "works": ["志愿服务证明.jpg"], "writings": [{"type": "简历条目", "versions": [{"name": "v1 通用", "text": "担任社区博物馆周末讲解员，累计讲解 24 场，服务约 600 人次，并为儿童团体重写讲解词。"}]}], "created": "2026-11-16T10:00:00+08:00", "updated": "2026-11-16T10:00:00+08:00"}, {"schema": 1, "id": "retro", "type": "思考", "org": "个人复盘", "title": "一次失败的社团招新复盘", "time": "2024.09", "year": 2024, "role": "记录", "tags": ["复盘"], "fact": "社团招新报名人数只有预期的一半，事后写了一篇复盘。", "result": "", "thought": "宣传渠道选错了：我们在自己喜欢的平台上发力，而新生根本不在那里。", "works": [], "writings": [], "created": "2026-11-16T10:00:00+08:00", "updated": "2026-11-16T10:00:00+08:00"}, {"schema": 1, "id": "skills", "type": "技能", "org": "", "title": "技能与语言（多版本）", "time": "", "year": 2026, "role": "", "tags": ["技能", "语言", "AI 工具"], "fact": "数据与研究：Python / SQL / Excel 数据透视、质性用户访谈与问卷设计。\nAI 与产品工具：Figma 原型、Prompt 工程与评测集构建、Claude Code / Cursor。\n语言：中文（母语），英语（CET-6 610 / IELTS 7.0，可作为工作语言）。", "result": "", "thought": "不同岗位看重的技能顺序不同，用「技能」卡片可以按投递方向切换版本，不用每次手动改简历。", "works": [], "writings": [{"type": "简历条目", "versions": [{"name": "v1 AI 产品向", "text": "产品与 AI：Figma 原型设计、SQL / Python 数据分析、AI Eval 评测集搭建与 Prompt 调优\n研究与协作：用户质性访谈、PRD 撰写、跨团队推进与数据复盘\n语言能力：中文（母语），英语（CET-6 610，可流畅阅读英文技术文档）"}, {"name": "v2 通用运营向", "text": "数据分析：Excel（数据透视 / VLOOKUP）、SQL 基础查询、内容选题与互动率复盘\n内容与策划：活动方案撰写、公众号/小红书图文排版、Figma 海报基础设计\n语言能力：中文（母语），英语（CET-6 610）"}, {"name": "v3 英文", "text": "Product & AI: Figma, SQL, Python (pandas), AI Evaluation & Prompt Engineering\nResearch: Qualitative User Interviews, Survey Design, Data-driven Funnel Analysis\nLanguages: Mandarin (Native), English (Fluent, IELTS 7.0)"}]}], "created": "2026-11-18T17:08:00+08:00", "updated": "2026-11-18T17:08:00+08:00"}, {"schema": 1, "id": "xhs", "type": "实习", "org": "小红书", "title": "小红书 · 内容运营实习", "time": "2025.06 – 2025.09", "year": 2025, "role": "运营实习生", "tags": ["实习相关", "内容"], "fact": "负责一个垂类话题的选题与数据复盘，每周输出选题建议。", "result": "负责话题的周均互动量提升约 30%。", "thought": "真正有用的选题来自创作者自己的历史数据，而不是模仿别人的爆款。", "works": ["选题复盘文档（链接）", "周报截图 ×3"], "writings": [{"type": "简历条目", "versions": [{"name": "v1 通用", "text": "负责垂类话题选题与数据复盘，每周输出选题建议，话题周均互动量提升约 30%。"}, {"name": "v2 偏数据", "text": "搭建话题数据复盘表，按周跟踪 5 项指标并输出选题建议，推动话题周均互动量提升约 30%。"}, {"name": "v3 英文", "text": "Planned weekly topics for a content vertical and ran performance reviews; average weekly engagement rose by about 30%."}]}, {"type": "网申短描述", "versions": [{"name": "v1 100 字", "text": "在小红书做内容运营实习时，我负责一个垂类话题的选题和复盘。通过分析历史数据调整选题方向，话题的周均互动量提升了约 30%。"}]}], "created": "2026-11-16T10:00:00+08:00", "updated": "2026-11-16T10:00:00+08:00"}]};
+const CARDS = Object.fromEntries(V.cards.map(c => [c.id, c]));
+const P = V.config.profile || {};
+const TYPES = V.config.types || [];
+const SEC = {"实习": "实习经历", "项目": "项目经历", "志愿者": "志愿经历", "获奖": "荣誉奖项", "技能": "技能与语言"};
+const WT = "简历条目";
+const LINE = 17.5, AVAIL = 1123 - 78;
+
+let RES = [
+  {id: "jl-xhs-yunying-202611", title: "某内容平台 · 内容运营实习", target: "某内容平台", position: "内容运营实习生", lang: "中文", date: "2026.11", status: "草稿", sent: "",
+   jd: "岗位职责：\n1. 负责垂类内容的选题策划与数据复盘，输出周报；\n2. 策划线上线下活动，提升创作者活跃与用户增长；\n3. 与产品、设计协作优化内容分发。\n任职要求：熟练使用 Excel / SQL 做数据分析；有内容平台或社群运营经验者优先。",
+   keywords: ["选题", "数据复盘", "活动", "用户增长", "Excel", "SQL", "内容运营"],
+   header: {headline: "求职意向：内容运营实习 · 可立即到岗", photo: true},
+   sections: [
+     {title: "教育经历", from: "education"},
+     {title: "实习经历", items: [{card: "xhs", version: "v2 偏数据"}, {card: "ali", version: "v1 通用"}]},
+     {title: "项目经历", items: [{card: "fair", version: "v1 通用"}]},
+     {title: "技能与语言", items: [{card: "skills", version: "v2 通用运营向"}]}
+   ]},
+  {id: "jl-ai-chanpin-202611", title: "某 AI 公司 · 产品实习", target: "某 AI 公司", position: "AI 产品实习生", lang: "中文", date: "2026.11", status: "已投递", sent: "2026-11-20",
+   jd: "参与 Agent 产品的需求分析与评测体系建设，有 Prompt / 评测集经验优先。",
+   keywords: ["Agent", "评测", "Prompt", "需求分析", "数据"],
+   header: {headline: "求职意向：AI 产品实习", photo: false},
+   sections: [
+     {title: "教育经历", from: "education"},
+     {title: "实习经历", items: [{card: "ali", version: "v2 偏 Agent 岗位"}, {card: "xhs", version: "v1 通用"}]},
+     {title: "技能与语言", items: [{card: "skills", version: "v1 AI 产品向"}]}
+   ]}
+];
+const LETTERS = [{t: "某乡村支教志愿项目 · 自荐信", m: "自荐信 · 2026.11"}, {t: "某公益传播实习 · 动机信", m: "动机信 · 2026.10"}];
+// snapshots: every item stores the text it showed; a sent resume keeps showing it even if the card changes later
+RES.forEach(r => r.sections.forEach(s => (s.items || []).forEach(it => it.text = verText(it.card, it.version))));
+
+let S = {cur: RES[0].id, q: "", sort: "jd", sel: null, edit: null, pending: null, jdOpen: false, flash: null};
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+const cur = () => RES.find(r => r.id === S.cur);
+const frozen = () => cur().status === "已投递";
+const tvar = t => `var(--t${(Math.max(0, TYPES.indexOf(t)) % 5) + 1})`;
+const ICON = {
+  plus: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M8 3v10M3 8h10"/></svg>',
+  search: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3" stroke-linecap="round"/></svg>',
+  spark: '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.5 9.4 6.6 14.5 8 9.4 9.4 8 14.5 6.6 9.4 1.5 8 6.6 6.6z"/></svg>',
+  pdf: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M4 1.8h5.5L12.5 5v9.2H4z"/><path d="M9.5 1.8V5h3M6 9.5h4.5M6 11.8h3"/></svg>',
+  x: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="m4 4 8 8M12 4l-8 8"/></svg>',
+  down: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m4.5 6.5 3.5 3.5 3.5-3.5"/></svg>',
+  lock: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3.2" y="7" width="9.6" height="6.8" rx="1.8"/><path d="M5.4 7V5.2a2.6 2.6 0 0 1 5.2 0V7"/></svg>',
+  pen: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M10.5 3 13 5.5 6 12.5H3.5V10z"/></svg>',
+  layers: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M8 2 14 5 8 8 2 5z"/><path d="m2 8 6 3 6-3M2 11l6 3 6-3"/></svg>',
+  copy: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="8.5" height="8.5" rx="2"/><path d="M11 5V3.8A1.3 1.3 0 0 0 9.7 2.5H3.8a1.3 1.3 0 0 0-1.3 1.3v5.9A1.3 1.3 0 0 0 3.8 11H5"/></svg>',
+  undo: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 4 2.5 7l3 3"/><path d="M2.8 7h6.7a4 4 0 0 1 0 8H7"/></svg>',
+  redo: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 4l3 3-3 3"/><path d="M13.2 7H6.5a4 4 0 0 0 0 8H9"/></svg>',
+  menu: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 4.5h10M3 8h10M3 11.5h10"/></svg>'
+};
+
+/* ---------- history: every change is undoable; in the real product each change is a PUT to resumes/<id>.json ---------- */
+const H = {past: [], future: []};
+const snap = () => JSON.stringify({RES, W: V.cards.map(c => c.writings)});
+function commit(before) {
+  H.past.push(before || snap()); if (H.past.length > 60) H.past.shift(); H.future = []; syncHist();
+  const el = $("#saved"); if (el) { el.classList.add("busy"); el.lastChild.textContent = "保存中…"; clearTimeout(commit.t); commit.t = setTimeout(() => { const e2 = $("#saved"); if (e2) { e2.classList.remove("busy"); e2.lastChild.textContent = "已保存"; } }, 450); }
+}
+function syncHist() { const u = $('[data-act="undo"]'), r = $('[data-act="redo"]'); if (u) u.disabled = !H.past.length; if (r) r.disabled = !H.future.length; }
+function restore(str) {
+  const o = JSON.parse(str); RES.splice(0, RES.length, ...o.RES); V.cards.forEach((c, i) => c.writings = o.W[i]);
+  if (!RES.find(r => r.id === S.cur)) S.cur = RES[0].id;
+  S.sel = S.edit = S.pending = null; closePop(); render();
+}
+function undo() { if (!H.past.length) return; H.future.push(snap()); restore(H.past.pop()); toast("已撤销"); }
+function redo() { if (!H.future.length) return; H.past.push(snap()); restore(H.future.pop()); toast("已重做"); }
+
+/* ---------- data helpers ---------- */
+function versions(id) {
+  const w = (CARDS[id]?.writings || []).find(w => w.type === WT);
+  return w ? w.versions : [];
+}
+function verText(id, name) {
+  const v = versions(id).find(v => v.name === name);
+  if (v) return v.text;
+  const c = CARDS[id] || {};
+  return c.result || c.fact || "";
+}
+function itemText(it) { if (it.draft != null) return it.draft; return frozen() ? it.text : (versions(it.card).some(v => v.name === it.version) ? verText(it.card, it.version) : it.text); }
+function inResume(id, r = cur()) { return r.sections.some(s => (s.items || []).some(it => it.card === id)); }
+function cardBlob(c) { return [c.title, c.org, c.role, c.fact, c.result, ...versions(c.id).map(v => v.text)].join(" ").toLowerCase(); }
+function cardKw(c, r = cur()) { const b = cardBlob(c); return (r.keywords || []).filter(k => b.includes(k.toLowerCase())); }
+function covered(r = cur()) {
+  const txt = r.sections.flatMap(s => s.from === "education" ? [JSON.stringify(P.education || [])] : (s.items || []).map(it => itemText(it))).join(" ").toLowerCase();
+  return (r.keywords || []).filter(k => txt.includes(k.toLowerCase()));
+}
+function lead(l) { const m = l.match(/^(.{1,16}?)[：:]\s*(.+)$/); return m ? [m[1] + "：", m[2]] : null; }
+function bodyHtml(text) {
+  const lines = String(text || "").split("\n").map(l => l.trim().replace(/^[-•·]\s*/, "")).filter(Boolean);
+  const anyLead = lines.some(lead);
+  return lines.map((l, k) => {
+    const m = lead(l);
+    if (k === 0 && !m && anyLead && lines.length > 1) return `<p class="sum">${esc(l)}</p>`;
+    return `<p class="pt">${m ? `<b>${esc(m[0])}</b>${esc(m[1])}` : esc(l)}</p>`;
+  }).join("");
+}
+
+/* ---------- render ---------- */
+function renderSide() {
+  $("#side").innerHTML = `<div class="brand"><i></i>经历库</div>
+    <div class="grp">简历 <button class="ic" data-act="newmenu" title="新建简历" aria-label="新建简历">${ICON.plus}</button></div>
+    <ul class="rl">${RES.map(r => `<li><button class="${r.id === S.cur ? "on" : ""}" data-act="open" data-id="${r.id}">
+      <span class="t"><i class="dot ${r.status === "已投递" ? "sent" : "draft"}"></i><span>${esc(r.title)}</span></span>
+      <span class="m">${r.status === "已投递" ? "已投递 · " + r.sent.slice(5).replace("-", ".") : "草稿 · " + r.date}</span></button></li>`).join("")}</ul>
+    <div class="grp">申请信 <button class="ic" title="新建申请信" aria-label="新建申请信">${ICON.plus}</button></div>
+    <ul class="rl letters">${LETTERS.map(l => `<li><button><span class="t"><span>${esc(l.t)}</span></span><span class="m">${esc(l.m)}</span></button></li>`).join("")}</ul>
+    <div class="sidefoot"><a href="#" data-act="toast" data-msg="回到经历时间线（原型里不跳转）">← 经历时间线</a></div>`;
+}
+
+function renderSrc() {
+  const r = cur(), q = S.q.trim().toLowerCase();
+  let list = V.cards.filter(c => c.type !== "思考").filter(c => !q || cardBlob(c).includes(q));
+  list = list.map(c => ({c, kw: cardKw(c), inn: inResume(c.id)}));
+  if (S.sort === "jd") list.sort((a, b) => (a.inn - b.inn) || (b.kw.length - a.kw.length));
+  else list.sort((a, b) => (b.c.year || 0) - (a.c.year || 0));
+  $("#src").innerHTML = `<div class="srch"><b>经历素材</b><small>拖到右边的简历里</small></div>
+    <label class="search">${ICON.search}<input id="q" placeholder="搜索经历、关键词" value="${esc(S.q)}" aria-label="搜索经历"></label>
+    ${frozen() ? `<div class="srcnote">这份简历已投递、内容冻结。想改就先在右上方点「复制为新草稿」。</div>` : ""}<div class="sort"><button class="${S.sort === "jd" ? "on" : ""}" data-act="sort" data-v="jd">按岗位相关</button><button class="${S.sort === "time" ? "on" : ""}" data-act="sort" data-v="time">按时间</button></div>
+    <div class="cards">${list.map(({c, kw, inn}) => {
+      const nv = versions(c.id).length;
+      return `<div class="cd ${inn ? "in" : ""}" style="--tc:${tvar(c.type)}" ${inn || frozen() ? "" : `draggable="true"`} data-card="${c.id}" ${inn ? `data-act="locate" data-id="${c.id}" title="在简历里找到这一条"` : ""}>
+        <div class="ct"><span class="ty">${esc(c.type)}</span><span>${esc(c.org || c.title)}</span></div>
+        <div class="cm">${esc([c.role, c.time].filter(Boolean).join(" · ") || c.title)} · ${nv ? nv + " 个简历版本" : "还没有简历版本"}</div>
+        ${kw.length ? `<div class="kws">${kw.slice(0, 4).map(k => `<span>${esc(k)}</span>`).join("")}</div>` : ""}
+        ${inn ? `<span class="ok">✓ 已在简历中</span>` : frozen() ? "" : `<button class="ic add" data-act="add" data-id="${c.id}" title="加到简历" aria-label="加到简历">${ICON.plus}</button>`}
+      </div>`;
+    }).join("") || `<div class="cm" style="padding:8px">没有匹配的经历</div>`}</div>`;
+}
+
+function renderWs() {
+  const r = cur(), cov = covered(r), fz = frozen();
+  $("#ws").innerHTML = `
+  <div class="bar tile">
+    <button class="btn switch" data-act="switcher" aria-label="切换简历">${ICON.menu}</button>
+    <div class="ttl"><h1><span ${fz ? "" : `contenteditable="true" spellcheck="false"`} id="rtitle">${esc(r.title)}</span></h1>
+      <div class="meta">${esc([r.target, r.position, r.lang, r.date].filter(Boolean).join(" · "))}</div></div>
+    <div class="seg" role="group" aria-label="状态"><button class="${fz ? "" : "on"}" data-act="status" data-v="草稿">草稿</button><button class="${fz ? "on" : ""}" data-act="status" data-v="已投递">已投递</button></div>
+    <button class="meter" id="meter" data-act="fitmenu"><div class="mt"><span>1 页</span><b id="mtxt">—</b></div><div class="track"><div class="fill" id="mfill"></div></div></button>
+    <span class="hist"><span class="saved" id="saved" title="改动会马上写回 resumes/${esc(r.id)}.json（原型里不真的写）"><i></i>已保存</span><button class="ic" data-act="undo" title="撤销 ⌘Z" aria-label="撤销" ${H.past.length ? "" : "disabled"}>${ICON.undo}</button><button class="ic" data-act="redo" title="重做 ⇧⌘Z" aria-label="重做" ${H.future.length ? "" : "disabled"}>${ICON.redo}</button></span>
+    <button class="btn drawerbtn" data-act="drawer">${ICON.plus}添加经历</button>
+    <button class="btn" data-act="askai" title="复制一句指令，粘贴到左边的 AI 对话">${ICON.spark}问 AI</button>
+    <button class="btn pri exp" data-act="export">${ICON.pdf}导出 PDF</button>
+  </div>
+  ${r.keywords?.length ? `<div class="jd tile ${S.jdOpen ? "open" : ""}">
+    <span class="lab">岗位要求</span>
+    <div class="kw">${r.keywords.map(k => `<span class="${cov.includes(k) ? "on" : ""}" data-act="kw" data-k="${esc(k)}" title="${cov.includes(k) ? "在简历里标出这个词" : "在左边找含这个词的经历"}">${esc(k)}${fz ? "" : `<i data-act="kwdel" data-k="${esc(k)}" title="删掉这个关键词" aria-label="删掉关键词 ${esc(k)}">×</i>`}</span>`).join("")}${fz ? "" : `<span class="kadd" data-act="kwadd" title="加一个关键词">＋</span>`}</div>
+    <span class="cov">已覆盖 <b>${cov.length}</b>/${r.keywords.length}</span>
+    <button class="btn ghost" data-act="jd">${S.jdOpen ? "收起原文" : "看原文"}</button>
+    <div class="raw">${esc(r.jd)}</div></div>` : ""}
+  ${fz ? `<div class="frozen">${ICON.lock}<span class="grow">${esc(r.sent)} 投给 <b>${esc(r.target)}</b> 的版本，内容已冻结；之后卡片怎么改都不影响它。</span><button class="btn" data-act="dup">${ICON.copy}复制为新草稿</button></div>` : ""}
+  <div class="canvas" id="canvas"><div class="pagebox" id="pagebox"><div class="page ${fz ? "" : "editable"}" id="page"></div><div class="pbreak" id="pbreak"><span>第 1 页到此为止</span></div></div></div>`;
+  renderPage();
+}
+
+function renderPage() {
+  const r = cur(), fz = frozen();
+  const contact = [P.location, P.phone && "电话：" + P.phone, P.email && "邮箱：" + P.email, ...(P.links || [])].filter(Boolean).map(esc).join(" ｜ ");
+  let h = `<div class="ph"><div><div class="pname">${esc(P.name || "姓名")}</div>${fz ? (r.header?.headline ? `<div class="phl">${esc(r.header.headline)}</div>` : "") : `<div class="phl ${r.header?.headline ? "" : "ph-empty"}" contenteditable="plaintext-only" spellcheck="false" id="headline" data-ph="添加求职意向（如：求职意向：内容运营实习）">${esc(r.header?.headline || "添加求职意向（可选）")}</div>`}<div class="pct">${contact}</div></div>${r.header?.photo ? `<div class="photo">证件照${fz ? "" : `<button data-act="photo">不放照片</button>`}</div>` : fz ? "" : `<button class="ph-add" data-act="photo">${ICON.plus}照片</button>`}</div>`;
+  r.sections.forEach((s, si) => {
+    const stool = fz ? "" : `<span class="stool"><button data-act="secup" data-s="${si}" title="上移">↑</button><button data-act="secdown" data-s="${si}" title="下移">↓</button><button data-act="secrename" data-s="${si}">改名</button></span>`;
+    h += `<div class="sec" data-s="${si}"><h3>${esc(s.title)}${stool}</h3><div class="items">`;
+    if (s.from === "education") {
+      h += (P.education || []).map(e => `<div class="it edu"><div class="ihead"><b>${esc([e.school, [e.major, e.degree].filter(Boolean).join(" ")].filter(Boolean).join(" - "))}</b><span>${esc(e.time)}</span></div>${(e.details || []).map(d => { const m = lead(d); return `<p class="ln">${m ? `<b>${esc(m[0])}</b>${esc(m[1])}` : esc(d)}</p>`; }).join("")}</div>`).join("");
+    } else {
+      if (!s.items.length) h += `<div class="empty-sec">把左边的经历拖到这里</div>`;
+      s.items.forEach((it, ii) => {
+        const c = CARDS[it.card] || {}, key = si + ":" + ii;
+        const head = (c.org || c.role || c.time) ? `<div class="ihead"><b>${esc([c.org || c.title, c.role].filter(Boolean).join(" - "))}</b><span>${esc(c.time || "")}</span></div>` : "";
+        const has = versions(it.card).length;
+        const tools = fz ? "" : `<div class="tools"><span class="grip" title="拖动排序">⋮⋮</span>
+          <button class="ver" data-act="ver" data-k="${key}">${has ? esc(it.version) : "卡片原文"} ${ICON.down}</button>
+          <button data-act="edit" data-k="${key}" title="双击正文也可以改">${ICON.pen}改</button>
+          <button data-act="remove" data-k="${key}" title="从这份简历移除（卡片不受影响）">${ICON.x}</button></div>`;
+        const editing = S.edit === key;
+        h += `<div class="it ${S.sel === key ? "sel" : ""} ${S.flash === key ? "flash" : ""}" data-k="${key}" ${fz || editing ? "" : `draggable="true"`}>${tools}${head}
+          <div class="ibody" ${editing ? `contenteditable="plaintext-only" spellcheck="false"` : ""}>${editing ? esc(itemText(it)) : bodyHtml(itemText(it))}</div>
+          ${S.pending === key ? savebar(it) : ""}</div>`;
+      });
+    }
+    h += `</div></div>`;
+  });
+  const total = r.sections.reduce((n, s) => n + (s.items || []).length, 0);
+  if (!total && !fz) h += `<div class="guide"><b>这份简历还是空的</b>从左边把经历拖进来，或者让 AI 按岗位要求先排一版<div class="gb"><button class="p" data-act="newai">${ICON.spark}让 AI 按岗位生成</button><button data-act="drawer">${ICON.plus}从经历里挑</button></div></div>`;
+  $("#page").innerHTML = h + `<div class="pageend"></div>`;
+  S.flash = null;
+  if (S.edit) { const b = $(`.it[data-k="${S.edit}"] .ibody`); if (b) { b.focus(); placeCaretEnd(b); } }
+  fit();
+}
+function savebar(it) {
+  const n = versions(it.card).length + 1;
+  return `<div class="savebar">这段改动存回「<b>${esc(CARDS[it.card]?.org || it.card)}</b>」卡片：<button class="p" data-act="saveas" data-mode="over">覆盖「${esc(it.version)}」</button><button data-act="saveas" data-mode="new">另存为「v${n} ${esc(cur().position.replace(/实习生?$/, "") + "向")}」</button><button data-act="saveas" data-mode="undo">撤销</button></div>`;
+}
+function placeCaretEnd(el) { const r = document.createRange(); r.selectNodeContents(el); r.collapse(false); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+
+function fit() {
+  const canvas = $("#canvas"), page = $("#page"), box = $("#pagebox");
+  if (!canvas) return;
+  const s = Math.min(1, (canvas.clientWidth - (innerWidth < 1100 ? 20 : 40)) / 794);
+  const h = Math.max(1123, page.scrollHeight);
+  box.style.setProperty("--s", s.toFixed(4));
+  box.style.setProperty("--h", h + "px");
+  $("#pbreak").style.top = 1123 * s + "px";
+  // how full is the page: content bottom vs the printable area
+  const end = page.querySelector(".pageend").offsetTop - 38, used = end, left = Math.floor((AVAIL - used) / LINE);
+  const m = $("#meter"), pct = Math.min(100, used / AVAIL * 100);
+  $("#mfill").style.width = pct + "%";
+  m.className = "meter" + (left < 0 ? " over" : left < 4 ? " warn" : "");
+  $("#mtxt").textContent = left < 0 ? `超出 ${-left} 行` : `还剩 ${left} 行`;
+  m.title = left < 0 ? `内容超出一页约 ${-left} 行` : `一页里还能再放约 ${left} 行`;
+  $("#pbreak").className = "pbreak" + (left < 0 ? "" : " fit");
+}
+
+function render() { renderSide(); renderSrc(); renderWs(); }
+
+/* ---------- actions ---------- */
+function toast(msg, action) {
+  const t = $("#toast"); t.innerHTML = `<span>${msg}</span>` + (action ? `<button id="tact">${action.label}</button>` : "");
+  t.classList.toggle("act", !!action); t.classList.add("show");
+  if (action) $("#tact").onclick = () => { t.classList.remove("show"); action.run(); };
+  clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove("show", "act"), action ? 5000 : 2600);
+}
+function scrollToItem(key) {
+  const el = $(`.it[data-k="${key}"]`), cv = $("#canvas"); if (!el || !cv) return;
+  const r = el.getBoundingClientRect(), c = cv.getBoundingClientRect();
+  if (r.top < c.top + 20 || r.bottom > c.bottom - 20) cv.scrollBy({top: r.top - c.top - c.height / 3, behavior: matchMedia("(prefers-reduced-motion:reduce)").matches ? "auto" : "smooth"});
+}
+async function copyPrompt(text, label) {
+  try { await navigator.clipboard.writeText(text); toast(`已复制给 AI 的指令，粘贴到左边对话框就行${label ? "：" + label : ""}`); }
+  catch { toast("复制失败，指令是：" + esc(text)); }
+}
+function removeItem(key) {
+  commit(); const {s, ii, it} = getItem(key); s.items.splice(ii, 1); S.sel = null; render();
+  toast(`已从简历移除「${esc(CARDS[it.card]?.org || it.card)}」，卡片本身不受影响`, {label: "撤销", run: undo});
+}
+function itemKeys() { return cur().sections.flatMap((s, si) => (s.items || []).map((_, ii) => si + ":" + ii)); }
+function select(key) { S.sel = key; $$(".it.sel").forEach(x => x.classList.remove("sel")); const el = $(`.it[data-k="${key}"]`); if (el) { el.classList.add("sel"); scrollToItem(key); } }
+function getItem(key) { const [si, ii] = key.split(":").map(Number); return {s: cur().sections[si], si, ii, it: cur().sections[si].items[ii]}; }
+function sectionFor(card) {
+  const r = cur(), title = SEC[card.type] || "其他经历";
+  let s = r.sections.find(s => s.title === title);
+  if (!s) {
+    s = {title, items: []};
+    const skillAt = r.sections.findIndex(x => x.title === "技能与语言");
+    r.sections.splice(skillAt < 0 ? r.sections.length : skillAt, 0, s);
+  }
+  return s;
+}
+function addCard(id, target) {
+  const c = CARDS[id]; if (!c || inResume(id) || frozen()) return;
+  commit();
+  const v = versions(id)[0], it = {card: id, version: v ? v.name : "", text: v ? v.text : (c.result || c.fact || "")};
+  const s = target && target.s && target.s.title === (SEC[c.type] || "其他经历") ? target.s : sectionFor(c);
+  const at = target && target.s === s ? target.at : s.items.length;
+  s.items.splice(at, 0, it);
+  S.sel = S.flash = cur().sections.indexOf(s) + ":" + at;
+  render();
+  scrollToItem(S.sel);
+  toast(`已把「${esc(c.org || c.title)}」加到「${esc(s.title)}」，用的是 ${v ? "「" + esc(v.name) + "」" : "卡片原文"}`);
+}
+
+document.addEventListener("click", e => {
+  const a = e.target.closest("[data-act]");
+  if (!a) {
+    const itEl = e.target.closest(".editable .it:not(.edu)");
+    if (itEl && !S.edit) { select(itEl.dataset.k); closePop(); return; }
+    if (!e.target.closest(".pop")) closePop(); if (!e.target.closest(".it")) { if (S.sel && !S.edit) { S.sel = null; $$(".it.sel").forEach(x => x.classList.remove("sel")); } } return; }
+  const act = a.dataset.act;
+  if (!["ver", "newmenu", "switcher", "fitmenu", "export"].includes(act) && !a.closest(".pop")) closePop();
+  if (act === "open") { S.cur = a.dataset.id; S.sel = S.edit = S.pending = null; $("#app").classList.remove("drawer"); closePop(); render(); }
+  if (act === "sort") { S.sort = a.dataset.v; renderSrc(); }
+  if (act === "add") addCard(a.dataset.id);
+  if (act === "drawer") $("#app").classList.toggle("drawer");
+  if (act === "jd") { S.jdOpen = !S.jdOpen; renderWs(); }
+  if (act === "toast") { e.preventDefault(); toast(a.dataset.msg); }
+  if (act === "kw") {
+    const k = a.dataset.k, on = a.classList.contains("on");
+    if (on) {
+      const keys = []; cur().sections.forEach((s, si) => (s.items || []).forEach((it, ii) => { if (itemText(it).toLowerCase().includes(k.toLowerCase())) keys.push(si + ":" + ii); }));
+      keys.forEach(key => $(`.it[data-k="${key}"]`)?.classList.add("hit"));
+      if (keys[0]) scrollToItem(keys[0]);
+      setTimeout(() => $$(".it.hit").forEach(x => x.classList.remove("hit")), 1800);
+      toast(keys.length ? `「${esc(k)}」出现在 ${keys.length} 条里` : `「${esc(k)}」出现在教育经历里`);
+    } else {
+      S.q = k; S.sort = "jd"; renderSrc();
+      if (innerWidth < 1100) $("#app").classList.add("drawer");
+      const n = $$(".cd").length;
+      toast(n ? `左边筛出了含「${esc(k)}」的经历` : `库里还没有含「${esc(k)}」的经历，可以让 AI 追问你补一段`);
+    }
+  }
+  if (act === "locate") {
+    const id = a.dataset.id; let key = null;
+    cur().sections.forEach((s, si) => (s.items || []).forEach((it, ii) => { if (it.card === id) key = si + ":" + ii; }));
+    if (key) { $("#app").classList.remove("drawer"); S.flash = key; renderPage(); scrollToItem(key); }
+  }
+  if (act === "fitmenu") openFit(a);
+  if (act === "undo") undo();
+  if (act === "redo") redo();
+  if (act === "photo") { commit(); const r = cur(); r.header = r.header || {}; r.header.photo = !r.header.photo; renderPage(); toast(r.header.photo ? "已放上证件照（照片来自个人信息）" : "这份简历不放照片"); }
+  if (act === "kwdel") { e.stopPropagation(); commit(); const r = cur(); r.keywords = r.keywords.filter(k => k !== a.dataset.k); renderWs(); renderSrc(); }
+  if (act === "kwadd") {
+    const k = (prompt("加一个岗位关键词（比如：用户访谈）") || "").trim();
+    if (k && !cur().keywords.includes(k)) { commit(); cur().keywords.push(k); renderWs(); renderSrc(); }
+  }
+  if (act === "fixswap") {
+    commit(); const {it} = getItem(a.dataset.k); it.version = a.dataset.v; it.text = verText(it.card, it.version);
+    S.flash = a.dataset.k; closePop(); renderPage(); renderSrc(); toast(`换成了更短的「${esc(it.version)}」`);
+  }
+  if (act === "fixdrop") {
+    commit(); const {s, ii, it} = getItem(a.dataset.k); s.items.splice(ii, 1); closePop(); render();
+    toast(`已移除「${esc(CARDS[it.card]?.org || it.card)}」`, {label: "撤销", run: undo});
+  }
+  if (act === "status") {
+    const r = cur(), v = a.dataset.v;
+    if (r.status === v) return;
+    commit();
+    if (v === "已投递") {
+      r.sections.forEach(s => (s.items || []).forEach(it => it.text = itemText(it)));
+      r.status = "已投递"; r.sent = new Date().toISOString().slice(0, 10);
+      toast("已标记为已投递：当前文字已冻结存档");
+    } else { r.status = "草稿"; r.sent = ""; toast("改回草稿：重新跟随卡片里的最新版本"); }
+    S.sel = S.edit = null; render();
+  }
+  if (act === "dup") {
+    commit(); const r = cur(), n = JSON.parse(JSON.stringify(r));
+    n.id = r.id + "-copy"; n.title = r.title + "（副本）"; n.status = "草稿"; n.sent = "";
+    RES.unshift(n); S.cur = n.id; render(); toast("已复制为新草稿，可以改了");
+  }
+  if (act === "remove") removeItem(a.dataset.k);
+  if (act === "ver") openVersions(a);
+  if (act === "pickver") {
+    commit(); const {it} = getItem(a.dataset.k); it.version = a.dataset.v; it.text = verText(it.card, it.version);
+    closePop(); renderPage(); renderSrc(); toast(`换成了「${esc(it.version)}」`);
+  }
+  if (act === "edit") { S.edit = a.dataset.k; S.sel = a.dataset.k; renderPage(); }
+  if (act === "saveas") {
+    if (a.dataset.mode !== "undo") commit();
+    const {it} = getItem(S.pending), mode = a.dataset.mode, vs = versions(it.card);
+    if (mode === "over") { const v = vs.find(v => v.name === it.version); if (v) v.text = it.draft; toast(`已覆盖「${esc(CARDS[it.card].org)}」卡片的「${esc(it.version)}」`); }
+    if (mode === "new") {
+      const name = `v${vs.length + 1} ${cur().position.replace(/实习生?$/, "")}向`;
+      vs.push({name, text: it.draft}); it.version = name; toast(`已在「${esc(CARDS[it.card].org)}」卡片下新存「${esc(name)}」，这份简历改用它`);
+    }
+    const draft = it.draft; delete it.draft;
+    it.text = mode === "undo" ? verText(it.card, it.version) : draft;
+    if (mode === "undo") toast("已撤销，卡片没有变化"); S.pending = null; renderPage(); renderSrc();
+  }
+  if (act === "secup" || act === "secdown") {
+    const r = cur(), i = +a.dataset.s, j = act === "secup" ? i - 1 : i + 1;
+    if (j < 0 || j >= r.sections.length) return;
+    commit(); [r.sections[i], r.sections[j]] = [r.sections[j], r.sections[i]]; renderPage();
+  }
+  if (act === "secrename") {
+    const s = cur().sections[+a.dataset.s], t = prompt("分节标题", s.title);
+    if (t && t.trim()) { commit(); s.title = t.trim(); renderPage(); }
+  }
+  if (act === "askai") {
+    const r = cur(), miss = (r.keywords || []).filter(k => !covered(r).includes(k));
+    copyPrompt(`请打开经历库里的简历「${r.title}」（resumes/${r.id}.json），对照里面存的岗位要求检查一遍：${miss.length ? "还没覆盖「" + miss.join("、") + "」，看看库里有没有能补上的经历；" : ""}哪几条该换版本或改写，改写的新版本存回卡片，再更新这份简历，控制在一页以内。`, "检查这份简历");
+  }
+  if (act === "airewrite") {
+    const {it} = getItem(a.dataset.k), r = cur();
+    closePop();
+    copyPrompt(`请以经历库「${CARDS[it.card].title}」卡片的「${WT} · ${it.version || "卡片原文"}」为底，针对简历「${r.title}」的岗位要求（${(r.keywords || []).join("、")}）改写一个新版本：只用卡片里的事实和数字，存成卡片的新版本，并让这份简历改用它。`, "改写这一条");
+  }
+  if (act === "export") openExport(a);
+  if (act === "exportlatex") { closePop(); const r = cur(); copyPrompt(`请把经历库里的简历「${r.title}」（resumes/${r.id}.json）用 LaTeX 模板导出成 PDF，放到「下载」文件夹，文件名用简历标题；导出后检查是不是正好一页。`, "精排 PDF"); }
+  if (act === "exportprint") { closePop(); setTimeout(() => print(), 200); }
+  if (act === "newmenu" || act === "switcher") openMenu(a, act);
+  if (act === "newblank" || act === "newcopy") {
+    commit();
+    const base = act === "newcopy" ? JSON.parse(JSON.stringify(cur())) : {keywords: [], jd: "", header: {headline: "", photo: false}, sections: [{title: "教育经历", from: "education"}]};
+    const n = Object.assign(base, {id: "jl-new-" + Date.now(), title: act === "newcopy" ? cur().title + "（副本）" : "未命名简历", target: act === "newcopy" ? base.target : "", position: act === "newcopy" ? base.position : "", lang: "中文", date: "2026.11", status: "草稿", sent: ""});
+    RES.unshift(n); S.cur = n.id; closePop(); render();
+  }
+  if (act === "newai") { closePop(); copyPrompt("我要投一个新岗位，岗位要求如下：<粘贴 JD>。请从经历库里挑经历、选或改写版本，帮我做一份一页的中文简历，存进 resumes/，再导出 PDF。", "按岗位生成简历"); }
+});
+
+/* inline edit: double-click the text; on leaving, ask where the change goes (it always lands on the card) */
+document.addEventListener("dblclick", e => {
+  const it = e.target.closest(".editable .it:not(.edu)"); if (!it) return;
+  S.edit = S.sel = it.dataset.k; renderPage();
+});
+document.addEventListener("focusin", e => {
+  if (e.target.id === "headline" || e.target.id === "rtitle") {
+    S.fsnap = snap();  // recorded as one undo step on blur, only if something changed
+    if (e.target.classList.contains("ph-empty")) { e.target.textContent = ""; e.target.classList.remove("ph-empty"); }
+  }
+});
+document.addEventListener("focusout", e => {
+  if ((e.target.id === "headline" || e.target.id === "rtitle") && S.fsnap) { if (snap() !== S.fsnap) commit(S.fsnap); S.fsnap = null; }
+  if (e.target.id === "headline" && !e.target.innerText.trim()) { e.target.classList.add("ph-empty"); e.target.textContent = "添加求职意向（可选）"; }
+  const b = e.target.closest?.(".ibody[contenteditable]"); if (!b) return;
+  const key = S.edit, {it} = getItem(key), was = itemText(it), now = b.innerText.replace(/\n{2,}/g, "\n").trim();
+  S.edit = null;
+  if (now && now !== was.trim()) { it.draft = now; S.pending = key; }
+  renderPage();
+});
+document.addEventListener("keydown", e => {
+  const typing = e.target.closest?.("input,textarea,[contenteditable]");
+  const mod = e.metaKey || e.ctrlKey;
+  if (mod && e.key.toLowerCase() === "z" && !typing) { e.preventDefault(); e.shiftKey ? redo() : undo(); return; }
+  if (mod && e.key.toLowerCase() === "y" && !typing) { e.preventDefault(); redo(); return; }
+  if (e.key === "Escape") { closePop(); if (S.edit) { S.edit = null; renderPage(); } else if (S.sel) { S.sel = null; $$(".it.sel").forEach(x => x.classList.remove("sel")); } $("#app").classList.remove("drawer"); }
+  if (typing && e.key === "Enter" && e.target.id === "headline") { e.preventDefault(); e.target.blur(); }
+  if (typing || frozen() || !S.sel) return;
+  const keys = itemKeys(), i = keys.indexOf(S.sel);
+  if ((e.key === "ArrowDown" || e.key === "ArrowUp") && !e.altKey) { e.preventDefault(); const j = Math.max(0, Math.min(keys.length - 1, i + (e.key === "ArrowDown" ? 1 : -1))); select(keys[j]); }
+  if ((e.key === "ArrowDown" || e.key === "ArrowUp") && e.altKey) {
+    e.preventDefault(); const {s, si, ii} = getItem(S.sel), jj = ii + (e.key === "ArrowDown" ? 1 : -1);
+    if (jj < 0 || jj >= s.items.length) return;
+    commit(); [s.items[ii], s.items[jj]] = [s.items[jj], s.items[ii]]; S.sel = si + ":" + jj; renderPage(); scrollToItem(S.sel);
+  }
+  if (e.key === "Enter") { e.preventDefault(); S.edit = S.sel; renderPage(); }
+  if (e.key === "Delete" || e.key === "Backspace") { e.preventDefault(); removeItem(S.sel); }
+  if (e.key === "Enter" && e.target.id === "rtitle") { e.preventDefault(); e.target.blur(); }
+});
+document.addEventListener("input", e => {
+  if (e.target.id === "q") { S.q = e.target.value; const pos = e.target.selectionStart; renderSrc(); const q = $("#q"); q.focus(); q.setSelectionRange(pos, pos); }
+  if (e.target.id === "headline") { const r = cur(); r.header = r.header || {}; r.header.headline = e.target.innerText.trim(); fit(); }
+  if (e.target.id === "rtitle") { cur().title = e.target.innerText.trim() || "未命名简历"; renderSide(); }
+});
+
+/* ---------- popovers ---------- */
+function place(pop, anchor) {
+  const r = anchor.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight;
+  let x = Math.min(innerWidth - w - 10, Math.max(10, r.left)), y = r.bottom + 6;
+  if (y + h > innerHeight - 10) y = Math.max(10, r.top - h - 6);
+  pop.style.left = x + "px"; pop.style.top = y + "px";
+}
+function openVersions(a) {
+  const key = a.dataset.k, {it} = getItem(key), vs = versions(it.card), c = CARDS[it.card];
+  const pop = $("#pop");
+  pop.innerHTML = `<h4>${esc(c.org || c.title)} · ${WT}</h4>` +
+    (vs.length ? vs.map(v => `<button class="vo ${v.name === it.version ? "on" : ""}" data-act="pickver" data-k="${key}" data-v="${esc(v.name)}">
+      <div class="vn"><span>${v.name === it.version ? "✓ " : ""}${esc(v.name)}</span><small>${[...v.text.replace(/\s/g, "")].length} 字</small></div><div class="vx">${esc(v.text)}</div>${usedIn(it.card, v.name)}</button>`).join("")
+      : `<div class="vo"><div class="vx">这张卡片还没有「${WT}」，现在显示的是卡片原文。</div></div>`) +
+    `<div class="sep"></div><button class="ai" data-act="airewrite" data-k="${key}">${ICON.spark}<span>让 AI 针对这个岗位写一个新版本<small>复制一句指令，粘贴到左边对话</small></span></button><div class="tip-kb">选中一条后：<kbd>↑</kbd><kbd>↓</kbd> 切换 · <kbd>⌥</kbd>+<kbd>↑</kbd><kbd>↓</kbd> 调顺序 · <kbd>Enter</kbd> 改 · <kbd>Delete</kbd> 移除 · <kbd>⌘Z</kbd> 撤销</div>`;
+  pop.classList.add("show"); place(pop, a);
+}
+function usedIn(card, ver) {
+  const rs = RES.filter(r => r.id !== S.cur && r.sections.some(s => (s.items || []).some(x => x.card === card && x.version === ver)));
+  return rs.length ? `<div class="vu">也用在：${rs.map(r => esc(r.title) + (r.status === "已投递" ? "（已投递）" : "")).join("、")}</div>` : "";
+}
+function openExport(a) {
+  const pop = $("#pop");
+  pop.innerHTML = `<button class="ai" data-act="exportlatex">${ICON.spark}<span>精排 PDF（推荐）<small>让左边的 AI 用 LaTeX 模板导出，和这张纸同一版式</small></span></button><div class="sep"></div><button class="mi" data-act="exportprint">${ICON.pdf}<span>浏览器打印<small>马上存成 PDF；字体随系统，细节可能略有差别</small></span></button>`;
+  pop.classList.add("show"); place(pop, a);
+}
+function openMenu(a, kind) {
+  const pop = $("#pop");
+  pop.innerHTML = kind === "switcher"
+    ? `<h4>简历</h4>${RES.map(r => `<button class="mi" data-act="open" data-id="${r.id}"><i class="dot ${r.status === "已投递" ? "sent" : "draft"}"></i><span>${esc(r.title)}<small>${r.status}${r.sent ? " · " + r.sent : ""}</small></span></button>`).join("")}<div class="sep"></div><button class="mi" data-act="newblank">${ICON.plus}<span>新建空白简历</span></button><button class="mi" data-act="newcopy">${ICON.copy}<span>复制当前这份</span></button><button class="ai" data-act="newai">${ICON.spark}<span>让 AI 按岗位要求生成<small>复制一句指令，粘贴到左边对话</small></span></button>`
+    : `<button class="ai" data-act="newai">${ICON.spark}<span>让 AI 按岗位要求生成<small>推荐：贴上 JD，AI 挑经历、选版本、排到一页</small></span></button><div class="sep"></div><button class="mi" data-act="newcopy">${ICON.copy}<span>复制当前这份<small>改投相似岗位时最快</small></span></button><button class="mi" data-act="newblank">${ICON.plus}<span>空白简历<small>自己从左边拖经历进来</small></span></button>`;
+  pop.classList.add("show"); place(pop, a);
+}
+function openFit(a) {
+  const r = cur(), pop = $("#pop"), swaps = [], rel = [];
+  r.sections.forEach((s, si) => (s.items || []).forEach((it, ii) => {
+    const key = si + ":" + ii, now = [...itemText(it).replace(/\s/g, "")].length, c = CARDS[it.card] || {};
+    const shorter = versions(it.card).filter(v => v.name !== it.version && !/英文/.test(v.name)).map(v => ({v, n: [...v.text.replace(/\s/g, "")].length})).filter(x => x.n < now - 8).sort((x, y) => x.n - y.n)[0];
+    if (shorter) swaps.push({key, c, v: shorter.v.name, save: now - shorter.n});
+    if (c.type !== "技能") rel.push({key, c, kw: cardKw(c, r).length});
+  }));
+  rel.sort((x, y) => x.kw - y.kw);
+  const fz = frozen();
+  pop.innerHTML = `<h4>${$("#meter").classList.contains("over") ? "压回一页，可以这样做" : "篇幅还够；需要更紧凑时可以这样做"}</h4>` +
+    (fz ? `<div class="vo"><div class="vx">已投递的简历不能改，先复制为新草稿。</div></div>` :
+    (swaps.length ? swaps.map(x => `<button class="fixo" data-act="fixswap" data-k="${x.key}" data-v="${esc(x.v)}"><span>${esc(x.c.org || x.c.title)} 换成「${esc(x.v)}」<small>同一张卡片里更短的版本</small></span><em>省 ${x.save} 字</em></button>`).join("") : `<div class="vo"><div class="vx">每条都已经是最短的版本了。</div></div>`) +
+    (rel[0] ? `<div class="sep"></div><button class="fixo" data-act="fixdrop" data-k="${rel[0].key}"><span>移除「${esc(rel[0].c.org || rel[0].c.title)}」<small>和岗位要求最不相关（命中 ${rel[0].kw} 个关键词）</small></span><em>可撤销</em></button>` : "")) +
+    `<div class="sep"></div><button class="ai" data-act="askai">${ICON.spark}<span>让 AI 帮我改到正好一页<small>复制一句指令，粘贴到左边对话</small></span></button>`;
+  pop.classList.add("show"); place(pop, a);
+}
+function closePop() { $("#pop").classList.remove("show"); }
+
+/* ---------- drag & drop: cards in from the source column, items reordered on the page ---------- */
+let D = null;
+document.addEventListener("dragstart", e => {
+  const cd = e.target.closest?.(".cd[draggable]"), it = e.target.closest?.(".it[draggable]");
+  if (cd) { D = {kind: "card", id: cd.dataset.card}; cd.classList.add("dragging"); }
+  else if (it) { D = {kind: "item", key: it.dataset.k}; it.classList.add("dragging"); }
+  else return;
+  e.dataTransfer.effectAllowed = "move"; e.dataTransfer.setData("text/plain", "x");
+  if (D.kind === "card" && innerWidth < 1100) setTimeout(() => $("#app").classList.remove("drawer"), 120);
+});
+function clearMarks() { $$(".ins-before,.ins-after,.ins-end,.drop-target").forEach(x => x.classList.remove("ins-before", "ins-after", "ins-end", "drop-target")); }
+function dropTarget(e) {
+  // where would it land? for a card: its own type's section; for an item: its current section
+  const r = cur();
+  let s;
+  if (D.kind === "card") s = r.sections.find(x => x.title === (SEC[CARDS[D.id].type] || "其他经历"));
+  else s = getItem(D.key).s;
+  if (!s) return {s: null, at: 0, el: null};
+  const si = r.sections.indexOf(s), els = $$(`.sec[data-s="${si}"] .it`);
+  let at = s.items.length, el = null, pos = "end";
+  for (let i = 0; i < els.length; i++) {
+    const b = els[i].getBoundingClientRect();
+    if (e.clientY < b.top + b.height / 2) { at = i; el = els[i]; pos = "before"; break; }
+  }
+  return {s, si, at, el, pos};
+}
+document.addEventListener("dragover", e => {
+  if (!D || !e.target.closest("#page")) return;
+  e.preventDefault();
+  clearMarks();
+  const t = dropTarget(e), sec = t.s ? $(`.sec[data-s="${t.si}"]`) : null;
+  if (sec) { sec.classList.add("drop-target"); if (t.el) t.el.classList.add("ins-before"); else sec.classList.add("ins-end"); }
+});
+document.addEventListener("drop", e => {
+  if (!D || !e.target.closest("#page")) return;
+  e.preventDefault(); clearMarks();
+  const t = dropTarget(e);
+  if (D.kind === "card") addCard(D.id, t.s ? {s: t.s, at: t.at} : null);
+  else {
+    commit(); const {s, ii} = getItem(D.key), [moved] = s.items.splice(ii, 1);
+    let at = t.at > ii ? t.at - 1 : t.at;
+    s.items.splice(at, 0, moved); S.sel = cur().sections.indexOf(s) + ":" + at; renderPage();
+  }
+  D = null;
+});
+document.addEventListener("dragend", () => { $$(".dragging").forEach(x => x.classList.remove("dragging")); clearMarks(); D = null; });
+addEventListener("resize", fit);
+
+render();
+document.fonts?.ready.then(fit);
+</script>
+</body>
+</html>

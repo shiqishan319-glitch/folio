@@ -36,7 +36,7 @@ skill/                       ← Skill 包（装进 harness）
     ├── doubao/
     └── codex/               （待验证）
 
-~/经历库/                    ← 用户数据，和 skill 分开放，升级 skill 不会动到
+~/folio/                    ← 用户数据，和 skill 分开放，升级 skill 不会动到
 ├── config.json              经历类型、个人信息
 ├── experiences/<id>.json    一段经历一个文件
 ├── applications/<id>.json   申请记录（整篇文档，按段落关联经历）

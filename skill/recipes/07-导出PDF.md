@@ -1,5 +1,7 @@
 # 07 导出 PDF
 
+> **要做一份新简历**（按岗位挑经历、选版本）：先读 `recipes/10-按岗位做简历.md`，它会在最后一步回到这里导出。本文件讲导出本身。
+
 有两种 PDF：**自荐信 / 动机信**（用 `letter` 模板，对应 `applications/` 目录里的「简历」文档）和**简历**（用 `resume` 模板，由经历卡片拼装）。
 
 两条路：
@@ -44,13 +46,19 @@ mkdir -p /tmp/jingliku-pdf && echo READY
 python3 "<SKILL>/scripts/fill_tex.py" letter "<VAULT>" "<文档id>" /tmp/jingliku-pdf/out.tex
 ```
 
-**简历：**
+**简历（已存的一份，推荐）：** `<简历id>` 是 `resumes/` 里的文件名，不带 `.json`：
+
+```bash
+python3 "<SKILL>/scripts/fill_tex.py" resume "<VAULT>" /tmp/jingliku-pdf/out.tex --from "<简历id>"
+```
+
+**简历（快速看一眼，所有经历都放）：**
 
 ```bash
 python3 "<SKILL>/scripts/fill_tex.py" resume "<VAULT>" /tmp/jingliku-pdf/out.tex
 ```
 
-简历的可选参数（加在命令末尾）：
+快速看一眼时的可选参数（加在命令末尾；用 `--from` 时不需要）：
 - `--prefer 英文`：每段经历优先用名字里含「英文」的版本（也可以写别的词，如 `偏数据`）。
 - `--writing 英文简历条目`：用另一种写法类型（默认 `简历条目`）。
 - `--ids xhs-2025,fair-2024`：只放这几段经历，并按这个顺序。
@@ -96,4 +104,4 @@ cp /tmp/jingliku-pdf/out.pdf "$HOME/Downloads/<文档标题>.pdf" && echo SAVED
 python3 "<SKILL>/scripts/fill_html.py" resume "<VAULT>" "$HOME/Downloads/简历-打印版.html"
 ```
 
-可选参数与 `fill_tex.py` 一致（`--prefer`、`--writing`、`--ids`）。生成后在系统浏览器打开该 `.html` 文件，点击右上角「打印 / 存为 PDF」（或 `Cmd/Ctrl + P`），勾选「背景图形」即可保存为 A4 PDF。用户也可以直接在右半屏左侧栏点「打印版简历」快捷打开。
+可选参数与 `fill_tex.py` 一致（`--from <简历id>`，或 `--prefer`、`--writing`、`--ids`）。生成后在系统浏览器打开该 `.html` 文件，点击右上角「打印 / 存为 PDF」（或 `Cmd/Ctrl + P`），勾选「背景图形」即可保存为 A4 PDF。用户也可以直接在右半屏左侧栏点「打印版简历」快捷打开。

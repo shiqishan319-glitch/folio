@@ -1,0 +1,7 @@
+schema_version: "1.1"
+name: resume-for-jd
+expected_outcome: |
+  A new resume is saved as resumes/<id>.json (status 草稿) that references existing card writing versions by
+  card id + version name, with each item's text snapshot equal to that version's text; it includes the 校园公益市集
+  (fair) experience and no 思考-type card; keywords are extracted from the job description; no original writing
+  version on any card is changed and no numbers are invented; a one-page PDF exported via the LaTeX template is in outputs/.

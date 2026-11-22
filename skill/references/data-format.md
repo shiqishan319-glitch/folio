@@ -1,11 +1,12 @@
 # 经历库数据格式（schema 1）
 
-数据目录 `$VAULT`（默认 `~/经历库`）：
+数据目录 `$VAULT`（默认 `~/folio`）：
 
 ```
 config.json                 配置：经历类型、个人信息
 experiences/<id>.json       一段经历一个文件
 applications/<id>.json      一份申请记录（整篇文档）一个文件
+resumes/<id>.json           一份简历一个文件（引用卡片里的写法版本）；导出的 PDF 存档为 resumes/<id>.pdf
 assets/<卡片id>/<文件名>     作品的快捷方式（软链接），指向原文件
 .trash/                     删除的文件移到这里
 .runtime.json               serve.py 写的运行信息（地址），不要手动改
@@ -136,6 +137,50 @@ assets/<卡片id>/<文件名>     作品的快捷方式（软链接），指向�
 
 - 整篇存，不拆。`paras` 按顺序排列，每段的 `card` 是它用到的经历 `id`，没有就填 `null`。
 - `kind`、`target`、`scene`、`date`、`lang` 是打标维度，用来检索和复用。
+
+## resumes/<id>.json：简历
+
+一份简历是一张**引用清单**：用哪张卡片的哪个写法版本、放在哪一节、什么顺序。文字只存在卡片里，每条另存一份快照 `text`。
+
+```json
+{
+  "schema": 1,
+  "id": "jl-xhs-yunying-202611",
+  "title": "小红书 · 内容运营实习",
+  "target": "小红书",
+  "position": "内容运营实习生",
+  "jd": "岗位要求原文（可空）",
+  "keywords": ["选题", "数据复盘", "活动策划"],
+  "lang": "中文",
+  "date": "2026.11",
+  "status": "草稿",
+  "sent": "",
+  "header": {"headline": "求职意向：内容运营实习", "photo": true},
+  "sections": [
+    {"title": "教育经历", "from": "education"},
+    {"title": "实习经历", "items": [
+      {"card": "xhs", "writing": "简历条目", "version": "v2 偏数据", "text": "搭建话题数据复盘表……"}
+    ]}
+  ],
+  "exports": [{"file": "resumes/jl-xhs-yunying-202611.pdf", "date": "2026-11-22T20:00:00+08:00"}],
+  "created": "2026-11-22T20:00:00+08:00",
+  "updated": "2026-11-22T20:00:00+08:00"
+}
+```
+
+| 字段 | 说明 |
+|---|---|
+| `title`, `target`, `position`, `lang`, `date` | 打标维度，用来找「上次投同类岗位的那份」 |
+| `jd`, `keywords` | 岗位要求原文，和从中提炼的 5–8 个关键词（右半屏显示覆盖情况） |
+| `status`, `sent` | `草稿`：显示卡片里版本的当前文字；`已投递`：显示快照 `text`，内容冻结。`sent` 是投递日期 |
+| `header` | 只覆盖这份简历的求职意向（`headline`）和要不要照片（`photo`）；姓名、联系方式、教育背景来自 `config.json` |
+| `sections[].from` | 特殊分节，目前只有 `education` |
+| `sections[].items[]` | `card` + `writing` + `version` 指向卡片里的一个版本（版本名一字不差）；`text` 是快照，由 `scripts/resume_model.py sync` 填写 |
+| `exports` | 导出过的 PDF 存档 |
+
+- 一张卡片在一份简历里只出现一次；不允许没有 `card` 的条目。
+- 导出时，一个版本的文字按行拆：「小标题：正文」（冒号前 1–16 个字）渲染成加粗小标题；其他行都有小标题而第一行没有时，第一行是不带圆点的概述。
+- 卡片的版本改名或删除后，用 `python3 scripts/resume_model.py check <VAULT>` 查断掉的引用。
 
 ## 前端怎么读写
 
