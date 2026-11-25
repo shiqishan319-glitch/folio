@@ -33,7 +33,12 @@ A = ap.parse_args()
 VAULT, APP = Path(A.vault).expanduser().resolve(), Path(A.app).resolve()
 WRITABLE = ("experiences/", "applications/", "resumes/", "config.json")
 DELETABLE = ("experiences/", "applications/", "resumes/")  # config.json can be written, never deleted
-SIGNATURE = "X-Jingliku"  # every response carries it, so we never mistake another app for ours
+SIGNATURE = "X-Jingliku"
+# The page may only talk to this server (and load the Google fonts it uses). So even a custom.js the user
+# was handed by someone else cannot send their vault anywhere — see recipes/12-改造前端.md.
+CSP = ("default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+       "font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; "
+       "connect-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'")  # every response carries it, so we never mistake another app for ours
 
 
 def runtime():
@@ -150,10 +155,12 @@ HOSTS = {f"127.0.0.1:{PORT}", f"localhost:{PORT}"}
 
 
 class H(BaseHTTPRequestHandler):
-    def send(self, code, body=b"", ctype="application/json; charset=utf-8"):
+    def send(self, code, body=b"", ctype="application/json; charset=utf-8", csp=False):
         try:
             self.send_response(code)
             self.send_header("Content-Type", ctype)
+            if csp:
+                self.send_header("Content-Security-Policy", CSP)
             self.send_header("Content-Length", str(len(body)))
             self.send_header("Cache-Control", "no-store")
             self.send_header(SIGNATURE, "1")
@@ -256,7 +263,7 @@ class H(BaseHTTPRequestHandler):
         body = f.read_bytes()
         if f.suffix == ".html":
             body = body.replace(b"</head>", f'<meta name="jingliku-token" content="{TOKEN}"></head>'.encode(), 1)
-        self.send(200, body, mimetypes.guess_type(f.name)[0] or "application/octet-stream")
+        self.send(200, body, mimetypes.guess_type(f.name)[0] or "application/octet-stream", csp=f.suffix == ".html")
 
     def do_PUT(self):
         if not self.guard(write=True): return

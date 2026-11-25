@@ -8,6 +8,7 @@ experiences/<id>.json       一段经历一个文件
 applications/<id>.json      一份申请记录（整篇文档）一个文件
 resumes/<id>.json           一份简历一个文件（引用卡片里的写法版本）；导出的 PDF 存档为 resumes/<id>.pdf
 assets/<卡片id>/<文件名>     作品的快捷方式（软链接），指向原文件
+custom.css / custom.js      可选：用户对右半屏的个人定制（见 recipes/12-改造前端.md），skill 更新不会动它
 .trash/                     删除的文件移到这里
 .runtime.json               serve.py 写的运行信息（地址），不要手动改
 .token                      serve.py 的写入口令（重启后沿用，已打开的页面才能继续保存），不要改、不要外传

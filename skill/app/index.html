@@ -1026,6 +1026,23 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .rp-empty{font:12px var(--font);color:#a1a1aa;padding:4px 0}
 .rp-guide{margin:26px 0 0;padding:22px 20px;border:1.5px dashed #d4d4d8;border-radius:12px;text-align:center;font:13px/1.6 var(--font);color:#52525b}
 .rp-guide b{display:block;font-size:15px;color:#18181b;margin-bottom:4px}
+.rp-sgrip{cursor:grab;color:#a1a1aa;padding:1px 4px;border-radius:6px;font:500 11px var(--font)}
+.rp-sgrip:hover{background:#f4f4f5;color:#18181b}
+.rp-sec.sdragging{opacity:.35}
+.rp-sec.sins::before{content:"";position:absolute;left:-6px;right:-6px;top:-5px;height:3px;border-radius:2px;background:#4354ff;z-index:4}
+.rp-sec.sins-end::after{content:"";position:absolute;left:-6px;right:-6px;bottom:-5px;height:3px;border-radius:2px;background:#4354ff;z-index:4}
+/* 对照: two sheets side by side, matched by card */
+.rv-cmphead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 auto 12px;max-width:1640px;font-size:12.5px;color:var(--ink-2)}
+.rv-cmphead .lg{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;color:var(--muted)}
+.rv-cmphead .lg i{display:inline-block;width:12px;height:10px;border-radius:3px;border:1.5px dashed rgba(217,119,6,.8);background:rgba(250,204,21,.12)}
+.rv-cmphead .grow{flex:1}
+.rv-pair{display:flex;gap:16px;justify-content:center;align-items:flex-start}
+.rv-pair .rv-box{margin:0;flex:none}
+.rv-side{display:flex;flex-direction:column;gap:6px;align-items:center}
+.rv-side .cap{font-size:11.5px;color:var(--muted);font-weight:600}
+.rp-it.solo{box-shadow:inset 0 0 0 1.5px rgba(217,119,6,.55);background:rgba(250,204,21,.07)}
+.rp-it.solo::after{content:"对照中没有";position:absolute;right:4px;bottom:3px;font:600 10px var(--font);color:#b45309;background:#fffbeb;border-radius:5px;padding:1px 5px}
+.rp-it.pair{background:rgba(67,84,255,.09)!important;box-shadow:inset 0 0 0 1.5px rgba(67,84,255,.45)!important}
 /* popover for versions / add / fit / export / menus */
 .rpop{position:fixed;z-index:60;width:340px;max-width:calc(100vw - 20px);max-height:70vh;overflow:auto;padding:6px;border-radius:14px;background:color-mix(in srgb,var(--tile-top) 94%,transparent);-webkit-backdrop-filter:blur(16px) saturate(1.3);backdrop-filter:blur(16px) saturate(1.3);border:1px solid var(--tile-bd);box-shadow:var(--sh-hi);opacity:0;transform:translateY(-4px) scale(.98);pointer-events:none;transition:opacity .16s var(--ease),transform .3s var(--spring)}
 .rpop.show{opacity:1;transform:none;pointer-events:auto}
@@ -1052,6 +1069,21 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
   .rv-canvas{padding:12px 8px 30px}
 }
 
+/* ---------- 引导: spotlight tour ---------- */
+.gt[open]{position:fixed;inset:0;margin:0;padding:0;border:0;width:100vw;height:100dvh;max-width:none;max-height:none;background:transparent;overflow:hidden;color:var(--ink)}
+.gt::backdrop{background:transparent}
+.gt-spot{position:fixed;border-radius:12px;pointer-events:none;box-shadow:0 0 0 200vmax rgba(12,14,22,.55);outline:2px solid var(--accent);outline-offset:1px;transition:left .35s var(--ease),top .35s var(--ease),width .35s var(--ease),height .35s var(--ease)}
+.gt-spot.none{outline:none}
+.gt-card{position:fixed;width:min(340px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto;padding:16px 18px;border-radius:16px;background:var(--panel);border:1px solid var(--tile-bd);box-shadow:var(--sh-hi);transition:left .35s var(--ease),top .35s var(--ease)}
+.gt-top,.gt-act{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.gt-top{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.gt-top button{border:0;background:transparent;color:var(--muted);font-size:12px;padding:4px 0}
+.gt-top button:hover{color:var(--ink)}
+.gt-card h2{margin:10px 0 6px;font-size:16px;line-height:1.45;letter-spacing:0}
+.gt-card p{margin:0 0 16px;font-size:13.5px;line-height:1.7;color:var(--ink-2);max-width:none}
+.gt-keys{font-size:11px;color:var(--faint);white-space:nowrap}
+@media (max-width:420px){.gt-keys{display:none}}
+@media (prefers-reduced-motion:reduce){.gt-spot,.gt-card{transition:none}}
 @media (max-width:640px){.stage{padding:0}.app{width:100%!important;border-radius:0;border:none}.sim{padding:6px 12px}}
 </style>
 </head>
@@ -1128,7 +1160,7 @@ const RESUMES=[
 if(!LIVE)Object.assign(VAULT_CFG.profile,{"name": "示例同学", "headline": "社会人类学 · 本科三年级", "location": "北京 / 上海（可随时到岗）", "email": "student@example.com", "phone": "138-0000-0000", "photo": "", "links": ["github.com/example-student"], "education": [{"school": "示例大学", "major": "社会人类学", "degree": "本科", "time": "2023.09 – 2027.06", "details": ["GPA：3.8 / 4.0（专业前 10%）", "核心课程：社会研究方法、质性访谈、数据统计分析"]}]});  // demo only: the sample person, so the sheet isn't blank
 /* DEMO-DATA:END */
 const DEF={filter:.17,list:.3};
-const S={show:{filter:true,list:true,detail:true},f:{...DEF},type:null,tag:null,adding:false,q:'',sel:'xhs',open:{'实习':true},ver:{},exp:{},expAll:false,menu:null,rename:null,edit:null,doc:null,hit:null,mode:'wide',pane:'list',loading:false,qopen:false,docEdit:null,dconf:null,dfocus:null,fedit:null,res:null,rsel:null,redit:null,rpend:null,rflash:null,rjd:false,rdel:null,rfocusPref:null,rzoom:'fit'};
+const S={show:{filter:true,list:true,detail:true},f:{...DEF},type:null,tag:null,adding:false,q:'',sel:'xhs',open:{'实习':true},ver:{},exp:{},expAll:false,menu:null,rename:null,edit:null,doc:null,hit:null,mode:'wide',pane:'list',loading:false,qopen:false,docEdit:null,dconf:null,dfocus:null,fedit:null,res:null,rsel:null,redit:null,rpend:null,rflash:null,rjd:false,rdel:null,rfocusPref:null,rzoom:'fit',rcmp:null};
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const card=id=>CARDS.find(c=>c.id===id);
@@ -1147,11 +1179,11 @@ function filterCol(open){
       <button class="name ${S.type===t?'on':''}" data-type="${t}" title="只看${t}；再点一次取消">${t}</button><span class="cnt">${items.length}</span></div>
       ${op?`<ul class="sub">${items.map(c=>`<li><button class="${S.sel===c.id&&!S.doc&&!S.res?'on':''}" data-sel="${c.id}" data-ck="${c.id}">${esc(c.org)}</button></li>`).join('')}</ul>`:''}</li>`}).join('');
   return `<div class="col side" style="flex:0 0 ${pct('filter')};min-width:150px">
-    <div class="brandrow"><span class="brand"><span class="logo" aria-hidden="true">${LOGO}</span>经历库</span>${S.mode==='single'?`<button data-pane="list" title="返回时间线" aria-label="返回时间线">${ICON.collapse}</button>`:`<button data-toggle="filter" title="收起筛选栏" aria-label="收起筛选栏">${ICON.collapse}</button>`}</div>
+    <div class="brandrow"><span class="brand"><span class="logo" aria-hidden="true">${LOGO}</span>经历库</span><button data-tour="menu" title="帮助：各个区域怎么用" aria-label="帮助">?</button>${S.mode==='single'?`<button data-pane="list" title="返回时间线" aria-label="返回时间线">${ICON.collapse}</button>`:`<button data-toggle="filter" title="收起筛选栏" aria-label="收起筛选栏">${ICON.collapse}</button>`}</div>
     <div class="trow"><button class="name allt ${S.type?'':'on'}" data-alltypes="1" title="显示全部类型">类型 · 全部</button><span class="cnt">${CARDS.length}</span></div>
-    <ul class="tree">${tree}</ul>
-    <div class="lab">简历<button class="more" data-ra="newmenu" title="新建简历" aria-label="新建简历">${ICON.plus}</button></div><ul class="sub" style="margin-left:0;padding-left:0;border:none">${RESUMES.map(r=>`<li><button class="${S.res===r.id?'on':''}" data-res="${esc(r.id)}" title="${esc(r.title||'未命名简历')}"><i class="rdot ${r.status==='已投递'?'sent':''}">${r.status==='已投递'?'✓':'简'}</i><span>${esc(r.title||'未命名简历')}<span class="rsub">${r.status==='已投递'?'已投递 · '+esc(String(r.sent||'').slice(5).replace('-','.')):'草稿'}</span></span></button></li>`).join('')||'<li><div class="rsub" style="padding:4px 10px;font-size:12px;color:var(--muted)">还没有简历。点 ＋ 新建，或让左边的 AI 按岗位做一份。</div></li>'}</ul>
-    <div class="lab">申请信<button class="more" data-dnew="1" title="新建申请信" aria-label="新建申请信">${ICON.plus}</button></div><ul class="sub" style="margin-left:0;padding-left:0;border:none">${DOCS.map(d=>S.rename==='doc#'+d.id?`<li><input id="rn" class="rn" style="width:100%;font-size:13px;padding:4px 8px;border-radius:7px" value="${esc(d.title||'')}" aria-label="申请信名称"></li>`:`<li><button class="${S.doc===d.id?'on':''}" data-doc="${esc(d.id)}" data-dk="${esc(d.id)}" title="右键可重命名、复制、删除">${ICON.doc}${esc(d.title||'未命名申请信')}</button></li>`).join('')}</ul>
+    <ul class="tree" data-guide="types">${tree}</ul>
+    <div class="lab">简历<button class="more" data-ra="newmenu" title="新建简历" aria-label="新建简历">${ICON.plus}</button></div><ul class="sub" data-guide="resumes" style="margin-left:0;padding-left:0;border:none">${RESUMES.map(r=>`<li><button class="${S.res===r.id?'on':''}" data-res="${esc(r.id)}" title="${esc(r.title||'未命名简历')}"><i class="rdot ${r.status==='已投递'?'sent':''}">${r.status==='已投递'?'✓':'简'}</i><span>${esc(r.title||'未命名简历')}<span class="rsub">${r.status==='已投递'?'已投递 · '+esc(String(r.sent||'').slice(5).replace('-','.')):'草稿'}</span></span></button></li>`).join('')||'<li><div class="rsub" style="padding:4px 10px;font-size:12px;color:var(--muted)">还没有简历。点 ＋ 新建，或让左边的 AI 按岗位做一份。</div></li>'}</ul>
+    <div class="lab">申请信<button class="more" data-dnew="1" title="新建申请信" aria-label="新建申请信">${ICON.plus}</button></div><ul class="sub" data-guide="letters" style="margin-left:0;padding-left:0;border:none">${DOCS.map(d=>S.rename==='doc#'+d.id?`<li><input id="rn" class="rn" style="width:100%;font-size:13px;padding:4px 8px;border-radius:7px" value="${esc(d.title||'')}" aria-label="申请信名称"></li>`:`<li><button class="${S.doc===d.id?'on':''}" data-doc="${esc(d.id)}" data-dk="${esc(d.id)}" title="右键可重命名、复制、删除">${ICON.doc}${esc(d.title||'未命名申请信')}</button></li>`).join('')}</ul>
     <a class="prof-btn" href="/resume-print" target="_blank" rel="noopener" data-rprint="1" title="把所有经历排成一份 A4 打印版，快速看一眼（浏览器 Cmd/Ctrl+P 存为 PDF）">${ICON.pdf}<span>全部经历打印版</span></a>
     <div class="sidefoot">${statusHtml()}</div></div>`;
 }
@@ -1180,7 +1212,7 @@ function listCol(fill){
       <div class="hint">这里只建一张空卡片。详细内容可以之后在对话里交给 AI 补充。</div></form>`:'';
   return `<div class="col list" style="${fill?'flex:1':`flex:0 0 ${pct('list')};min-width:200px`}">
     ${statsHtml()}
-    <h2><span class="hleft">${S.mode==='single'||!(S.show.filter&&S.mode==='wide')?`<button class="hexp" data-toggle="filter" title="展开筛选栏" aria-label="展开筛选栏${activeCount()?`（已选 ${activeCount()} 项）`:''}">${ICON.side}${activeCount()?`<i class="hn">${activeCount()}</i>`:''}</button><span class="brand mark hmark" title="经历库 · ${VST.t}"><span class="logo" aria-hidden="true">${LOGO}</span><i class="vdot" data-s="${VST.s}" title="${VST.t}"></i></span>`:''}<span class="htl">时间线</span></span> <span class="hright"><span class="hcnt">${cs.length} 段${S.type?' · '+S.type:''}</span><span class="qslot"></span><button class="btn" data-add="1" title="新增经历">${ICON.plus}<span class="bt">新增</span></button></span></h2>
+    <h2><span class="hleft">${S.mode==='single'||!(S.show.filter&&S.mode==='wide')?`<button class="hexp" data-toggle="filter" title="展开筛选栏" aria-label="展开筛选栏${activeCount()?`（已选 ${activeCount()} 项）`:''}">${ICON.side}${activeCount()?`<i class="hn">${activeCount()}</i>`:''}</button><span class="brand mark hmark" title="经历库 · ${VST.t}"><span class="logo" aria-hidden="true">${LOGO}</span><i class="vdot" data-s="${VST.s}" title="${VST.t}"></i></span><button class="hexp" data-tour="menu" title="帮助：各个区域怎么用" aria-label="帮助">?</button>`:''}<span class="htl">时间线</span></span> <span class="hright"><span class="hcnt">${cs.length} 段${S.type?' · '+S.type:''}</span><span class="qslot"></span><button class="btn" data-add="1" title="新增经历">${ICON.plus}<span class="bt">新增</span></button></span></h2>
     <div class="chips tagbar" role="group" aria-label="按标签筛选">${tags.map(t=>`<button class="${S.tag===t?'on':''}" data-tag="${esc(t)}">${esc(t)}</button>`).join('')}</div>
     ${add}<div class="tl">${h||`<div class="empty">${CARDS.length?'没有符合条件的经历。换一个类型或标签，或点「新增」。':EMPTY_VAULT}</div>`}${pcard}</div></div>`;
 }
@@ -1300,9 +1332,9 @@ function detailCol(){
       :`<h1 class="dt" data-dbl="title" title="双击编辑标题">${esc(c.title)} <button class="more" style="font-size:18px;vertical-align:middle" data-cmenu="${c.id}" aria-label="经历操作：重命名、复制、删除" title="重命名、复制、删除">⋯</button><span class="fpen" aria-hidden="true">${ICON.pen2}</span></h1>`}
     <div class="dm">${c.tags.map(t=>`<span class="pill">${esc(t)}</span>`).join('')}</div>
     <div class="kpis"><span class="kpi"><b>${nVers(c)}</b>写法</span><span class="kpi"><b>${c.works.length}</b>作品</span><span class="kpi"><b>${r?r.versions.length:0}</b>申请引用</span><span class="kpi"><b>${RESUMES.filter(x=>rin(c.id,x)).length}</b>简历引用</span></div>${(()=>{const rs=RESUMES.filter(x=>rin(c.id,x));return rs.length?`<div class="rv-refs">用到它的简历：${rs.map(x=>`<button class="${x.status==='已投递'?'sent':''}" data-res="${esc(x.id)}" title="${x.status==='已投递'?'已投递 · 内容冻结，改这张卡片不影响它':'草稿 · 改这张卡片会跟着变'}">${x.status==='已投递'?'✓ ':''}${esc(x.title||'未命名简历')}</button>`).join('')}</div>`:''})()}</div>
-    <div class="bento${LIVE&&c.works.some(w=>w&&(w.kind==='image'||w.kind==='video'))?' has-media':''}">${tile('fact','fact','事实','fact','双击填写事实——做了什么','','做了什么、在什么情境下……')}${tile('res','res','结果','result','双击填写结果——最好有数字',bn?`<div class="big"><span>${esc(bn.n)}</span><small>${esc(bn.u)}</small></div>`:'','结果——最好有数字或证明材料')}${tile('th','th','思考','thought','双击填写思考——这段经历让你想到了什么','','这段经历让你想到了什么')}
+    <div data-guide="bento" class="bento${LIVE&&c.works.some(w=>w&&(w.kind==='image'||w.kind==='video'))?' has-media':''}">${tile('fact','fact','事实','fact','双击填写事实——做了什么','','做了什么、在什么情境下……')}${tile('res','res','结果','result','双击填写结果——最好有数字',bn?`<div class="big"><span>${esc(bn.n)}</span><small>${esc(bn.u)}</small></div>`:'','结果——最好有数字或证明材料')}${tile('th','th','思考','thought','双击填写思考——这段经历让你想到了什么','','这段经历让你想到了什么')}
     <div class="tile wk ${c.works.length?'':'miss'}"><div class="lk">${ICON.wk}作品</div><div class="v">${c.works.length?c.works.map(workHtml).join(''):'无'}</div></div></div>
-    <div class="sec"><span>已有写法<small>${c.writings.length+(r?1:0)}</small></span>${anyMany?`<button class="tog" data-expall="1">${S.expAll?'全部收起':'全部展开对比'}</button>`:''}</div>${ws||'<div class="empty">还没有写法。回到对话，让 AI 按某次申请的要求生成。</div>'}</div>`;
+    <div class="sec" data-guide="writings"><span>已有写法<small>${c.writings.length+(r?1:0)}</small></span>${anyMany?`<button class="tog" data-expall="1">${S.expAll?'全部收起':'全部展开对比'}</button>`:''}</div>${ws||'<div class="empty">还没有写法。回到对话，让 AI 按某次申请的要求生成。</div>'}</div>`;
 }
 const dtitle=d=>d.title||'未命名申请信';
 function docView(back){
@@ -1378,6 +1410,8 @@ function render(){
   document.querySelectorAll('.dta,.fta').forEach(autoGrow);
   if(S.dfocus!=null){const el=S.dfocus==='title'?document.querySelector('.dtitle'):document.querySelector(`[data-dp="${S.dfocus}"]`);S.dfocus=null;if(el)el.focus()}
   if(S.res&&typeof rfit==='function')rfit();
+  if(typeof rhistSave==='function')rhistSave();
+  if(typeof jlRunHooks==='function')jlRunHooks();
   const hh=S.res?'#res='+S.res:'';if(location.hash!==hh&&(hh||location.hash.startsWith('#res=')))try{history.replaceState(null,'',hh||location.pathname+location.search)}catch(e){}
 }
 let QM=false;const QB=document.getElementById('qbox'),QI=document.getElementById('q'),QP=document.getElementById('qpark');
@@ -1452,7 +1486,7 @@ document.addEventListener('click',e=>{
   else if(d.alltypes){S.type=null;if(single)S.pane='list'}
   else if(d.add){S.adding=!S.adding}
   else if(d.addcancel){S.adding=false}
-  else if(d.res){S.res=d.res;S.doc=null;S.docEdit=null;S.rsel=S.redit=S.rpend=null;S.rdel=null;S.show.detail=true;S.pane='detail'}
+  else if(d.res){S.res=d.res;S.rcmp=null;S.doc=null;S.docEdit=null;S.rsel=S.redit=S.rpend=null;S.rdel=null;S.show.detail=true;S.pane='detail'}
   else if(d.sel){S.sel=d.sel;S.res=null;S.doc=null;S.docEdit=null;S.edit=null;S.fedit=null;S.show.detail=true;S.pane='detail'}
   else if(d.doc){S.res=null;if(S.docEdit!==d.doc)S.docEdit=null;S.docDelConf=null;S.doc=d.doc;S.hit=d.hit!==undefined?+d.hit:null;S.show.detail=true;S.pane='detail'}
   else if(d.back){S.doc=null;S.docEdit=null;S.docDelConf=null}
@@ -1577,7 +1611,8 @@ const RWT='简历条目';
 /* 专注 is automatic at half width (the sheet would be unreadable beside the timeline) until the user toggles it */
 /* #res=<id> opens that resume (deep link / reload keeps it open) */
 function rhashOpen(){const m=location.hash.match(/^#res=([A-Za-z0-9_-]{1,64})$/);if(m&&RESUMES.some(r=>r.id===m[1])){S.res=m[1];S.doc=null;S.show.detail=true;S.pane='detail'}}
-function rIsFocus(){return !!(S.res&&S.mode!=='single'&&(S.rfocusPref!=null?S.rfocusPref:S.mode==='mid'))}
+function rcmpOther(){const o=S.rcmp&&S.rcmp!==S.res?RESUMES.find(x=>x.id===S.rcmp):null;return o||null}
+function rIsFocus(){return !!(S.res&&S.mode!=='single'&&(rcmpOther()||(S.rfocusPref!=null?S.rfocusPref:S.mode==='mid')))}
 const RSEC={'实习':'实习经历','项目':'项目经历','志愿者':'志愿经历','获奖':'荣誉奖项','技能':'技能与语言'};
 const R_LINE=17.5,R_AVAIL=1123-78;
 const RIC={spark:'<svg class="ic" width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 1.5 9.4 6.6 14.5 8 9.4 9.4 8 14.5 6.6 9.4 1.5 8 6.6 6.6z"/></svg>',
@@ -1607,7 +1642,17 @@ function rget(key){const r=rcur(),[si,ii]=key.split(':').map(Number),s=r&&r.sect
 const RH={past:[],future:[]};
 const rsnapAll=()=>JSON.stringify({r:RESUMES,w:CARDS.map(c=>[c.id,c.writings])});
 function rcommit(before){RH.past.push(before||rsnapAll());if(RH.past.length>60)RH.past.shift();RH.future=[]}
-function rhistClear(){RH.past=[];RH.future=[]}
+function rhistClear(){RH.past=[];RH.future=[];try{sessionStorage.removeItem(RH_KEY)}catch(e){}}
+const RH_KEY='jingliku.undo.v1';
+const rfp=()=>{   // fingerprint of the content only: ignores timestamps and list order, which change on save / reload
+  const strip=o=>JSON.stringify(o,(k,v)=>k==='updated'||k==='created'||k==='schema'?undefined:v);
+  const str=JSON.stringify([RESUMES.map(strip).sort(),CARDS.map(c=>c.id+'\u0001'+JSON.stringify(c.writings)).sort()]);
+  let h=5381;for(let i=0;i<str.length;i++)h=((h<<5)+h+str.charCodeAt(i))|0;return (h>>>0).toString(36)+':'+str.length};
+/* keep undo across a reload of this tab; dropped if the files changed in between (e.g. the AI edited them) */
+function rhistSave(){if(!RH.past.length&&!RH.future.length)return;let n=20;const fp=rfp();
+  while(n>0){try{sessionStorage.setItem(RH_KEY,JSON.stringify({past:RH.past.slice(-n),future:RH.future.slice(-n),fp}));return}catch(e){n=Math.floor(n/2)}}}
+function rhistLoad(){try{const o=JSON.parse(sessionStorage.getItem(RH_KEY)||'null');if(!o)return;
+  if(o.fp===rfp()){RH.past=o.past||[];RH.future=o.future||[]}else sessionStorage.removeItem(RH_KEY)}catch(e){}}
 function rrestore(str){const o=JSON.parse(str),m=new Map(o.w);RESUMES.splice(0,RESUMES.length,...o.r);CARDS.forEach(c=>{if(m.has(c.id))c.writings=m.get(c.id)});
   S.rsel=S.redit=S.rpend=null;if(S.res&&!RESUMES.some(r=>r.id===S.res))S.res=null;rpopClose();render()}
 function rundoAll(){if(!RH.past.length){toast('没有可以撤销的改动');return}RH.future.push(rsnapAll());rrestore(RH.past.pop());toast('已撤销')}
@@ -1652,14 +1697,19 @@ function resumeView(back){
       <button class="btn rv-zoom" id="rv-zoom" data-ra="zoom" title="在「适应宽度」和「100%」之间切换">100%</button>
       ${S.mode==='single'?'':`<button class="btn" data-ra="focus" aria-pressed="${rIsFocus()?'true':'false'}" title="${rIsFocus()?'退出专注：显示时间线和左栏':'专注：收起时间线和左栏，让纸更大'}">${rIsFocus()?RIC.shrink:RIC.expand}<span class="bt">${rIsFocus()?'退出专注':'专注'}</span></button>`}
       <span class="rv-hist"><button class="more" data-ra="undo" title="撤销（⌘Z）" aria-label="撤销" ${RH.past.length?'':'disabled'}>↶</button><button class="more" data-ra="redo" title="重做（⇧⌘Z）" aria-label="重做" ${RH.future.length?'':'disabled'}>↷</button></span>
+      <button class="more" data-tour="menu" title="帮助：这一页怎么用" aria-label="帮助">?</button>
       <button class="more" data-ra="rmenu" aria-label="简历操作：复制、删除" title="复制、删除">⋯</button>
     </div>${jd}
     ${fz?`<div class="rv-frozen">${RIC.lock}<span>${esc(r.sent||'')} 投给 <b>${esc(r.target||'对方')}</b> 的版本，内容已冻结；之后卡片怎么改都不影响它。</span><button class="btn" data-ra="dup">复制为新草稿</button></div>`:''}
-    <div class="rv-canvas" id="rv-canvas"><div class="rv-box" id="rv-box"><div class="rp ${fz?'':'rp-edit'}" id="rp">${rpage(r)}</div><div class="rv-break fit" id="rv-break"><span>第 1 页到此为止</span></div></div></div>
+    <div class="rv-canvas" id="rv-canvas">${(()=>{const o=rcmpOther();
+      const left=`<div class="rv-box" id="rv-box"><div class="rp ${fz?'':'rp-edit'}" id="rp">${rpage(r,{other:o})}</div><div class="rv-break fit" id="rv-break"><span>第 1 页到此为止</span></div></div>`;
+      if(!o)return left;
+      return `<div class="rv-cmphead"><span>对照：<b>${esc(r.title||'未命名简历')}</b> ↔ <b>${esc(o.title||'未命名简历')}</b>${o.lang?' · '+esc(o.lang):''}${o.status==='已投递'?' · 已投递':''}</span><span class="lg"><i></i>只在一边出现</span><span class="lg">鼠标移到一条上，另一边对应的那条会一起亮</span><span class="grow"></span><button class="btn" data-ra="cmpswap" title="打开右边这份来编辑">编辑右边这份</button><button class="btn" data-ra="cmpoff">退出对照</button></div>
+        <div class="rv-pair"><div class="rv-side"><span class="cap">${esc(r.lang||'')} · 可编辑</span>${left}</div><div class="rv-side"><span class="cap">${esc(o.lang||'')} · 只读</span><div class="rv-box" id="rv-box2"><div class="rp" id="rp2">${rpage(o,{ro:true,other:r})}</div></div></div></div>`})()}</div>
   </div>`;
 }
-function rpage(r){
-  const p=VAULT_CFG.profile||{},fz=rfrozen(r),h=r.header||{};
+function rpage(r,opt){opt=opt||{};
+  const p=VAULT_CFG.profile||{},fz=rfrozen(r)||!!opt.ro,h=r.header||{};
   const contact=[p.location,p.phone&&'电话：'+p.phone,p.email&&'邮箱：'+p.email,...(p.links||[])].filter(Boolean).map(esc).join('<i class="rp-sep">|</i>');
   const hl='headline' in h?h.headline:(p.headline||'');
   const hlHtml=fz?(hl?`<div class="rp-hl">${esc(hl)}</div>`:''):`<div class="rp-hl ${hl?'':'ph'}" contenteditable="plaintext-only" spellcheck="false" data-rce="headline">${esc(hl||'添加求职意向（可选）')}</div>`;
@@ -1671,7 +1721,7 @@ function rpage(r){
   let total=0;
   r.sections.forEach((s,si)=>{
     const empty=s.from!=='education'&&!s.items.length;
-    const stool=fz?'':`<span class="rp-stool"><button data-ra="secmv" data-s="${si}" data-d="-1" title="上移">↑</button><button data-ra="secmv" data-s="${si}" data-d="1" title="下移">↓</button>${empty?`<button data-ra="secdel" data-s="${si}">删除这一节</button>`:''}</span>`;
+    const stool=fz?'':`<span class="rp-stool"><span class="rp-sgrip" draggable="true" data-s="${si}" title="拖动调整这一节的位置">⋮⋮</span><button data-ra="secmv" data-s="${si}" data-d="-1" title="上移">↑</button><button data-ra="secmv" data-s="${si}" data-d="1" title="下移">↓</button>${empty?`<button data-ra="secdel" data-s="${si}">删除这一节</button>`:''}</span>`;
     out+=`<div class="rp-sec" data-s="${si}"><h3><span class="st" ${fz?'':`contenteditable="plaintext-only" spellcheck="false" data-rce="sec" data-s="${si}" title="点击改分节名"`}>${esc(s.title)}</span>${stool}</h3><div class="rp-items">`;
     if(s.from==='education'){
       out+=(p.education||[]).map(e=>`<div class="rp-it edu"><div class="rp-ih"><b>${esc([e.school,[e.major,e.degree].filter(Boolean).join(' ')].filter(Boolean).join(' - '))}</b><span>${esc(e.time||'')}</span></div>${(e.details||[]).map(d=>{const m=rlead(d);return `<p class="rp-ln">${m?`<b>${esc(m[0])}</b>${esc(m[1])}`:esc(d)}</p>`}).join('')}</div>`).join('')
@@ -1684,14 +1734,15 @@ function rpage(r){
         const head=c&&!skill?`<div class="rp-ih"><b>${esc([c.org||c.title,c.role].filter(Boolean).join(' - '))}</b><span>${esc(c.time||'')}</span></div>`:'';
         const vlabel=gone?'卡片已删除':vmiss?'原版本不在了':vs.length?esc(it.version||vs[0].name):'卡片原文';
         const tools=fz?'':`<div class="rp-tools"><span class="rp-grip" title="拖动排序">⋮⋮</span><button class="rp-ver" data-ra="ver" data-k="${key}" title="换版本">${vlabel} ▾</button>${gone?'':`<button data-ra="edit" data-k="${key}" title="双击正文也可以改">改</button>`}<button data-ra="remove" data-k="${key}" title="从这份简历移除（卡片不受影响）" aria-label="移除">✕</button></div>`;
-        const ed=S.redit===key;
-        out+=`<div class="rp-it${S.rsel===key?' sel':''}${S.rflash===key?' flash':''}${gone||vmiss?' warn':''}" data-k="${key}"${fz||ed?'':' draggable="true"'}>${tools}${head}<div class="rp-body"${ed?' contenteditable="plaintext-only" spellcheck="false"':''}>${ed?esc(ritemText(r,it)):rbody(ritemText(r,it))}</div>${S.rpend===key?rsavebar(r,it):''}</div>`;
+        const ed=S.redit===key&&!opt.ro;
+        const solo=opt.other&&!rin(it.card,opt.other)?' solo':'';
+        out+=`<div class="rp-it${S.rsel===key&&!opt.ro?' sel':''}${S.rflash===key&&!opt.ro?' flash':''}${gone||vmiss?' warn':''}${solo}" ${opt.ro?'data-k2':'data-k'}="${key}" data-card="${esc(it.card)}"${fz||ed?'':' draggable="true"'}>${tools}${head}<div class="rp-body"${ed?' contenteditable="plaintext-only" spellcheck="false"':''}>${ed?esc(ritemText(r,it)):rbody(ritemText(r,it))}</div>${S.rpend===key?rsavebar(r,it):''}</div>`;
       });
     }
     out+='</div></div>';
   });
   if(!total&&!fz)out+=`<div class="rp-guide"><b>这份简历还没有经历</b>把中间栏的卡片拖到纸上，或者让左边的 AI 按岗位要求先排一版<div style="margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button class="btn pri" data-ra="newai">${RIC.spark}复制给 AI 的指令</button><button class="btn" data-ra="addmenu">${ICON.plus}从经历里挑</button></div></div>`;
-  S.rflash=null;
+  if(!opt.ro)S.rflash=null;
   return out+'<div class="rp-end"></div>';
 }
 function rsavebar(r,it){
@@ -1703,9 +1754,10 @@ function rsavebar(r,it){
 /* ---------- page fill: scale the sheet to the column, count the lines left on page 1 ---------- */
 function rfit(){
   const cv=$('rv-canvas'),rp=$('rp'),box=$('rv-box');if(!cv||!rp||!box)return;
-  const fitS=Math.min(1,(cv.clientWidth-32)/794),s=S.rzoom==='100'?1:fitS,h=Math.max(1123,rp.scrollHeight);
+  const two=!!$('rv-box2'),fitS=Math.min(1,(two?(cv.clientWidth-48)/2:cv.clientWidth-32)/794),s=S.rzoom==='100'?1:fitS,h=Math.max(1123,rp.scrollHeight);
   const zb=$('rv-zoom');if(zb){zb.textContent=S.rzoom==='100'?'100%':Math.round(fitS*100)+'%';zb.title=S.rzoom==='100'?'现在是 100%（实际大小）；点一下改回适应宽度':'现在按宽度缩放到 '+Math.round(fitS*100)+'%；点一下看实际大小（100%）';zb.disabled=fitS>=1&&S.rzoom!=='100'}
   box.style.setProperty('--s',s.toFixed(4));box.style.setProperty('--h',h+'px');
+  const b2=$('rv-box2'),rp2=$('rp2');if(b2&&rp2){b2.style.setProperty('--s',s.toFixed(4));b2.style.setProperty('--h',Math.max(1123,rp2.scrollHeight)+'px')}
   const br=$('rv-break');br.style.top=(1123*s)+'px';
   const end=rp.querySelector('.rp-end'),used=end?end.offsetTop-38:0,left=Math.floor((R_AVAIL-used)/R_LINE);
   const m=$('rv-meter'),f=$('rv-mfill'),t=$('rv-mtxt');if(!m)return;
@@ -1715,6 +1767,10 @@ function rfit(){
   br.classList.toggle('fit',left>=0);
 }
 addEventListener('resize',()=>{if(S.res)rfit()});
+document.addEventListener('mouseover',e=>{const it=e.target.closest&&e.target.closest('.rp-it[data-card]');if(!it||!document.getElementById('rp2'))return;
+  const c=it.dataset.card;document.querySelectorAll('.rp-it.pair').forEach(x=>{if(x.dataset.card!==c)x.classList.remove('pair')});
+  document.querySelectorAll(`.rp-it[data-card="${CSS.escape(c)}"]`).forEach(x=>x.classList.add('pair'))});
+document.addEventListener('mouseout',e=>{const it=e.target.closest&&e.target.closest('.rp-it[data-card]');if(!it||(e.relatedTarget&&it.contains(e.relatedTarget)))return;document.querySelectorAll('.rp-it.pair').forEach(x=>x.classList.remove('pair'))});
 addEventListener('hashchange',()=>{const m=location.hash.match(/^#res=([A-Za-z0-9_-]{1,64})$/);if(m&&m[1]!==S.res&&RESUMES.some(r=>r.id===m[1])){rhashOpen();S.rsel=S.redit=S.rpend=null;render()}});
 
 /* ---------- popover ---------- */
@@ -1745,7 +1801,11 @@ function rpopFit(a){const r=rcur();if(!r)return;const fz=rfrozen(r),swaps=[],rel
      +(rel[0]?`<div class="sep"></div><button class="o" data-ra="remove" data-k="${rel[0].key}"><span>移除「${esc(rel[0].c.org||rel[0].c.title)}」<small>和岗位要求最不相关（命中 ${rel[0].n} 个关键词）</small></span><em>可撤销</em></button>`:'')
      +`<div class="sep"></div><button class="o ai" data-ra="aifit"><span>${RIC.spark} 让 AI 帮我改到正好一页<small>复制一句指令，粘贴到左边对话</small></span></button>`),a)}
 function rpopExport(a){rpop(`<button class="o" data-ra="print"><span><b>打印版（马上就能存 PDF）</b><small>新标签页打开 A4 页面，点「打印 / 存为 PDF」；版式和这张纸一样</small></span></button><div class="sep"></div><button class="o ai" data-ra="ailatex"><span>${RIC.spark} 精排 PDF（LaTeX）<small>复制一句指令，让左边的 AI 用 LaTeX 模板导出并检查是否一页</small></span></button>`,a)}
-function rpopMenu(a){const r=rcur();if(!r)return;rpop(`<button class="o" data-ra="dup"><span>复制为新草稿<small>改投相似岗位时最快</small></span></button><div class="sep"></div><button class="o danger" data-ra="del"><span>${S.rdel===r.id?'再点一次确认删除':'删除这份简历'}<small>移到数据目录的 .trash，卡片不受影响</small></span></button>`,a)}
+function rpopMenu(a){const r=rcur();if(!r)return;rpop(`<button class="o" data-ra="cmpmenu"><span>对照另一份<small>比如中文版和英文版并排，按经历对齐</small></span></button><div class="sep"></div><button class="o" data-ra="dup"><span>复制为新草稿<small>改投相似岗位时最快</small></span></button><div class="sep"></div><button class="o danger" data-ra="del"><span>${S.rdel===r.id?'再点一次确认删除':'删除这份简历'}<small>移到数据目录的 .trash，卡片不受影响</small></span></button>`,a)}
+function rpopCmp(a){const r=rcur();if(!r)return;
+  const others=RESUMES.filter(x=>x.id!==r.id).map(x=>({x,score:(x.lang&&x.lang!==r.lang?4:0)+(x.target&&x.target===r.target?2:0)+(x.position&&x.position===r.position?1:0)})).sort((a,b)=>b.score-a.score);
+  rpop(`<h4>和哪一份对照？</h4>`+(others.map(({x})=>`<button class="o" data-ra="cmpon" data-id="${esc(x.id)}"><span><b>${esc(x.title||'未命名简历')}</b><small>${esc([x.lang,x.position,x.status==='已投递'?'已投递 '+(x.sent||''):'草稿'].filter(Boolean).join(' · '))}</small></span></button>`).join('')||'<div class="none">还没有别的简历可以对照。</div>')
+    +`<div class="sep"></div><button class="o ai" data-ra="aien"><span>${RIC.spark} 让 AI 做一份英文版<small>复制一句指令：引用每张卡片的英文版本，没有就写一个新的</small></span></button>`,a)}
 function rpopNew(a){rpop(`<button class="o ai" data-ra="newai"><span>${RIC.spark} 让 AI 按岗位要求生成<small>推荐：复制指令，在左边贴上 JD，AI 挑经历、选版本、排到一页</small></span></button><div class="sep"></div>${rcur()?'<button class="o" data-ra="dup"><span>复制当前这份<small>改投相似岗位时最快</small></span></button>':''}<button class="o" data-ra="newblank"><span>空白简历<small>自己把经历拖进来</small></span></button>`,a)}
 
 /* ---------- actions ---------- */
@@ -1805,6 +1865,11 @@ document.addEventListener('click',e=>{
   if(act==='aikw'){rcopyAI(`请从这段岗位要求里提炼 5–8 个关键词，写进经历库简历「${r.title}」（resumes/${r.id}.json）的 keywords（原文存进 jd）：<在这里粘贴 JD>`,'提取关键词');return}
   if(act==='airewrite'){const{it}=rget(d.k);rpopClose();if(!it)return;const c=card(it.card)||{};
     rcopyAI(`请以经历库「${c.title||it.card}」卡片的「${it.writing||RWT} · ${it.version||'卡片原文'}」为底，针对简历「${r.title}」的岗位要求（${(r.keywords||[]).join('、')||'见 resumes/'+r.id+'.json 的 jd'}）改写一个新版本：只用卡片里的事实和数字，存成卡片的新版本，并让这份简历改用它。`,'改写这一条');return}
+  if(act==='cmpmenu'){rpopCmp(document.querySelector('[data-ra="rmenu"]')||a);return}
+  if(act==='cmpon'){S.rcmp=d.id;rpopClose();render();return}
+  if(act==='cmpoff'){S.rcmp=null;render();return}
+  if(act==='cmpswap'){const o=S.rcmp;S.rcmp=S.res;S.res=o;S.rsel=S.redit=S.rpend=null;render();return}
+  if(act==='aien'){rpopClose();rcopyAI(`请把经历库里的简历「${r.title}」（resumes/${r.id}.json）做一份英文版：复制成新的简历文件，lang 写「英文」，每一条改用卡片里的英文写法版本（名字里带「英文」的）；没有英文版本的，按原版本翻译成简历英文，存成卡片的新版本（如「v<N> 英文」）再引用。只用卡片里的事实。`,'做英文版');return}
   if(act==='zoom'){S.rzoom=S.rzoom==='100'?'fit':'100';rfit();return}
   if(act==='focus'){S.rfocusPref=!rIsFocus();rpopClose();render();return}
   if(act==='undo'){rundoAll();return}
@@ -1861,7 +1926,15 @@ document.addEventListener('keydown',e=>{
 });
 
 /* ---------- drag: timeline cards in, items reordered on the sheet ---------- */
-let rdrag=null;
+let rdrag=null,rsdrag=null;
+document.addEventListener('dragstart',e=>{const g=e.target.closest&&e.target.closest('.rp-sgrip');if(!g)return;e.stopPropagation();rsdrag={si:+g.dataset.s};const sec=g.closest('.rp-sec');if(sec)sec.classList.add('sdragging');try{e.dataTransfer.setData('text/plain','rps');e.dataTransfer.effectAllowed='move'}catch{}},true);
+function rsTarget(e){const secs=[...document.querySelectorAll('#rp .rp-sec')];let at=secs.length;for(let i=0;i<secs.length;i++){const b=secs[i].getBoundingClientRect();if(e.clientY<b.top+b.height/2){at=i;break}}return{at,secs}}
+function rsClear(){document.querySelectorAll('.rp-sec.sins,.rp-sec.sins-end,.rp-sec.sdragging').forEach(x=>x.classList.remove('sins','sins-end','sdragging'))}
+document.addEventListener('dragover',e=>{if(!rsdrag||!e.target.closest('#rp'))return;e.preventDefault();document.querySelectorAll('.rp-sec.sins,.rp-sec.sins-end').forEach(x=>x.classList.remove('sins','sins-end'));
+  const{at,secs}=rsTarget(e);if(at<secs.length)secs[at].classList.add('sins');else if(secs.length)secs[secs.length-1].classList.add('sins-end')});
+document.addEventListener('drop',e=>{if(!rsdrag||!e.target.closest('#rp'))return;e.preventDefault();const r=rcur(),{at}=rsTarget(e),from=rsdrag.si;rsdrag=null;rsClear();
+  if(!r||rfrozen(r))return;const to=at>from?at-1:at;if(to===from)return;rcommit();const[m]=r.sections.splice(from,1);r.sections.splice(to,0,m);S.rsel=null;render();toast('已把「'+(m.title||'这一节')+'」移到第 '+(to+1)+' 节')});
+document.addEventListener('dragend',()=>{if(rsdrag){rsdrag=null;rsClear()}});
 document.addEventListener('dragstart',e=>{const it=e.target.closest&&e.target.closest('.rp-it[draggable]');if(!it)return;rdrag={key:it.dataset.k};it.classList.add('dragging');try{e.dataTransfer.setData('text/plain','rp');e.dataTransfer.effectAllowed='move'}catch{}});
 function rclearMarks(){document.querySelectorAll('.rp-it.ins,.rp-sec.ins-end,.rp-sec.drop').forEach(x=>x.classList.remove('ins','ins-end','drop'))}
 function rtarget(e){const r=rcur();if(!r)return null;let s;
@@ -1875,8 +1948,117 @@ document.addEventListener('drop',e=>{if(!S.res||!e.target.closest('#rp'))return;
   if(dragCid)raddCard(dragCid,t&&t.s?{s:t.s,at:t.at}:null)});
 document.addEventListener('dragend',()=>{rdrag=null;rclearMarks();document.querySelectorAll('.rp-it.dragging').forEach(x=>x.classList.remove('dragging'))});
 
-if(LIVE){CARDS.length=0;DOCS.length=0;RESUMES.length=0;S.sel=null;S.loading=true}else rhashOpen();
+/* ===================== 引导 =====================
+   A read-only spotlight tour (same pattern as SqsAgent's GuidedTour): a modal <dialog> makes the page inert,
+   one box-shadow dims everything but the target, a card explains it. Steps whose target isn't on screen are skipped.
+   Runs once on first open (remembered in localStorage); the「?」buttons bring it back. ?notour skips the auto run. */
+const TOUR_KEY='jingliku.tour.v1';
+const GS=(target,title,text,pre)=>({target,title,text,pre});
+const TOUR_MAIN=[
+  GS('[data-guide="types"]','按类型看经历','左栏按实习、项目、志愿者……分好了类。点类型只看这一类，点前面的小三角展开每一段。'),
+  GS('.hexp[data-toggle="filter"]','左栏收起来了','点这里展开左栏：里面有经历类型、简历和申请信。'),
+  GS('[data-guide="resumes"]','简历','每投一个岗位做一份。简历只记「用哪张卡片的哪个版本」，文字始终存在卡片里；投出去后标记「已投递」，内容就冻结了。'),
+  GS('[data-guide="letters"]','申请信','自荐信、动机信、个人陈述整篇存在这里，每一段都连着它用到的经历。'),
+  GS('.col.list .stats','一眼看库存','一共几段经历、几种写法、几份简历；下面的色条是各类经历的占比。'),
+  GS('.col.list .tl .card[data-ck]','一段经历一张卡片','时间线按年份排好。点开看详情；按住拖到右边的简历或申请信里，就把这段经历加进去了。'),
+  GS('.col.list [data-sel="__profile__"]','个人概况','姓名、联系方式、教育背景和证件照填在这里，导出简历时自动带上。'),
+  GS('[data-guide="bento"]','事实 · 结果 · 思考 · 作品','一段经历拆成这四块。双击任意一块就能直接改，改完自动保存。'),
+  GS('[data-guide="writings"]','同一段经历的多种写法','简历条目、网申短描述、英文版……每种写法可以有多个版本，能展开对比、复制、另存新版本。'),
+  GS('.vsync,.vdot','同步状态','绿色表示已经和电脑里的文件同步。左边的 AI 改了文件，这里两秒内自动刷新。'),
+  GS(null,'重活交给左边的 AI','把素材、旧简历、岗位要求发给左边的 AI：它负责拆卡片、追问细节、改写、做简历。右半屏负责看、挑、微调。想再看一遍，点「?」。'),
+];
+const TOUR_RES=[
+  GS('.rv-ttl','这是一份简历','点标题就能改名；下面一行是投递对象和岗位。'),
+  GS('.rv-bar .seg','草稿 / 已投递','草稿跟着卡片里的最新版本走；投出去后点「已投递」，内容冻结，卡片再怎么改都不影响它。'),
+  GS('#rv-meter','一页纸','实时显示还剩几行、超出几行。超了就点它，会建议换成更短的版本，或移除最不相关的一段。'),
+  GS('.rp-edit .rp-it:not(.edu)','纸上的一条','每一条来自一张卡片的某个版本。鼠标移上去可以换版本、改字、移除；双击直接改，改动存回卡片；按住拖动调整顺序。'),
+  GS('[data-ra="addmenu"]','添加经历','从经历里挑一段加进来，已经按和岗位的相关程度排好。也可以把时间线里的卡片直接拖到纸上。'),
+  GS('.rv-jd','岗位关键词','打勾的是简历里已经覆盖的词。点一个词，能在纸上标出它，或在时间线里找相关经历。'),
+  GS('[data-ra="askai"]','需要改写时问 AI','按岗位改写、压到一页、从零生成，这些交给左边的 AI：点这里会复制一句写好的指令。'),
+  GS('[data-ra="export"]','导出 PDF','打印版马上就能存成 PDF；精排版让 AI 用 LaTeX 导出，版式和这张纸一样。'),
+  GS('[data-ra="focus"]','专注','收起时间线和左栏，让纸更大。半屏时会自动打开。'),
+];
+const openFirstResume=()=>{if(!S.res&&RESUMES.length){S.res=RESUMES[0].id;S.doc=null;S.show.detail=true;S.pane='detail';render()}};
+const TOUR_FLOW=[...TOUR_MAIN.slice(0,-1),
+  GS('.rv-ttl','做一份简历','打开一份简历：它是一张可以直接改的 A4 纸。',openFirstResume),
+  TOUR_RES[3],TOUR_RES[2],TOUR_RES[1],TOUR_RES[7],TOUR_MAIN[TOUR_MAIN.length-1]];
+function gtVisible(sel){if(!sel)return null;return [...document.querySelectorAll(sel)].find(el=>!el.closest('[hidden],[aria-hidden="true"]')&&el.getClientRects().length>0&&getComputedStyle(el).visibility!=='hidden')||null}
+const GT={dlg:null,steps:[],i:0,ret:null};
+function tourStart(steps){
+  if(typeof rpopClose==='function')rpopClose();
+  GT.steps=steps;GT.i=-1;GT.ret=document.activeElement;
+  if(!GT.dlg){
+    const d=GT.dlg=document.createElement('dialog');d.className='gt';d.setAttribute('aria-label','操作引导');
+    d.innerHTML='<div class="gt-spot" aria-hidden="true"></div><div class="gt-card"></div>';document.body.append(d);
+    d.addEventListener('cancel',e=>{e.preventDefault();tourEnd()});
+    d.addEventListener('keydown',e=>{
+      if(e.key==='Escape'){e.preventDefault();tourEnd()}
+      else if(e.key==='ArrowRight'){e.preventDefault();tourGo(1)}
+      else if(e.key==='ArrowLeft'){e.preventDefault();tourGo(-1)}
+      else if(e.key==='Tab'){const bs=[...d.querySelectorAll('.gt-card button:not(:disabled)')],f=bs[0],l=bs[bs.length-1];
+        if(e.shiftKey&&document.activeElement===f){e.preventDefault();l.focus()}else if(!e.shiftKey&&document.activeElement===l){e.preventDefault();f.focus()}}});
+    d.addEventListener('click',e=>{const b=e.target.closest('[data-gt]');if(!b)return;const a=b.dataset.gt;
+      if(a==='end')tourEnd();else if(a==='next'){if(!tourGo(1))tourEnd()}else if(a==='prev')tourGo(-1)});
+    addEventListener('resize',()=>{if(d.open)tourPlace()});
+  }
+  try{GT.dlg.showModal()}catch(e){GT.dlg.setAttribute('open','')}
+  if(!tourGo(1))tourEnd();
+}
+/* move to the next step in direction d that has something to show (running its pre() first) */
+function tourGo(d){for(let j=GT.i+d;j>=0&&j<GT.steps.length;j+=d){const s=GT.steps[j];if(s.pre)s.pre();if(!s.target||gtVisible(s.target)){GT.i=j;tourShow();return true}}return false}
+function tourHasMore(d){for(let j=GT.i+d;j>=0&&j<GT.steps.length;j+=d){const s=GT.steps[j];if(s.pre||!s.target||gtVisible(s.target))return true}return false}
+function tourShow(){
+  const s=GT.steps[GT.i],card=GT.dlg.querySelector('.gt-card'),total=GT.steps.filter(x=>x.pre||!x.target||gtVisible(x.target)).length,pos=GT.steps.slice(0,GT.i+1).filter(x=>x.pre||!x.target||gtVisible(x.target)).length;
+  const last=!tourHasMore(1);
+  card.innerHTML=`<div class="gt-top"><span>${pos} / ${Math.max(total,pos)}</span><button type="button" data-gt="end">结束引导</button></div>
+    <div aria-live="polite" aria-atomic="true"><h2>${esc(s.title)}</h2><p>${esc(s.text)}</p></div>
+    <div class="gt-act"><button type="button" class="btn" data-gt="prev" ${tourHasMore(-1)?'':'disabled'}>上一步</button><span class="gt-keys">← → 翻页 · Esc 结束</span><button type="button" class="btn pri" data-gt="next">${last?'完成':'下一步'}</button></div>`;
+  const el=gtVisible(s.target);if(el)el.scrollIntoView({block:'nearest',inline:'nearest'});
+  tourPlace();const nb=card.querySelector('[data-gt="next"]');if(nb)nb.focus({preventScroll:true});
+}
+function tourPlace(){
+  const s=GT.steps[GT.i];if(!s)return;const el=gtVisible(s.target),spot=GT.dlg.querySelector('.gt-spot'),card=GT.dlg.querySelector('.gt-card');
+  const W=innerWidth,H=innerHeight,cw=card.offsetWidth||Math.min(340,W-24),ch=card.offsetHeight||200;
+  if(!el){spot.classList.add('none');Object.assign(spot.style,{left:W/2+'px',top:H/2+'px',width:'1px',height:'1px'});/* 1px, not 0: some engines skip the shadow of an empty box */card.style.left=Math.max(12,(W-cw)/2)+'px';card.style.top=Math.max(12,(H-ch)/2)+'px';return}
+  spot.classList.remove('none');
+  const r=el.getBoundingClientRect(),x=Math.max(6,r.left-5),y=Math.max(6,r.top-5),R=Math.min(W-6,r.right+5),B=Math.min(H-6,r.bottom+5);
+  Object.assign(spot.style,{left:x+'px',top:y+'px',width:Math.max(0,R-x)+'px',height:Math.max(0,B-y)+'px'});
+  const side=W>760&&R+cw+24<W;   // room on the right: sit beside the target, else below / above it
+  const left=side?R+12:Math.max(12,Math.min(W-cw-12,x));
+  const top=side?Math.max(12,Math.min(H-ch-12,y)):B+ch+24<H?B+12:y-ch-12>12?y-ch-12:Math.max(12,H-ch-12);
+  card.style.left=left+'px';card.style.top=top+'px';
+}
+function tourEnd(){if(GT.dlg){try{GT.dlg.close()}catch(e){GT.dlg.removeAttribute('open')}}try{localStorage.setItem(TOUR_KEY,'1')}catch(e){}
+  if(GT.ret&&GT.ret.isConnected&&GT.ret.focus)GT.ret.focus({preventScroll:true})}
+function tourAuto(){if(/[?&]notour\b/.test(location.search)||S.loading||(GT.dlg&&GT.dlg.open))return;let seen=null;try{seen=localStorage.getItem(TOUR_KEY)}catch(e){}if(!seen)tourStart(S.res?TOUR_RES:TOUR_MAIN)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-tour]');if(!b)return;const t=b.dataset.tour;
+  if(t==='menu'){rpop(`<h4>帮助</h4><button class="o" data-tour="page"><span><b>这一页怎么用</b><small>${S.res?'简历编辑器的各个区域':'左栏、时间线、详情区各是做什么的'}</small></span></button><button class="o" data-tour="flow"><span><b>完整流程</b><small>从看经历到做一份简历</small></span></button>`,b);return}
+  if(typeof rpopClose==='function')rpopClose();
+  if(t==='page')tourStart(S.res?TOUR_RES:TOUR_MAIN);else if(t==='flow')tourStart(TOUR_FLOW)});
+
+/* ===================== 用户自定义（C4，轻量） =====================
+   The user's own tweaks live in the vault, not in this file, so skill updates never overwrite them:
+     <VAULT>/custom.css  — loaded after the built-in styles (override CSS variables, sizes, colours)
+     <VAULT>/custom.js   — small additions, through window.JL (see recipes/12-改造前端.md)
+   Delete or rename a file to undo it. A failing custom.js shows one toast; the page keeps working. */
+const JL_HOOKS=[];let jlWarned=false;
+function jlErr(e){console.error('custom.js',e);if(!jlWarned){jlWarned=true;toast('custom.js 出错了：'+(e&&e.message||e)+'（右半屏其他功能不受影响）')}}
+window.JL={
+  get state(){return S},get cards(){return CARDS},get docs(){return DOCS},get resumes(){return RESUMES},get profile(){return VAULT_CFG.profile||{}},
+  render(){render()},toast(m){toast(String(m))},
+  afterRender(fn){if(typeof fn!=='function')return;JL_HOOKS.push(fn);try{fn()}catch(e){jlErr(e)}}
+};
+function jlRunHooks(){for(const fn of JL_HOOKS){try{fn()}catch(e){jlErr(e)}}}
+addEventListener('error',e=>{if(e.filename&&/\/vault\/custom\.js/.test(e.filename))jlErr(e.message)});
+async function loadCustom(){if(!LIVE)return;try{
+  const r=await fetch('/vault/',{cache:'no-store'});if(!r.ok)return;const names=new Set((await r.json()).map(f=>f.name));
+  if(names.has('custom.css')){const l=document.createElement('link');l.rel='stylesheet';l.href='/vault/custom.css';document.head.append(l)}
+  if(names.has('custom.js')){const sc=document.createElement('script');sc.src='/vault/custom.js';sc.onerror=()=>jlErr('文件没能加载');document.body.append(sc)}
+}catch(e){}}
+
+if(LIVE){CARDS.length=0;DOCS.length=0;RESUMES.length=0;S.sel=null;S.loading=true}else{rhashOpen();rhistLoad()}
 render();
+if(!LIVE)setTimeout(tourAuto,900);
 </script>
 <script>
 /* ===== Motion engine — presentation only. It wraps render / toast / showMenu and listens with event delegation;
@@ -2200,10 +2382,13 @@ async function boot(){
     CARDS.forEach(c=>{if(c.type&&!TYPES.includes(c.type))TYPES.push(c.type)});
     const first=[...CARDS].sort((a,b)=>String(b.time).localeCompare(String(a.time)))[0];
     S.sel=first?first.id:null;S.open={};if(first)S.open[first.type]=true;
+    if(typeof rhistLoad==='function')rhistLoad();
     if(typeof rhashOpen==='function')rhashOpen();
     status('ok','已同步');
   }catch(e){status('err','读取失败');toast('读取经历库失败：'+e.message)}
   S.loading=false;render();
+  if(typeof loadCustom==='function')loadCustom();
+  setTimeout(()=>{if(typeof tourAuto==='function')tourAuto()},900);
   setInterval(()=>{if(!document.hidden)poll()},2000);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)poll()});
 }
