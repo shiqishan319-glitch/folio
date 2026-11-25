@@ -199,12 +199,9 @@ button.on{background:var(--accent-soft);color:var(--accent)}
 .card{display:block;width:100%;text-align:left;border:1px solid transparent;border-radius:11px;padding:10px 12px 11px;margin-bottom:4px;position:relative;transition:background-color .18s var(--ease),border-color .18s var(--ease),box-shadow .22s var(--ease),transform .18s var(--ease)}
 .card::before{content:"";position:absolute;left:-20px;top:18px;width:7px;height:7px;border-radius:50%;background:color-mix(in srgb,var(--line-2) 55%,var(--faint));box-shadow:0 0 0 3px var(--panel);transition:background-color .18s var(--ease),box-shadow .2s var(--ease)}
 .card:hover{background:var(--hover)}
-.card:hover::before{background:var(--faint)}
 .card:active{transform:scale(.995)}
 .card.on{background:var(--raised);border-color:var(--line);box-shadow:var(--shadow);color:inherit}
-.card.on::before{background:var(--accent);box-shadow:0 0 0 3px var(--panel),0 0 0 6px var(--accent-soft)}
 .card.on.fx{animation:lift .32s var(--ease) both}
-.card.on.fx::before{animation:ping .5s var(--ease) both}
 .card .t{font-weight:600;overflow-wrap:anywhere;font-size:14px;letter-spacing:-.003em;line-height:1.5}
 .card .m{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:1px}
 .card .ps{margin-top:8px;display:flex;flex-wrap:wrap;gap:4px}
@@ -298,7 +295,7 @@ button.on{background:var(--accent-soft);color:var(--accent)}
 .toast.show{opacity:1;transform:translate(-50%,0) scale(1)}
 
 /* ---------- Bento layer: floating tiles on a tinted canvas (v1 craft, v8 composition) ---------- */
-.tc0{--tc:var(--t1)}.tc1{--tc:var(--t2)}.tc2{--tc:var(--t3)}.tc3{--tc:var(--t4)}.tc4{--tc:var(--t5)}
+.tc0{--tc:var(--t1)}.tc1{--tc:var(--t2)}.tc2{--tc:var(--t3)}.tc3{--tc:var(--t4)}.tc4{--tc:var(--t5)}.tc5{--tc:#0891b2}
 body{background:
   radial-gradient(900px 560px at 6% -12%,var(--glow),transparent 62%),
   radial-gradient(760px 560px at 104% 6%,var(--glow-b),transparent 62%),
@@ -378,12 +375,13 @@ body{background:
 @container (max-width:380px){
   .stats{padding:8px 10px 9px;gap:7px 0;border-radius:16px;margin-bottom:14px}
   .sts{flex:1 1 100%;justify-content:space-between}
-  .st{padding:0 6px;gap:3px}
+  /* sized so three two-digit counts still leave room for the full labels (「简历」, not 「简」) */
+  .st{padding:0 5px;gap:2px}
   .st:last-child{padding-right:0}
-  .st .sn{font-size:19px;line-height:22px}
+  .st .sn{font-size:17px;line-height:22px;letter-spacing:-.05em}
   .st .sk{font-size:11px}
-  .st .wo,.st .wo2,.lg{display:none}
-  .st-main .sn{min-width:24px;padding:0 5px;border-radius:7px}
+  .st .wo,.lg{display:none}
+  .st-main .sn{min-width:22px;padding:0 4px;border-radius:7px}
   .bar{flex:1 1 100%}
 }
 
@@ -397,10 +395,8 @@ body{background:
 .yr .yc{font-size:12px;font-weight:500;color:var(--muted);white-space:nowrap}
 .yr::after{content:"";flex:1;height:1px;align-self:center;background:linear-gradient(90deg,var(--line-2),transparent)}
 .card{display:flex;flex-direction:column;margin:0;border-radius:20px;padding:14px 16px 15px;overflow:hidden;color:inherit;transition:transform .3s var(--ease),box-shadow .3s var(--ease),border-color .2s var(--ease),background .2s var(--ease)}
-.card::after{content:"";position:absolute;right:-50px;top:-60px;width:160px;height:160px;border-radius:50%;background:radial-gradient(closest-side,color-mix(in srgb,var(--tc) 16%,transparent),transparent);opacity:0;transition:opacity .3s var(--ease);pointer-events:none}
 .card > *{position:relative}
 .card:hover{background:linear-gradient(180deg,var(--tile-top),var(--tile-bot));border-color:var(--tile-bd);transform:translateY(-3px) rotate(-.3deg);box-shadow:var(--sh-hi),var(--tile-hl)}
-.card:hover::after,.card.on::after{opacity:1}
 .card:active{transform:translateY(-1px) scale(.995)}
 .card.on{background:linear-gradient(180deg,color-mix(in srgb,var(--tc) 8%,var(--tile-top)),var(--tile-bot));border-color:color-mix(in srgb,var(--tc) 48%,transparent);box-shadow:0 0 0 3px color-mix(in srgb,var(--tc) 15%,transparent),var(--sh-hi),var(--tile-hl)}
 .card.on.fx{animation:lift .34s var(--ease) both}
@@ -545,6 +541,8 @@ body{background:
 .w .hd{padding:11px 14px 0 16px}
 .w .bd{padding:9px 16px}
 .w .acts{padding:0 16px 12px}
+.wcount{margin-left:auto;align-self:center;font-size:11.5px;color:var(--faint);font-variant-numeric:tabular-nums;white-space:nowrap}
+a.prof-btn{text-decoration:none;box-sizing:border-box}
 .cmp{padding:10px}
 .backrow{margin-bottom:10px}
 
@@ -590,16 +588,15 @@ body:has(> .amb){background:var(--bg)}
 /* cursor spotlight: border glow (::before ring) + soft fill (::after), positioned by --mx/--my */
 .card,.tile,.w,.hero{isolation:isolate}
 .w,.stats{position:relative}
-.card::before,.tile::before,.w::before,.hero::before,.stats::before{content:"";display:block;position:absolute;inset:0;border-radius:inherit;padding:1.2px;pointer-events:none;z-index:2;
+.card::before,.tile::before,.w::before,.hero::before,.stats::before{content:"";display:block;position:absolute;inset:0;box-shadow:none;border-radius:inherit;padding:1.2px;pointer-events:none;z-index:2;
   background:radial-gradient(200px circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,var(--tc,var(--accent)) 90%,transparent),transparent 72%);
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;
   opacity:0;transition:opacity .35s var(--ease)}
 .lit::before{opacity:1}
-.card::after{inset:0;width:auto;height:auto;border-radius:inherit;z-index:-1;background:radial-gradient(240px circle at var(--mx,88%) var(--my,0%),color-mix(in srgb,var(--tc) 15%,transparent),transparent 70%)}
 .tile:not(.th):not(.res)::after,.w::after{content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,var(--tc,var(--accent)) 10%,transparent),transparent 70%);opacity:0;transition:opacity .35s var(--ease)}
 .lit::after{opacity:1}
 /* selected card: rotating conic border */
-.card.on::before,.card.on.fx::before{opacity:1;padding:1.5px;background:conic-gradient(from var(--ang),var(--tc),color-mix(in srgb,var(--tc) 0%,transparent) 22%,var(--g2) 50%,color-mix(in srgb,var(--g2) 0%,transparent) 78%,var(--tc));animation:spin 4.5s linear infinite}
+.card.on::before,.card.on.fx::before{opacity:1;padding:1.5px;box-shadow:none;background:conic-gradient(from var(--ang),var(--tc),color-mix(in srgb,var(--tc) 0%,transparent) 22%,var(--g2) 50%,color-mix(in srgb,var(--g2) 0%,transparent) 78%,var(--tc));animation:spin 4.5s linear infinite}
 .card.on.lit::before{background:radial-gradient(200px circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,var(--tc) 90%,transparent),transparent 72%),conic-gradient(from var(--ang),var(--tc),color-mix(in srgb,var(--tc) 0%,transparent) 22%,var(--g2) 50%,color-mix(in srgb,var(--g2) 0%,transparent) 78%,var(--tc))}
 @keyframes spin{to{--ang:360deg}}
 /* 结果: light sweep on hover */
@@ -763,6 +760,8 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .tile.wk a.pill{text-decoration:none;color:var(--ink);cursor:pointer}
 .tile.wk a.pill:hover{background:var(--press)}
 .wk-k{margin-left:auto;padding-left:8px;font-size:11px;font-weight:500;color:var(--muted);white-space:nowrap}
+.wk-item{display:flex;flex-direction:column;gap:3px}
+.wk-sum{font-size:11.5px;line-height:1.45;color:var(--muted);padding:0 4px}
 .tile.wk .pill.wmiss{color:var(--faint);background:transparent;border:1px dashed var(--line-2);cursor:help}
 .tile.wk .pill.wmiss::before{background:var(--faint)}
 .tile.wk .pill.wmiss .wk-k{color:var(--danger);opacity:.8}
@@ -801,6 +800,10 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .dctl .ib:disabled{opacity:.35;cursor:default}
 .dctl .ib.del:hover,.dctl .ib.del.confirm{color:var(--danger);background:var(--danger-soft);border-color:transparent}
 .dadd{align-self:flex-start;margin:6px 8px 4px}
+.card[draggable="true"]{cursor:grab}
+.card.dragging{opacity:.48}
+.dpara.drag-over,.ddrop.drag-over,.doc .body.drag-over{outline:2px dashed var(--accent);outline-offset:-2px;background:var(--accent-soft)!important}
+.ddrop{border:1.5px dashed var(--line-2);border-radius:12px;padding:10px 12px;text-align:center;font-size:12.5px;color:var(--muted);margin:8px 8px 4px;transition:border-color .15s var(--ease),background-color .15s var(--ease)}
 .detail.editing .hero{box-shadow:0 0 0 3px var(--accent-soft),var(--sh-tile),var(--tile-hl)}
 /* double-click editing of 事实 / 结果 / 思考 and the title */
 .tile[data-dbl],.dt[data-dbl]{cursor:text}
@@ -834,6 +837,30 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .vdot[data-s="save"],.vdot[data-s="load"],.vdot[data-s="demo"]{background:var(--t4)}
 .vdot[data-s="err"],.vdot[data-s="off"]{background:var(--danger)}
 .sidefoot{margin:20px 4px 2px}
+.prof-btn{width:100%;display:flex;align-items:center;gap:8px;margin-top:12px;padding:7px 10px;border-radius:11px;font-size:12.5px;font-weight:500;color:var(--ink-2);background:var(--track);border:1px solid transparent;transition:background-color .16s var(--ease),border-color .16s var(--ease),color .16s var(--ease);text-align:left;cursor:pointer}
+.prof-btn.on{background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent)}
+.prof-btn span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pdlg{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:20px;background:rgba(16,19,27,.38);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .22s var(--ease)}
+.pdlg.on{opacity:1;pointer-events:auto}
+.pbox{width:min(540px,100%);max-height:86vh;overflow:auto;border-radius:22px;padding:22px 24px;background:var(--tile-top);border:1px solid var(--tile-bd);box-shadow:var(--sh-hi);transform:translateY(10px) scale(.98);transition:transform .28s var(--spring)}
+.pdlg.on .pbox{transform:none}
+.phead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.phead h3{margin:0;font-size:17px;font-weight:700;letter-spacing:-.02em}
+.pgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.pgrid .full{grid-column:1/-1}
+.pfield{display:flex;flex-direction:column;gap:4px;min-width:0;font-size:12px;font-weight:500;color:var(--muted)}
+.pfield input,.pfield textarea{width:100%;min-width:0;box-sizing:border-box;font:inherit;font-size:13px;color:var(--ink);background:var(--track);border:1px solid transparent;border-radius:10px;padding:7px 10px;outline:none;transition:border-color .16s var(--ease),background-color .16s var(--ease)}
+.pfield input:focus,.pfield textarea:focus{border-color:var(--accent-line);background:var(--tile-top);box-shadow:0 0 0 3px var(--accent-soft)}
+.pedu-head{display:flex;align-items:center;justify-content:space-between;margin:16px 0 8px;font-size:12.5px;font-weight:600;color:var(--ink-2)}
+.pedu-item{padding:12px;border-radius:14px;background:var(--sunk);border:1px solid var(--line);margin-bottom:10px;position:relative}
+.pedu-item .pgrid{gap:8px}
+.pfoot{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;padding-top:12px;border-top:1px solid var(--line)}
+.pdrop{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;border:1.5px dashed var(--line-2);background:var(--sunk);cursor:pointer;transition:border-color .16s var(--ease),background-color .16s var(--ease)}
+.pdrop:hover,.pdrop.drag{border-color:var(--accent);background:var(--accent-soft)}
+.pdrop img{width:42px;height:50px;object-fit:cover;border-radius:8px;border:1px solid var(--line);flex:none;background:#fff}
+.pdrop .pdt{flex:1;min-width:0;font-size:12.5px;color:var(--muted);line-height:1.45}
+.pdrop .pdt b{color:var(--ink);font-weight:600;display:block}
+@media (max-width:480px){.pgrid{grid-template-columns:1fr}}
 .vsync[data-s="demo"] i{background:var(--t4)}
 .col.list h2 .htl{flex:none}
 .col.list h2 .hright{display:flex;gap:8px;align-items:center;justify-content:flex-end;min-width:0}
@@ -894,6 +921,169 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
   .col.doc mark{background:none;color:inherit;box-shadow:none;padding:0}
 }
 
+/* ---------- 简历编辑器: one A4 sheet you edit directly; text always lives on the cards ---------- */
+.lab + .sub button .rdot{width:22px;height:22px;flex:none;border-radius:7px;display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:700;color:#fff;background:linear-gradient(140deg,#e0a100,#f26b1d)}
+.lab + .sub button .rdot.sent{background:linear-gradient(140deg,#0f9f6e,#22c08a)}
+.lab + .sub button .rsub{display:block;font-size:11px;font-weight:400;color:var(--muted)}
+.lab + .sub button.on .rsub{color:inherit;opacity:.75}
+.rin{margin-left:auto;font-size:11px;font-weight:600;color:var(--t3);white-space:nowrap}
+.col.rv{display:flex;flex-direction:column;gap:10px;overflow:hidden;padding-bottom:12px}
+.rv-bar{display:flex;align-items:center;gap:8px 10px;flex-wrap:wrap;padding:10px 12px 10px 16px;border-radius:var(--r);background:linear-gradient(180deg,var(--tile-top),var(--tile-bot));border:1px solid var(--tile-bd);box-shadow:var(--sh-tile),var(--tile-hl)}
+.rv-ttl{flex:1 1 150px;min-width:0}
+.rv-ttl h1{margin:0;font-size:17px;font-weight:700;letter-spacing:-.01em;line-height:1.35;display:flex;min-width:0}
+.rv-ttl h1 span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border-radius:6px;padding:0 3px;margin:0 -3px;outline:none}
+.rv-ttl h1 span[contenteditable]:hover{background:var(--hover)}
+.rv-ttl h1 span:focus{white-space:normal;background:var(--sunk);box-shadow:0 0 0 2px var(--ring)}
+.rv-meta{font-size:12px;color:var(--muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rv-zoom{min-width:48px;justify-content:center;font-variant-numeric:tabular-nums}
+.rv-hist{display:inline-flex;gap:0}
+.rv-hist .more{font-size:15px;padding:0 5px}
+.rv-hist .more:disabled{opacity:.3;cursor:default}
+.rv-refs{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:10px;font-size:12px;color:var(--muted)}
+.rv-refs button{font-size:12px;padding:2px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent);border:0}
+.rv-refs button.sent{background:color-mix(in srgb,var(--t3) 14%,transparent);color:var(--t3)}
+.rv-meter{display:flex;flex-direction:column;gap:4px;width:128px;padding:4px 6px;margin:-4px -2px;border-radius:10px;text-align:left}
+.rv-meter:hover{background:var(--hover)}
+.rv-meter .mt{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);white-space:nowrap}
+.rv-meter .mt b{color:var(--ink);font-weight:600}
+.rv-meter .track{display:block;height:6px;border-radius:999px;background:var(--track);overflow:hidden}
+.rv-meter .fill{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,var(--g1),var(--g2));transition:width .45s var(--ease)}
+.rv-meter.warn .fill{background:var(--warn)}.rv-meter.over .fill{background:var(--danger)}
+.rv-meter.over .mt b{color:var(--danger)}.rv-meter.over .mt b::after{content:" ›"}
+.rv-jd{display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;padding:9px 14px;border-radius:var(--r);background:linear-gradient(180deg,var(--tile-top),var(--tile-bot));border:1px solid var(--tile-bd);box-shadow:var(--sh-tile)}
+.rv-jd .lab2{font-size:12px;font-weight:600;color:var(--ink-2)}
+.rv-kw{display:flex;flex-wrap:wrap;gap:5px;flex:1;min-width:180px;align-items:center}
+.rv-kw .k{font-size:11.5px;padding:2px 8px;border-radius:999px;border:1px dashed var(--line-2);color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;gap:3px;transition:background-color .2s var(--ease),color .2s var(--ease)}
+.rv-kw .k.on{border-style:solid;border-color:transparent;background:var(--accent-soft);color:var(--accent);font-weight:500}
+.rv-kw .k.on::before{content:"✓"}
+.rv-kw .k:hover{border-color:var(--accent-line);color:var(--accent)}
+.rv-kw .k i{font-style:normal;display:none;opacity:.6;padding-left:2px}
+.rv-kw .k:hover i{display:inline}.rv-kw .k i:hover{opacity:1}
+.rv-kw input{font:inherit;font-size:11.5px;width:9em;padding:2px 8px;border-radius:999px;border:1px dashed var(--line-2);background:transparent;color:var(--ink);outline:none}
+.rv-kw input:focus{border-style:solid;border-color:var(--ring)}
+.rv-cov{font-size:12px;color:var(--muted);white-space:nowrap}.rv-cov b{color:var(--ink)}
+.rv-raw{flex-basis:100%;font-size:12px;line-height:1.6;color:var(--ink-2);background:var(--sunk);border-radius:10px;padding:8px 10px;white-space:pre-wrap}
+.rv-frozen{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 14px;border-radius:13px;font-size:12.5px;color:var(--ink-2);background:color-mix(in srgb,var(--t3) 10%,var(--panel));border:1px solid color-mix(in srgb,var(--t3) 30%,transparent)}
+.rv-frozen span{flex:1;min-width:200px}
+.rv-canvas{flex:1;min-height:0;overflow:auto;border-radius:var(--r);background:color-mix(in srgb,var(--sunk) 70%,transparent);border:1px solid var(--tile-bd);padding:20px 16px 40px;position:relative}
+.rv-box{position:relative;margin:0 auto;width:calc(794px * var(--s,1));height:calc(var(--h,1123px) * var(--s,1))}
+.rv-break{position:absolute;left:-12px;right:-12px;top:1123px;border-top:1.5px dashed #ef4444;pointer-events:none;z-index:3}
+.rv-break span{position:absolute;right:12px;top:-19px;font:600 11px var(--font);color:#ef4444;background:#fff;padding:1px 6px;border-radius:5px}
+.rv-break.fit{display:none}
+/* the sheet: same layout as templates/latex/resume.tex and templates/html/resume.html */
+.rp{position:absolute;left:0;top:0;width:794px;min-height:1123px;transform:scale(var(--s,1));transform-origin:0 0;background:#fff;color:#18181b;border-radius:3px;box-shadow:0 1px 2px rgba(16,24,40,.06),0 18px 40px -18px rgba(16,24,40,.35);padding:38px 46px 40px;font:12.3px/1.42 "PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",sans-serif;color-scheme:light;text-align:left}
+.rp p{margin:0;max-width:none}
+.rp-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:6px}
+.rp-hm{flex:1;min-width:0}
+.rp-name{font-size:25px;font-weight:700;letter-spacing:.04em;margin-top:4px}
+.rp-hl{color:#52525b;margin-top:3px;border-radius:4px;outline:none;min-height:1.4em}
+.rp-edit .rp-hl:hover{background:rgba(67,84,255,.06)}
+.rp-hl:focus{background:#fff;box-shadow:0 0 0 2px #4354ff}
+.rp-hl.ph,.rp-ph{color:#a1a1aa}
+.rp-ct{margin-top:6px;color:#27272a;overflow-wrap:anywhere}
+.rp-sep{font-style:normal;color:#a1a1aa;margin:0 .45em}
+.rp-photo{position:relative;width:80px;height:100px;flex:none;border-radius:3px;overflow:hidden;background:linear-gradient(160deg,#e4e4e7,#d4d4d8);display:grid;place-items:center;align-content:center;gap:2px;color:#71717a;font-size:11px;text-align:center}
+.rp-photo img{width:100%;height:100%;object-fit:cover}
+.rp-photo small{font-size:9.5px;color:#a1a1aa;padding:0 6px}
+.rp-photo button,.rp-addphoto{font:500 11px var(--font)}
+.rp-photo button{position:absolute;left:4px;right:4px;bottom:4px;height:22px;border:0;border-radius:6px;background:rgba(24,24,27,.78);color:#fff;opacity:0;transition:opacity .15s}
+.rp-edit .rp-photo:hover button{opacity:1}
+.rp-addphoto{flex:none;align-self:flex-start;margin-top:8px;height:24px;padding:0 9px;border-radius:6px;border:1px dashed #d4d4d8;background:#f4f4f5;color:#71717a}
+.rp-addphoto:hover{color:#18181b;border-color:#a1a1aa}
+.rp-sec{position:relative;border-radius:6px;transition:background-color .2s}
+.rp-sec h3{display:flex;align-items:center;gap:6px;margin:11px 0 4px;padding:0 0 2px;font-size:14.5px;font-weight:700;color:#18181b;border-bottom:1.3px solid #18181b;letter-spacing:0}
+.rp-sec h3 .st{outline:none;border-radius:4px;padding:0 2px;margin:0 -2px}
+.rp-edit .rp-sec h3 .st:hover{background:rgba(67,84,255,.06)}
+.rp-sec h3 .st:focus{box-shadow:0 0 0 2px #4354ff}
+.rp-stool{display:none;margin-left:auto;gap:2px;font:500 11px var(--font)}
+.rp-edit .rp-sec:hover .rp-stool{display:inline-flex}
+.rp-stool button{border:0;background:transparent;color:#a1a1aa;border-radius:6px;padding:1px 6px;font:inherit}
+.rp-stool button:hover{background:#f4f4f5;color:#18181b}
+.rp-sec.drop{background:rgba(67,84,255,.05);box-shadow:0 0 0 2px rgba(67,84,255,.35)}
+.rp-ih{display:flex;justify-content:space-between;gap:14px;font-weight:700}
+.rp-ih span{font-weight:400;white-space:nowrap;color:#27272a}
+.rp-pt{position:relative;padding-left:14px}
+.rp-pt::before{content:"•";position:absolute;left:3px}
+.rp-it{position:relative;padding:2px 6px 3px;margin:0 -6px 1px;border-radius:6px;transition:background-color .15s,box-shadow .15s}
+.rp-edit .rp-it:not(.edu):hover,.rp-it.sel{background:rgba(67,84,255,.045);box-shadow:inset 0 0 0 1px rgba(67,84,255,.28)}
+.rp-it.warn{background:rgba(239,68,68,.05);box-shadow:inset 0 0 0 1px rgba(239,68,68,.3)}
+.rp-it.dragging{opacity:.3}
+.rp-it.ins::before{content:"";position:absolute;left:0;right:0;top:-2px;height:2.5px;border-radius:2px;background:#4354ff;z-index:4}
+.rp-sec.ins-end .rp-items::after{content:"";display:block;height:2.5px;border-radius:2px;background:#4354ff;margin-top:2px}
+.rp-it.flash{animation:rpflash 1.6s var(--ease)}
+.rp-it.hit{background:rgba(250,204,21,.22)!important;box-shadow:inset 0 0 0 1px rgba(202,138,4,.45)!important}
+@keyframes rpflash{0%{background:rgba(67,84,255,.22);box-shadow:inset 0 0 0 1.5px rgba(67,84,255,.6)}100%{background:transparent;box-shadow:inset 0 0 0 1px transparent}}
+.rp-body[contenteditable]{outline:2px solid #4354ff;outline-offset:2px;border-radius:3px;white-space:pre-wrap;background:#fff;cursor:text}
+.rp-tools{position:absolute;right:0;top:-27px;display:none;align-items:center;gap:2px;padding:2px;border-radius:9px;background:var(--toast);color:var(--toast-ink);box-shadow:0 8px 20px -8px rgba(0,0,0,.45);font:500 11.5px var(--font);z-index:5;white-space:nowrap}
+.rp-edit .rp-it:hover .rp-tools,.rp-it.sel .rp-tools{display:flex}
+.rp-tools button{height:22px;padding:0 7px;border:0;border-radius:7px;background:transparent;color:inherit;font:inherit;display:inline-flex;align-items:center;gap:4px}
+.rp-tools button:hover{background:rgba(255,255,255,.14)}
+.rp-tools .rp-ver{background:rgba(255,255,255,.12)}
+.rp-grip{cursor:grab;opacity:.7;padding:0 4px}
+.rp-save{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:6px 0 4px;padding:7px 8px;border-radius:9px;background:#f4f5ff;border:1px solid rgba(67,84,255,.25);font:12px var(--font);color:#343a4a}
+.rp-save button{height:24px;padding:0 9px;border-radius:7px;border:1px solid #d3d7e2;background:#fff;font:inherit;font-size:11.5px;color:#10131b}
+.rp-save button.p{border:0;color:#fff;background:linear-gradient(135deg,#4a5cff,#9b5cff)}
+.rp-empty{font:12px var(--font);color:#a1a1aa;padding:4px 0}
+.rp-guide{margin:26px 0 0;padding:22px 20px;border:1.5px dashed #d4d4d8;border-radius:12px;text-align:center;font:13px/1.6 var(--font);color:#52525b}
+.rp-guide b{display:block;font-size:15px;color:#18181b;margin-bottom:4px}
+.rp-sgrip{cursor:grab;color:#a1a1aa;padding:1px 4px;border-radius:6px;font:500 11px var(--font)}
+.rp-sgrip:hover{background:#f4f4f5;color:#18181b}
+.rp-sec.sdragging{opacity:.35}
+.rp-sec.sins::before{content:"";position:absolute;left:-6px;right:-6px;top:-5px;height:3px;border-radius:2px;background:#4354ff;z-index:4}
+.rp-sec.sins-end::after{content:"";position:absolute;left:-6px;right:-6px;bottom:-5px;height:3px;border-radius:2px;background:#4354ff;z-index:4}
+/* 对照: two sheets side by side, matched by card */
+.rv-cmphead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 auto 12px;max-width:1640px;font-size:12.5px;color:var(--ink-2)}
+.rv-cmphead .lg{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;color:var(--muted)}
+.rv-cmphead .lg i{display:inline-block;width:12px;height:10px;border-radius:3px;border:1.5px dashed rgba(217,119,6,.8);background:rgba(250,204,21,.12)}
+.rv-cmphead .grow{flex:1}
+.rv-pair{display:flex;gap:16px;justify-content:center;align-items:flex-start}
+.rv-pair .rv-box{margin:0;flex:none}
+.rv-side{display:flex;flex-direction:column;gap:6px;align-items:center}
+.rv-side .cap{font-size:11.5px;color:var(--muted);font-weight:600}
+.rp-it.solo{box-shadow:inset 0 0 0 1.5px rgba(217,119,6,.55);background:rgba(250,204,21,.07)}
+.rp-it.solo::after{content:"对照中没有";position:absolute;right:4px;bottom:3px;font:600 10px var(--font);color:#b45309;background:#fffbeb;border-radius:5px;padding:1px 5px}
+.rp-it.pair{background:rgba(67,84,255,.09)!important;box-shadow:inset 0 0 0 1.5px rgba(67,84,255,.45)!important}
+/* popover for versions / add / fit / export / menus */
+.rpop{position:fixed;z-index:60;width:340px;max-width:calc(100vw - 20px);max-height:70vh;overflow:auto;padding:6px;border-radius:14px;background:color-mix(in srgb,var(--tile-top) 94%,transparent);-webkit-backdrop-filter:blur(16px) saturate(1.3);backdrop-filter:blur(16px) saturate(1.3);border:1px solid var(--tile-bd);box-shadow:var(--sh-hi);opacity:0;transform:translateY(-4px) scale(.98);pointer-events:none;transition:opacity .16s var(--ease),transform .3s var(--spring)}
+.rpop.show{opacity:1;transform:none;pointer-events:auto}
+.rpop h4{margin:4px 8px 6px;font-size:11.5px;color:var(--muted);font-weight:600}
+.rpop .o{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;width:100%;text-align:left;border:0;background:transparent;border-radius:10px;padding:8px 10px;font-size:12.5px;color:var(--ink)}
+.rpop .o:hover{background:var(--hover)}
+.rpop .o.on{background:var(--accent-soft)}
+.rpop .o > span{flex:1;min-width:0}
+.rpop .o small{display:block;color:var(--muted);font-size:11px;font-weight:400;margin-top:2px}
+.rpop .o .x{display:block;font-size:12px;color:var(--ink-2);line-height:1.5;margin-top:3px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.rpop .o em{font-style:normal;font-size:11px;color:var(--t3);font-weight:600;white-space:nowrap}
+.rpop .o .ty{flex:none;font-size:10.5px;font-weight:600;padding:1px 6px;border-radius:6px;background:var(--sunk);color:var(--muted)}
+.rpop .o.ai{color:var(--accent)}.rpop .o.ai:hover{background:var(--accent-soft)}
+.rpop .o.danger{color:var(--danger)}
+.rpop .sep{height:1px;background:var(--line);margin:6px 4px}
+.rpop .none{padding:8px 10px;font-size:12px;color:var(--muted)}
+@container (max-width:820px){.rv-bar .bt{display:none}.rv-bar{gap:8px}.rv-meter{width:112px}
+  /* two deliberate rows: [title · 导出 PDF] / [状态 · 篇幅 · 添加 · AI · 缩放 · 专注 · 撤销 · ⋯] */
+  .rv-bar .rv-ttl{order:1;flex-basis:calc(100% - 150px)}.rv-bar > .btn.pri{order:2}.rv-bar > :not(.rv-ttl):not(.pri){order:3}.rv-bar > .rv-meter{flex:1 1 90px}}
+@container (max-width:560px){
+  .rv-bar{padding:10px}
+  .rv-ttl{flex-basis:calc(100% - 130px)}
+  .rv-meter{flex:1 1 100px;width:auto}
+  .rv-canvas{padding:12px 8px 30px}
+}
+
+/* ---------- 引导: spotlight tour ---------- */
+.gt[open]{position:fixed;inset:0;margin:0;padding:0;border:0;width:100vw;height:100dvh;max-width:none;max-height:none;background:transparent;overflow:hidden;color:var(--ink)}
+.gt::backdrop{background:transparent}
+.gt-spot{position:fixed;border-radius:12px;pointer-events:none;box-shadow:0 0 0 200vmax rgba(12,14,22,.55);outline:2px solid var(--accent);outline-offset:1px;transition:left .35s var(--ease),top .35s var(--ease),width .35s var(--ease),height .35s var(--ease)}
+.gt-spot.none{outline:none}
+.gt-card{position:fixed;width:min(340px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto;padding:16px 18px;border-radius:16px;background:var(--panel);border:1px solid var(--tile-bd);box-shadow:var(--sh-hi);transition:left .35s var(--ease),top .35s var(--ease)}
+.gt-top,.gt-act{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.gt-top{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.gt-top button{border:0;background:transparent;color:var(--muted);font-size:12px;padding:4px 0}
+.gt-top button:hover{color:var(--ink)}
+.gt-card h2{margin:10px 0 6px;font-size:16px;line-height:1.45;letter-spacing:0}
+.gt-card p{margin:0 0 16px;font-size:13.5px;line-height:1.7;color:var(--ink-2);max-width:none}
+.gt-keys{font-size:11px;color:var(--faint);white-space:nowrap}
+@media (max-width:420px){.gt-keys{display:none}}
+@media (prefers-reduced-motion:reduce){.gt-spot,.gt-card{transition:none}}
 @media (max-width:640px){.stage{padding:0}.app{width:100%!important;border-radius:0;border:none}.sim{padding:6px 12px}}
 </style>
 </head>
@@ -910,7 +1100,9 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 const IC=(d,s=14)=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
 const ICON={chev:IC('<path d="M6 4l4 4-4 4"/>',12),side:IC('<rect x="2.5" y="3" width="11" height="10" rx="2"/><path d="M6.5 3v10"/>',16),
   collapse:IC('<path d="M8.5 4.5 5 8l3.5 3.5M12.5 4.5 9 8l3.5 3.5"/>',14),plus:IC('<path d="M8 3.5v9M3.5 8h9"/>',13),
-  doc:IC('<path d="M4.5 2.5h4.5l2.5 2.5v8.5h-7z"/><path d="M9 2.5V5h2.5"/>',13),pen:IC('<path d="M10.5 3 13 5.5 6 12.5H3.5V10z"/>',11)};
+  doc:IC('<path d="M4.5 2.5h4.5l2.5 2.5v8.5h-7z"/><path d="M9 2.5V5h2.5"/>',13),pen:IC('<path d="M10.5 3 13 5.5 6 12.5H3.5V10z"/>',11),
+  user:IC('<circle cx="8" cy="5.5" r="2.5"/><path d="M3.5 13.5c.6-2.2 2.4-3.3 4.5-3.3s3.9 1.1 4.5 3.3"/>',13)};
+let VAULT_CFG={schema:1,types:['实习','项目','志愿者','获奖','技能','思考'],profile:{name:'',headline:'',location:'',email:'',phone:'',links:[],photo:'',education:[],skills:[]}};
 /* presentation-only: remembers what was on screen last render so entry animations play only on real changes */
 const FX={k:null,sig:null,sel:false,pv:{},pe:{}};
 Object.assign(ICON,{fact:IC('<path d="M4.5 2.5h4.5l2.5 2.5v8.5h-7z"/><path d="M6.5 8.5h3M6.5 11h2"/>',14),
@@ -921,7 +1113,7 @@ Object.assign(ICON,{fact:IC('<path d="M4.5 2.5h4.5l2.5 2.5v8.5h-7z"/><path d="M6
   pen2:IC('<path d="M10.5 3 13 5.5 6 12.5H3.5V10z"/>',13),
   pdf:IC('<path d="M8 2.5v7"/><path d="M5 7l3 3 3-3"/><path d="M3 11v2.5h10V11"/>',13)});
 /* presentation-only Bento helpers: derived from the data on every render, never stored */
-const tc=t=>{const i=TYPES.indexOf(t);return 'tc'+(i<0?0:i)};
+const tc=t=>{const i=TYPES.indexOf(t);return 'tc'+(i<0?0:i%6)};
 const nVers=c=>c.writings.reduce((n,w)=>n+w.versions.length,0);
 function bigNum(s){let best=null;String(s||'').replace(/(\d[\d,]*(?:\.\d+)?)\s*(%|人次|万元|个|条|元|场|次|人|项|万|倍|篇|位|天|周|名)?/g,(m,n,u)=>{const v=parseFloat(n.replace(/,/g,''));if(!best||v>best.v)best={v,n,u:u||''}});return best}
 function statsHtml(){
@@ -930,7 +1122,7 @@ function statsHtml(){
   return `<div class="stats" aria-label="经历库概览"><div class="sts">
     <div class="st st-main" title="经历${span?' · '+span:''}"><span class="sn">${CARDS.length}</span><span class="sk">经历${span?`<span class="wo"> · ${span}</span>`:''}</span></div>
     <div class="st" title="写法版本"><span class="sn">${CARDS.reduce((n,c)=>n+nVers(c),0)}</span><span class="sk">写法</span></div>
-    <div class="st" title="简历"><span class="sn">${DOCS.length}</span><span class="sk">简<span class="wo2">历</span></span></div></div>
+    <div class="st" title="简历"><span class="sn">${RESUMES.length}</span><span class="sk">简历</span></div></div>
     <div class="st-mix" title="类型分布"><div class="bar" aria-hidden="true">${per.map(p=>p.n?`<i class="${tc(p.t)}" style="flex:${p.n}" title="${p.t} ${p.n}"></i>`:'').join('')}</div>
       <div class="lg">${per.map(p=>`<span class="${tc(p.t)}${p.n?'':' zero'}"><i></i>${p.t}<b>${p.n}</b></span>`).join('')}</div></div></div>`;
 }
@@ -946,44 +1138,29 @@ const statusHtml=()=>`<span class="vsync" data-s="${VST.s}" title="${VST.t}" rol
 const EMPTY_VAULT='经历库还是空的——在左边对话里把素材发给 AI，或点 ＋新增';
 const KEYH=/Mac|iPhone|iPad/.test(navigator.platform)?'⌘↩ 保存 · Esc 取消':'Ctrl+↩ 保存 · Esc 取消';
 const autoGrow=t=>{t.style.height='auto';t.style.height=t.scrollHeight+'px'};
-const TYPES=['实习','项目','志愿者','获奖','思考'];
+const TYPES=['实习','项目','志愿者','获奖','技能','思考'];
+/* DEMO-DATA:BEGIN — generated by tools/sync_demo.py from skill/examples/sample-vault; edit the sample vault, not this block */
 const CARDS=[
- {id:'ali',type:'实习',org:'阿里巴巴',title:'阿里巴巴 · AI 产品实习',time:'2026.03 – 2026.06',year:2026,role:'产品实习生',tags:['实习相关','AI 产品'],
-  fact:'参与一个面向创作者的 AI 工具，负责 Skill 的评测与体验走查。',result:'整理出 40 条评测用例，其中 12 条进入回归集。',thought:'评测标准写清楚之前，讨论效果好坏没有意义。',works:['评测用例表（链接）','走查报告.pdf（快捷方式）'],
-  writings:[{type:'简历条目',versions:[{name:'v1 通用',text:'参与创作者 AI 工具的 Skill 评测，设计 40 条评测用例，其中 12 条纳入回归集。'},{name:'v2 偏 Agent 岗位',text:'负责 Agent Skill 的评测方案：定义评测维度，设计 40 条用例并推动 12 条进入回归集，支撑两次版本迭代的质量判断。'}]},
-            {type:'网申短描述',versions:[{name:'v1 150 字',text:'在阿里巴巴实习期间，我负责一款创作者 AI 工具的 Skill 评测。我先和研发对齐了“好”的标准，再把它拆成可执行的用例，最终有 12 条进入团队的回归集。这段经历让我习惯先定义标准再讨论效果。'}]}]},
- {id:'xhs',type:'实习',org:'小红书',title:'小红书 · 内容运营实习',time:'2025.06 – 2025.09',year:2025,role:'运营实习生',tags:['实习相关','内容'],
-  fact:'负责一个垂类话题的选题与数据复盘，每周输出选题建议。',result:'负责话题的周均互动量提升约 30%。',thought:'真正有用的选题来自创作者自己的历史数据，而不是模仿别人的爆款。',works:['选题复盘文档（链接）','周报截图 ×3'],
-  writings:[{type:'简历条目',versions:[{name:'v1 通用',text:'负责垂类话题选题与数据复盘，每周输出选题建议，话题周均互动量提升约 30%。'},{name:'v2 偏数据',text:'搭建话题数据复盘表，按周跟踪 5 项指标并输出选题建议，推动话题周均互动量提升约 30%。'},{name:'v3 英文',text:'Planned weekly topics for a content vertical and ran performance reviews; average weekly engagement rose by about 30%.'}]},
-            {type:'网申短描述',versions:[{name:'v1 100 字',text:'在小红书做内容运营实习时，我负责一个垂类话题的选题和复盘。通过分析历史数据调整选题方向，话题的周均互动量提升了约 30%。'}]}]},
- {id:'fair',type:'项目',org:'校园公益市集',title:'校园公益市集策划',time:'2024.10 – 2024.12',year:2024,role:'总策划',tags:['活动策划','公益'],
-  fact:'牵头策划一场校园公益市集，负责招商、宣传和现场统筹。',result:'18 个摊位参与，筹得善款 6,200 元。',thought:'',works:['策划案.pptx（快捷方式）','现场照片 ×8','回顾视频（链接）'],
-  writings:[{type:'简历条目',versions:[{name:'v1 通用',text:'牵头策划校园公益市集，统筹招商、宣传与现场，18 个摊位参与，筹得善款 6,200 元。'}]}]},
- {id:'museum',type:'志愿者',org:'社区博物馆',title:'社区博物馆讲解志愿者',time:'2024.03 – 2024.06',year:2024,role:'讲解员',tags:['志愿服务','公共表达'],
-  fact:'每周末为参观者做展厅讲解，面向儿童团体调整讲解内容。',result:'累计讲解 24 场，服务约 600 人次。',thought:'给孩子讲明白一件事，比给大人讲难得多，也更能检验自己是否真的懂。',works:['志愿服务证明.jpg'],
-  writings:[{type:'简历条目',versions:[{name:'v1 通用',text:'担任社区博物馆周末讲解员，累计讲解 24 场，服务约 600 人次，并为儿童团体重写讲解词。'}]}]},
- {id:'award',type:'获奖',org:'校级',title:'校级优秀学生干部',time:'2025.05',year:2025,role:'获奖人',tags:['荣誉'],
-  fact:'因社团工作获评校级优秀学生干部。',result:'',thought:'',works:['获奖证书.jpg'],writings:[]},
- {id:'retro',type:'思考',org:'个人复盘',title:'一次失败的社团招新复盘',time:'2024.09',year:2024,role:'记录',tags:['复盘'],
-  fact:'社团招新报名人数只有预期的一半，事后写了一篇复盘。',result:'',thought:'宣传渠道选错了：我们在自己喜欢的平台上发力，而新生根本不在那里。',works:[],writings:[]}
+ {"id": "ali", "type": "实习", "org": "阿里巴巴", "title": "阿里巴巴 · AI 产品实习", "time": "2026.03 – 2026.06", "year": 2026, "role": "产品实习生", "tags": ["实习相关", "AI 产品"], "fact": "参与一个面向创作者的 AI 工具，负责 Skill 的评测与体验走查。", "result": "整理出 40 条评测用例，其中 12 条进入回归集。", "thought": "评测标准写清楚之前，讨论效果好坏没有意义。", "works": ["评测用例表（链接）", "走查报告.pdf（快捷方式）"], "writings": [{"type": "简历条目", "versions": [{"name": "v1 通用", "text": "参与创作者 AI 工具的 Skill 评测，设计 40 条评测用例，其中 12 条纳入回归集。"}, {"name": "v2 偏 Agent 岗位", "text": "负责 Agent Skill 的评测方案：定义评测维度，设计 40 条用例并推动 12 条进入回归集，支撑两次版本迭代的质量判断。"}]}, {"type": "网申短描述", "versions": [{"name": "v1 150 字", "text": "在阿里巴巴实习期间，我负责一款创作者 AI 工具的 Skill 评测。我先和研发对齐了“好”的标准，再把它拆成可执行的用例，最终有 12 条进入团队的回归集。这段经历让我习惯先定义标准再讨论效果。"}]}]},
+ {"id": "award", "type": "获奖", "org": "校级", "title": "校级优秀学生干部", "time": "2025.05", "year": 2025, "role": "获奖人", "tags": ["荣誉"], "fact": "因社团工作获评校级优秀学生干部。", "result": "", "thought": "", "works": ["获奖证书.jpg"], "writings": []},
+ {"id": "fair", "type": "项目", "org": "校园公益市集", "title": "校园公益市集策划", "time": "2024.10 – 2024.12", "year": 2024, "role": "总策划", "tags": ["活动策划", "公益"], "fact": "牵头策划一场校园公益市集，负责招商、宣传和现场统筹。", "result": "18 个摊位参与，筹得善款 6,200 元。", "thought": "", "works": [{"label": "策划案.pptx（示例摘要）", "kind": "slides", "summary": "24 页完整策划案：含市集招商方案、预算拆解表、动线规划图与雨天应急预案。"}, "现场照片 ×8", "回顾视频（链接）"], "writings": [{"type": "简历条目", "versions": [{"name": "v1 通用", "text": "牵头策划校园公益市集，统筹招商、宣传与现场，18 个摊位参与，筹得善款 6,200 元。"}]}]},
+ {"id": "museum", "type": "志愿者", "org": "社区博物馆", "title": "社区博物馆讲解志愿者", "time": "2024.03 – 2024.06", "year": 2024, "role": "讲解员", "tags": ["志愿服务", "公共表达"], "fact": "每周末为参观者做展厅讲解，面向儿童团体调整讲解内容。", "result": "累计讲解 24 场，服务约 600 人次。", "thought": "给孩子讲明白一件事，比给大人讲难得多，也更能检验自己是否真的懂。", "works": ["志愿服务证明.jpg"], "writings": [{"type": "简历条目", "versions": [{"name": "v1 通用", "text": "担任社区博物馆周末讲解员，累计讲解 24 场，服务约 600 人次，并为儿童团体重写讲解词。"}]}]},
+ {"id": "retro", "type": "思考", "org": "个人复盘", "title": "一次失败的社团招新复盘", "time": "2024.09", "year": 2024, "role": "记录", "tags": ["复盘"], "fact": "社团招新报名人数只有预期的一半，事后写了一篇复盘。", "result": "", "thought": "宣传渠道选错了：我们在自己喜欢的平台上发力，而新生根本不在那里。", "works": [], "writings": []},
+ {"id": "skills", "type": "技能", "org": "", "title": "技能与语言（多版本）", "time": "", "year": 2026, "role": "", "tags": ["技能", "语言", "AI 工具"], "fact": "数据与研究：Python / SQL / Excel 数据透视、质性用户访谈与问卷设计。\nAI 与产品工具：Figma 原型、Prompt 工程与评测集构建、Claude Code / Cursor。\n语言：中文（母语），英语（CET-6 610 / IELTS 7.0，可作为工作语言）。", "result": "", "thought": "不同岗位看重的技能顺序不同，用「技能」卡片可以按投递方向切换版本，不用每次手动改简历。", "works": [], "writings": [{"type": "简历条目", "versions": [{"name": "v1 AI 产品向", "text": "产品与 AI：Figma 原型设计、SQL / Python 数据分析、AI Eval 评测集搭建与 Prompt 调优\n研究与协作：用户质性访谈、PRD 撰写、跨团队推进与数据复盘\n语言能力：中文（母语），英语（CET-6 610，可流畅阅读英文技术文档）"}, {"name": "v2 通用运营向", "text": "数据分析：Excel（数据透视 / VLOOKUP）、SQL 基础查询、内容选题与互动率复盘\n内容与策划：活动方案撰写、公众号/小红书图文排版、Figma 海报基础设计\n语言能力：中文（母语），英语（CET-6 610）"}, {"name": "v3 英文", "text": "Product & AI: Figma, SQL, Python (pandas), AI Evaluation & Prompt Engineering\nResearch: Qualitative User Interviews, Survey Design, Data-driven Funnel Analysis\nLanguages: Mandarin (Native), English (Fluent, IELTS 7.0)"}]}]},
+ {"id": "xhs", "type": "实习", "org": "小红书", "title": "小红书 · 内容运营实习", "time": "2025.06 – 2025.09", "year": 2025, "role": "运营实习生", "tags": ["实习相关", "内容"], "fact": "负责一个垂类话题的选题与数据复盘，每周输出选题建议。", "result": "负责话题的周均互动量提升约 30%。", "thought": "真正有用的选题来自创作者自己的历史数据，而不是模仿别人的爆款。", "works": ["选题复盘文档（链接）", "周报截图 ×3"], "writings": [{"type": "简历条目", "versions": [{"name": "v1 通用", "text": "负责垂类话题选题与数据复盘，每周输出选题建议，话题周均互动量提升约 30%。"}, {"name": "v2 偏数据", "text": "搭建话题数据复盘表，按周跟踪 5 项指标并输出选题建议，推动话题周均互动量提升约 30%。"}, {"name": "v3 英文", "text": "Planned weekly topics for a content vertical and ran performance reviews; average weekly engagement rose by about 30%."}]}, {"type": "网申短描述", "versions": [{"name": "v1 100 字", "text": "在小红书做内容运营实习时，我负责一个垂类话题的选题和复盘。通过分析历史数据调整选题方向，话题的周均互动量提升了约 30%。"}]}]}
 ];
 const DOCS=[
- {id:'d1',title:'某乡村支教志愿项目 · 自荐信',kind:'自荐信',target:'某乡村支教志愿项目',scene:'志愿项目',date:'2026.11',lang:'中文',
-  paras:[
-   {text:'尊敬的项目负责人：我是一名社会人类学专业的学生，希望申请本期乡村支教志愿者。',card:null},
-   {text:'我有面向儿童讲解的经验。在社区博物馆做周末讲解员期间，我累计讲解 24 场，并专门为儿童团体重写了讲解词。这让我明白，把一件事讲给孩子听懂，需要先确认自己真的懂。',card:'museum'},
-   {text:'我也有组织活动的能力。我曾牵头策划校园公益市集，协调 18 个摊位并筹得善款 6,200 元，熟悉从筹备到现场的完整流程。',card:'fair'},
-   {text:'此外，在小红书的实习让我习惯用数据复盘工作，我希望把这种方法带到支教课程的反馈收集中。',card:'xhs'},
-   {text:'期待有机会参与项目，谢谢您的阅读。',card:null}]},
- {id:'d2',title:'某公益传播实习 · 动机信',kind:'动机信',target:'某公益机构传播部',scene:'实习申请',date:'2026.10',lang:'中文',
-  paras:[
-   {text:'您好，我希望申请贵机构传播部的实习岗位。',card:null},
-   {text:'我在小红书做过内容运营实习，负责一个垂类话题的选题与复盘，话题周均互动量提升约 30%。我想把这套“从历史数据里找选题”的方法用在公益内容上。',card:'xhs'},
-   {text:'我也组织过校园公益市集，18 个摊位、筹款 6,200 元的过程让我理解了公益项目落地时的琐碎与分量。',card:'fair'},
-   {text:'感谢您的时间，期待进一步交流。',card:null}]}
+ {"id": "d1", "title": "某乡村支教志愿项目 · 自荐信", "kind": "自荐信", "target": "某乡村支教志愿项目", "scene": "志愿项目", "date": "2026.11", "lang": "中文", "paras": [{"text": "尊敬的项目负责人：我是一名社会人类学专业的学生，希望申请本期乡村支教志愿者。", "card": null}, {"text": "我有面向儿童讲解的经验。在社区博物馆做周末讲解员期间，我累计讲解 24 场，并专门为儿童团体重写了讲解词。这让我明白，把一件事讲给孩子听懂，需要先确认自己真的懂。", "card": "museum"}, {"text": "我也有组织活动的能力。我曾牵头策划校园公益市集，协调 18 个摊位并筹得善款 6,200 元，熟悉从筹备到现场的完整流程。", "card": "fair"}, {"text": "此外，在小红书的实习让我习惯用数据复盘工作，我希望把这种方法带到支教课程的反馈收集中。", "card": "xhs"}, {"text": "期待有机会参与项目，谢谢您的阅读。", "card": null}]},
+ {"id": "d2", "title": "某公益传播实习 · 动机信", "kind": "动机信", "target": "某公益机构传播部", "scene": "实习申请", "date": "2026.10", "lang": "中文", "paras": [{"text": "您好，我希望申请贵机构传播部的实习岗位。", "card": null}, {"text": "我在小红书做过内容运营实习，负责一个垂类话题的选题与复盘，话题周均互动量提升约 30%。我想把这套“从历史数据里找选题”的方法用在公益内容上。", "card": "xhs"}, {"text": "我也组织过校园公益市集，18 个摊位、筹款 6,200 元的过程让我理解了公益项目落地时的琐碎与分量。", "card": "fair"}, {"text": "感谢您的时间，期待进一步交流。", "card": null}]}
 ];
+const RESUMES=[
+ {"id": "jl-ai-chanpin-202611", "title": "某 AI 公司 · 产品实习", "target": "某 AI 公司", "position": "AI 产品实习生", "jd": "参与 Agent 产品的需求分析与评测体系建设，有 Prompt / 评测集经验优先。", "keywords": ["Agent", "评测", "Prompt", "需求分析", "数据"], "lang": "中文", "date": "2026.11", "status": "已投递", "sent": "2026-11-20", "header": {"headline": "求职意向：AI 产品实习", "photo": false}, "sections": [{"title": "教育经历", "from": "education"}, {"title": "实习经历", "items": [{"card": "ali", "writing": "简历条目", "version": "v2 偏 Agent 岗位", "text": "负责 Agent Skill 的评测方案：定义评测维度，设计 40 条用例并推动 12 条进入回归集，支撑两次版本迭代的质量判断。"}, {"card": "xhs", "writing": "简历条目", "version": "v1 通用", "text": "负责垂类话题选题与数据复盘，每周输出选题建议，话题周均互动量提升约 30%。"}]}, {"title": "技能与语言", "items": [{"card": "skills", "writing": "简历条目", "version": "v1 AI 产品向", "text": "产品与 AI：Figma 原型设计、SQL / Python 数据分析、AI Eval 评测集搭建与 Prompt 调优\n研究与协作：用户质性访谈、PRD 撰写、跨团队推进与数据复盘\n语言能力：中文（母语），英语（CET-6 610，可流畅阅读英文技术文档）"}]}], "exports": []},
+ {"id": "jl-neirong-yunying-202611", "title": "某内容平台 · 内容运营实习", "target": "某内容平台", "position": "内容运营实习生", "jd": "岗位职责：\n1. 负责垂类内容的选题策划与数据复盘，输出周报；\n2. 策划线上线下活动，提升创作者活跃与用户增长；\n3. 与产品、设计协作优化内容分发。\n任职要求：熟练使用 Excel / SQL 做数据分析；有内容平台或社群运营经验者优先。", "keywords": ["选题", "数据复盘", "活动", "用户增长", "Excel", "SQL", "内容运营"], "lang": "中文", "date": "2026.11", "status": "草稿", "sent": "", "header": {"headline": "求职意向：内容运营实习 · 可立即到岗", "photo": true}, "sections": [{"title": "教育经历", "from": "education"}, {"title": "实习经历", "items": [{"card": "xhs", "writing": "简历条目", "version": "v2 偏数据", "text": "搭建话题数据复盘表，按周跟踪 5 项指标并输出选题建议，推动话题周均互动量提升约 30%。"}, {"card": "ali", "writing": "简历条目", "version": "v1 通用", "text": "参与创作者 AI 工具的 Skill 评测，设计 40 条评测用例，其中 12 条纳入回归集。"}]}, {"title": "项目经历", "items": [{"card": "fair", "writing": "简历条目", "version": "v1 通用", "text": "牵头策划校园公益市集，统筹招商、宣传与现场，18 个摊位参与，筹得善款 6,200 元。"}]}, {"title": "技能与语言", "items": [{"card": "skills", "writing": "简历条目", "version": "v2 通用运营向", "text": "数据分析：Excel（数据透视 / VLOOKUP）、SQL 基础查询、内容选题与互动率复盘\n内容与策划：活动方案撰写、公众号/小红书图文排版、Figma 海报基础设计\n语言能力：中文（母语），英语（CET-6 610）"}]}], "exports": []}
+];
+if(!LIVE)Object.assign(VAULT_CFG.profile,{"name": "示例同学", "headline": "社会人类学 · 本科三年级", "location": "北京 / 上海（可随时到岗）", "email": "student@example.com", "phone": "138-0000-0000", "photo": "", "links": ["github.com/example-student"], "education": [{"school": "示例大学", "major": "社会人类学", "degree": "本科", "time": "2023.09 – 2027.06", "details": ["GPA：3.8 / 4.0（专业前 10%）", "核心课程：社会研究方法、质性访谈、数据统计分析"]}]});  // demo only: the sample person, so the sheet isn't blank
+/* DEMO-DATA:END */
 const DEF={filter:.17,list:.3};
-const S={show:{filter:true,list:true,detail:true},f:{...DEF},type:null,tag:null,adding:false,q:'',sel:'xhs',open:{'实习':true},ver:{},exp:{},expAll:false,menu:null,rename:null,edit:null,doc:null,hit:null,mode:'wide',pane:'list',loading:false,qopen:false,docEdit:null,dconf:null,dfocus:null,fedit:null};
+const S={show:{filter:true,list:true,detail:true},f:{...DEF},type:null,tag:null,adding:false,q:'',sel:'xhs',open:{'实习':true},ver:{},exp:{},expAll:false,menu:null,rename:null,edit:null,doc:null,hit:null,mode:'wide',pane:'list',loading:false,qopen:false,docEdit:null,dconf:null,dfocus:null,fedit:null,res:null,rsel:null,redit:null,rpend:null,rflash:null,rjd:false,rdel:null,rfocusPref:null,rzoom:'fit',rcmp:null};
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const card=id=>CARDS.find(c=>c.id===id);
@@ -993,30 +1170,41 @@ const pct=k=>(S.f[k]*100).toFixed(2)+'%';
 function visible(){
   const q=S.q.trim().toLowerCase();
   return CARDS.filter(c=>(!S.type||c.type===S.type)&&(!S.tag||c.tags.includes(S.tag))&&
-    (!q||[c.title,c.fact,c.result,c.thought,c.tags.join(' ')].join(' ').toLowerCase().includes(q)));
+    (!q||[c.title,c.fact,c.result,c.thought,c.tags.join(' '),c.works.map(w=>typeof w==='string'?w:[w.label,w.summary].filter(Boolean).join(' ')).join(' ')].join(' ').toLowerCase().includes(q)));
 }
 function filterCol(open){
   if(!open)return '';   // collapsed: no rail — the expand control lives in the timeline header
   const tree=TYPES.map(t=>{const items=CARDS.filter(c=>c.type===t),op=!!S.open[t];
     return `<li class="${tc(t)}"><div class="trow"><button class="caret" data-open="${t}" aria-expanded="${op}" aria-label="${op?'收起':'展开'}${t}">${ICON.chev}</button>
       <button class="name ${S.type===t?'on':''}" data-type="${t}" title="只看${t}；再点一次取消">${t}</button><span class="cnt">${items.length}</span></div>
-      ${op?`<ul class="sub">${items.map(c=>`<li><button class="${S.sel===c.id&&!S.doc?'on':''}" data-sel="${c.id}" data-ck="${c.id}">${esc(c.org)}</button></li>`).join('')}</ul>`:''}</li>`}).join('');
+      ${op?`<ul class="sub">${items.map(c=>`<li><button class="${S.sel===c.id&&!S.doc&&!S.res?'on':''}" data-sel="${c.id}" data-ck="${c.id}">${esc(c.org)}</button></li>`).join('')}</ul>`:''}</li>`}).join('');
   return `<div class="col side" style="flex:0 0 ${pct('filter')};min-width:150px">
-    <div class="brandrow"><span class="brand"><span class="logo" aria-hidden="true">${LOGO}</span>经历库</span>${S.mode==='single'?`<button data-pane="list" title="返回时间线" aria-label="返回时间线">${ICON.collapse}</button>`:`<button data-toggle="filter" title="收起筛选栏" aria-label="收起筛选栏">${ICON.collapse}</button>`}</div>
+    <div class="brandrow"><span class="brand"><span class="logo" aria-hidden="true">${LOGO}</span>经历库</span><button data-tour="menu" title="帮助：各个区域怎么用" aria-label="帮助">?</button>${S.mode==='single'?`<button data-pane="list" title="返回时间线" aria-label="返回时间线">${ICON.collapse}</button>`:`<button data-toggle="filter" title="收起筛选栏" aria-label="收起筛选栏">${ICON.collapse}</button>`}</div>
     <div class="trow"><button class="name allt ${S.type?'':'on'}" data-alltypes="1" title="显示全部类型">类型 · 全部</button><span class="cnt">${CARDS.length}</span></div>
-    <ul class="tree">${tree}</ul>
-    <div class="lab">简历<button class="more" data-dnew="1" title="新建简历" aria-label="新建简历">${ICON.plus}</button></div><ul class="sub" style="margin-left:0;padding-left:0;border:none">${DOCS.map(d=>`<li><button class="${S.doc===d.id?'on':''}" data-doc="${esc(d.id)}">${ICON.doc}${esc(d.title||'未命名简历')}</button></li>`).join('')}</ul><div class="sidefoot">${statusHtml()}</div></div>`;
+    <ul class="tree" data-guide="types">${tree}</ul>
+    <div class="lab">简历<button class="more" data-ra="newmenu" title="新建简历" aria-label="新建简历">${ICON.plus}</button></div><ul class="sub" data-guide="resumes" style="margin-left:0;padding-left:0;border:none">${RESUMES.map(r=>`<li><button class="${S.res===r.id?'on':''}" data-res="${esc(r.id)}" title="${esc(r.title||'未命名简历')}"><i class="rdot ${r.status==='已投递'?'sent':''}">${r.status==='已投递'?'✓':'简'}</i><span>${esc(r.title||'未命名简历')}<span class="rsub">${r.status==='已投递'?'已投递 · '+esc(String(r.sent||'').slice(5).replace('-','.')):'草稿'}</span></span></button></li>`).join('')||'<li><div class="rsub" style="padding:4px 10px;font-size:12px;color:var(--muted)">还没有简历。点 ＋ 新建，或让左边的 AI 按岗位做一份。</div></li>'}</ul>
+    <div class="lab">申请信<button class="more" data-dnew="1" title="新建申请信" aria-label="新建申请信">${ICON.plus}</button></div><ul class="sub" data-guide="letters" style="margin-left:0;padding-left:0;border:none">${DOCS.map(d=>S.rename==='doc#'+d.id?`<li><input id="rn" class="rn" style="width:100%;font-size:13px;padding:4px 8px;border-radius:7px" value="${esc(d.title||'')}" aria-label="申请信名称"></li>`:`<li><button class="${S.doc===d.id?'on':''}" data-doc="${esc(d.id)}" data-dk="${esc(d.id)}" title="右键可重命名、复制、删除">${ICON.doc}${esc(d.title||'未命名申请信')}</button></li>`).join('')}</ul>
+    <a class="prof-btn" href="/resume-print" target="_blank" rel="noopener" data-rprint="1" title="把所有经历排成一份 A4 打印版，快速看一眼（浏览器 Cmd/Ctrl+P 存为 PDF）">${ICON.pdf}<span>全部经历打印版</span></a>
+    <div class="sidefoot">${statusHtml()}</div></div>`;
 }
 function listCol(fill){
   const cs=visible().sort((a,b)=>String(b.time).localeCompare(String(a.time)));let yr=null,h='';
   const tags=[...new Set(CARDS.flatMap(c=>c.tags))];
   cs.forEach(c=>{if(c.year!==yr){yr=c.year;h+=`<div class="yr"><b>${yr||'时间未定'}</b><span class="yc">${cs.filter(x=>x.year===yr).length} 段</span></div>`}
-    const top=`<div class="ctop"><span class="tbadge">${esc(c.type)}</span><span class="cnum">${ICON.pen}<b>${nVers(c)}</b>个写法</span></div>`;
+    const top=`<div class="ctop"><span class="tbadge">${esc(c.type)}</span>${S.res&&typeof rin==='function'&&rin(c.id)?'<span class="rin">✓ 在简历中</span>':`<span class="cnum">${ICON.pen}<b>${nVers(c)}</b>个写法</span>`}</div>`;
     const inner=`<div class="m">${esc(c.time)}${c.role?' · '+esc(c.role):''}</div>
       ${c.tags.length?`<div class="ps">${c.tags.map(t=>`<span class="pill">${esc(t)}</span>`).join('')}</div>`:''}`;
     h+=S.rename==='card#'+c.id
       ?`<div class="card on ${tc(c.type)}">${top}<input id="rn" class="rn" style="width:100%;border-radius:8px;font-size:14px;padding:3px 9px" value="${esc(c.title)}" aria-label="经历名称">${inner}</div>`
-      :`<button class="card ${tc(c.type)} ${S.sel===c.id&&!S.doc?'on'+(FX.sel?' fx':''):''}" data-sel="${c.id}" data-ck="${c.id}" title="右键可重命名、复制、删除">${top}<div class="t">${esc(c.title)}</div>${inner}</button>`});
+      :`<button class="card ${tc(c.type)} ${S.sel===c.id&&!S.doc&&!S.res?'on'+(FX.sel?' fx':''):''}" draggable="true" data-sel="${c.id}" data-ck="${c.id}" title="可拖动到右侧的简历或申请信；右键可重命名、复制、删除">${top}<div class="t">${esc(c.title)}</div>${inner}</button>`});
+  const prof=VAULT_CFG.profile||{},edus=Array.isArray(prof.education)?prof.education:[];
+  const pmeta=[prof.headline,prof.location,edus.length?`教育背景 ${edus.length} 段`:''].filter(Boolean).join(' · ')||'点击填写姓名、联系方式与教育背景';
+  const pcard=`<div class="yr"><b>个人概况</b></div>
+    <button class="card tc5 ${S.sel==='__profile__'&&!S.doc?'on'+(FX.sel?' fx':''):''}" data-sel="__profile__">
+      <div class="ctop"><span class="tbadge">个人信息</span><span class="cnum"><b>${edus.length}</b>段学历</span></div>
+      <div class="t">${esc(prof.name||'个人信息与教育背景')}</div>
+      <div class="m">${esc(pmeta)}</div>
+    </button>`;
   const add=S.adding?`<form class="add" id="addf"><input id="add-title" placeholder="经历名称，如：某公司 · 某岗位" aria-label="经历名称" required>
       <div style="display:flex;gap:6px;flex-wrap:wrap"><select id="add-type" aria-label="类型">${TYPES.map(t=>`<option ${t===S.type?'selected':''}>${t}</option>`).join('')}</select>
       <input id="add-time" placeholder="时间，如 2026.09" aria-label="时间" style="flex:1;min-width:110px"></div>
@@ -1024,15 +1212,22 @@ function listCol(fill){
       <div class="hint">这里只建一张空卡片。详细内容可以之后在对话里交给 AI 补充。</div></form>`:'';
   return `<div class="col list" style="${fill?'flex:1':`flex:0 0 ${pct('list')};min-width:200px`}">
     ${statsHtml()}
-    <h2><span class="hleft">${S.mode==='single'||!(S.show.filter&&S.mode==='wide')?`<button class="hexp" data-toggle="filter" title="展开筛选栏" aria-label="展开筛选栏${activeCount()?`（已选 ${activeCount()} 项）`:''}">${ICON.side}${activeCount()?`<i class="hn">${activeCount()}</i>`:''}</button><span class="brand mark hmark" title="经历库 · ${VST.t}"><span class="logo" aria-hidden="true">${LOGO}</span><i class="vdot" data-s="${VST.s}" title="${VST.t}"></i></span>`:''}<span class="htl">时间线</span></span> <span class="hright"><span class="hcnt">${cs.length} 段${S.type?' · '+S.type:''}</span><span class="qslot"></span><button class="btn" data-add="1" title="新增经历">${ICON.plus}<span class="bt">新增</span></button></span></h2>
+    <h2><span class="hleft">${S.mode==='single'||!(S.show.filter&&S.mode==='wide')?`<button class="hexp" data-toggle="filter" title="展开筛选栏" aria-label="展开筛选栏${activeCount()?`（已选 ${activeCount()} 项）`:''}">${ICON.side}${activeCount()?`<i class="hn">${activeCount()}</i>`:''}</button><span class="brand mark hmark" title="经历库 · ${VST.t}"><span class="logo" aria-hidden="true">${LOGO}</span><i class="vdot" data-s="${VST.s}" title="${VST.t}"></i></span><button class="hexp" data-tour="menu" title="帮助：各个区域怎么用" aria-label="帮助">?</button>`:''}<span class="htl">时间线</span></span> <span class="hright"><span class="hcnt">${cs.length} 段${S.type?' · '+S.type:''}</span><span class="qslot"></span><button class="btn" data-add="1" title="新增经历">${ICON.plus}<span class="bt">新增</span></button></span></h2>
     <div class="chips tagbar" role="group" aria-label="按标签筛选">${tags.map(t=>`<button class="${S.tag===t?'on':''}" data-tag="${esc(t)}">${esc(t)}</button>`).join('')}</div>
-    ${add}${h?`<div class="tl">${h}</div>`:`<div class="empty">${CARDS.length?'没有符合条件的经历。换一个类型或标签，或点「新增」。':EMPTY_VAULT}</div>`}</div>`;
+    ${add}<div class="tl">${h||`<div class="empty">${CARDS.length?'没有符合条件的经历。换一个类型或标签，或点「新增」。':EMPTY_VAULT}</div>`}${pcard}</div></div>`;
+}
+function countStats(s){
+  const t=String(s||''),chars=t.length,noSpace=t.replace(/\s+/g,'').length;
+  const cjk=(t.match(/[\u4e00-\u9fff\u3400-\u4dbf]/g)||[]).length;
+  const words=(t.match(/[A-Za-z0-9]+(?:['’-][A-Za-z0-9]+)*/g)||[]).length;
+  if(!chars)return '0 字';
+  return cjk>0?`${noSpace} 字 · ${chars} 字符`:`${words} 词 · ${chars} 字符`;
 }
 function vcell(key,w,vi,ref){
-  const v=w.versions[vi],ek=key+'#'+vi;
-  if(ref)return `<div class="bd">${esc(v.text)}</div><div class="acts"><button class="btn" data-copytext="${esc(v.text)}">复制</button><button class="btn" data-doc="${v.doc}" data-hit="${v.pi}">展开完整文档 →</button></div>`;
-  return S.edit===ek?`<div class="bd"><textarea id="ta" aria-label="编辑写法">${esc(v.text)}</textarea></div><div class="acts"><button class="btn pri" data-save="${ek}">保存到当前版本</button><button class="btn" data-savenew="${ek}">另存为新版本</button><button data-cancel="1">取消</button></div>`
-    :`<div class="bd">${esc(v.text)}</div><div class="acts"><button class="btn" data-copy="${ek}">复制</button><button class="btn" data-edit="${ek}">编辑</button></div>`;
+  const v=w.versions[vi],ek=key+'#'+vi,cnt=countStats(v.text);
+  if(ref)return `<div class="bd">${esc(v.text)}</div><div class="acts"><button class="btn" data-copytext="${esc(v.text)}">复制</button><button class="btn" data-doc="${v.doc}" data-hit="${v.pi}">展开完整文档 →</button><span class="wcount">${cnt}</span></div>`;
+  return S.edit===ek?`<div class="bd"><textarea id="ta" aria-label="编辑写法">${esc(v.text)}</textarea></div><div class="acts"><button class="btn pri" data-save="${ek}">保存到当前版本</button><button class="btn" data-savenew="${ek}">另存为新版本</button><button data-cancel="1">取消</button><span class="wcount" id="ta-count">${cnt}</span></div>`
+    :`<div class="bd">${esc(v.text)}</div><div class="acts"><button class="btn" data-copy="${ek}">复制</button><button class="btn" data-edit="${ek}">编辑</button><span class="wcount">${cnt}</span></div>`;
 }
 function vname(key,w,vi,ref,tab,on){
   const n=w.versions[vi].name,rn=S.rename===key+'#'+vi;
@@ -1054,9 +1249,73 @@ function refsOf(c){
   const vs=DOCS.flatMap(d=>d.paras.map((p,pi)=>p.card===c.id?{name:d.title,text:p.text,doc:d.id,pi}:null).filter(Boolean));
   return vs.length?{type:'动机信段落',versions:vs}:null;
 }
+function profileView(back){
+  const p=VAULT_CFG.profile||{},edus=Array.isArray(p.education)?p.education:[];
+  const skills=Array.isArray(p.skills)?p.skills:[];
+  if(S.profEdit){
+    const eRows=S.profEdus||JSON.parse(JSON.stringify(edus));
+    S.profEdus=eRows;
+    return `<div class="col detail tc5" style="flex:1">${back?`<div class="backrow">${back}</div>`:''}
+      <div class="hero">
+        <div class="htop"><span class="tbadge">个人信息</span><span>编辑中 · ${LIVE?'保存后写入 config.json':'演示模式'}</span></div>
+        <h1 class="dt">${esc(p.name||'个人信息与教育背景')}</h1>
+        <div class="pgrid" style="margin-top:12px">
+          <label class="pfield">姓名<input id="pf-name" value="${esc(p.name||'')}"></label>
+          <label class="pfield">头衔 / 求职方向<input id="pf-head" placeholder="如：传播学 · 本科三年级" value="${esc(p.headline||'')}"></label>
+          <label class="pfield">所在城市 / 到岗时间<input id="pf-loc" placeholder="如：北京 · 可立即到岗" value="${esc(p.location||'')}"></label>
+          <label class="pfield">邮箱<input id="pf-email" value="${esc(p.email||'')}"></label>
+          <label class="pfield">电话<input id="pf-phone" value="${esc(p.phone||'')}"></label>
+          <label class="pfield">个人主页 / 链接（逗号隔开）<input id="pf-links" value="${esc((p.links||[]).join(', '))}"></label>
+          <label class="pfield full">证件照（支持拖拽或点击上传，自动存到 ~/folio/assets/）
+            <div class="pdrop" id="pf-drop" tabindex="0" role="button" aria-label="拖拽或点击上传证件照">
+              ${p.photo?`<img id="pf-pimg" src="/vault/${esc(p.photo)}?t=${Date.now()}" alt="证件照">`:'<img id="pf-pimg" hidden alt="证件照">'}
+              <div class="pdt"><b>${p.photo?'已上传证件照（拖入新图可替换）':'拖入证件照图片，或点击选择文件'}</b><span>支持 JPG / PNG / WebP，导出简历 PDF 时显示在右上角</span></div>
+              <input id="pf-file" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+            </div>
+            <input id="pf-photo" placeholder="assets/portrait.jpg" value="${esc(p.photo||'')}" style="margin-top:4px">
+          </label>
+        </div>
+        <div class="pedu-head"><span>教育背景</span><button type="button" class="btn" data-peduadd="1">+ 添加学历</button></div>
+        <div id="pf-edus">${eRows.length?eRows.map((ed,i)=>`<div class="pedu-item" data-ei="${i}">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:12px;color:var(--muted)">
+            <span>教育经历 ${i+1}</span><button type="button" class="btn" style="padding:2px 8px;font-size:11px" data-pedudel="${i}">删除</button>
+          </div>
+          <div class="pgrid">
+            <label class="pfield">学校<input data-ef="school" value="${esc(ed.school||'')}"></label>
+            <label class="pfield">专业<input data-ef="major" value="${esc(ed.major||'')}"></label>
+            <label class="pfield">学历（本科 / 硕士）<input data-ef="degree" value="${esc(ed.degree||'')}"></label>
+            <label class="pfield">时间（2023.09 – 2027.06）<input data-ef="time" value="${esc(ed.time||'')}"></label>
+            <label class="pfield full">成绩 / 主修课程（每行一条）<textarea rows="2" data-ef="details">${esc((ed.details||[]).join('\n'))}</textarea></label>
+          </div></div>`).join(''):'<div style="font-size:12.5px;color:var(--muted);padding:4px 0">暂无教育背景，点右上角「+ 添加学历」录入。</div>'}</div>
+        <div class="pedu-head"><span>技能与语言兜底（多版本建议新建「技能」卡片）</span></div>
+        <label class="pfield"><textarea id="pf-skills" rows="2" placeholder="语言：IELTS 7.0&#10;工具：Python、SQL">${esc(skills.join('\n'))}</textarea></label>
+        <div class="pfoot"><button type="button" class="btn" data-pcancel="1">取消</button><button type="button" class="btn pri" data-psave="1">保存</button></div>
+      </div></div>`;
+  }
+  const contacts=[p.location,p.phone?'电话：'+p.phone:'',p.email?'邮箱：'+p.email:'',...(p.links||[])].filter(Boolean);
+  return `<div class="col detail tc5" style="flex:1">${back?`<div class="backrow">${back}</div>`:''}
+    <div class="hero">
+      <div class="htop"><span class="tbadge">个人信息</span><span>置底基础卡片 · 导出简历 PDF 时使用</span></div>
+      <h1 class="dt">${esc(p.name||'未填写姓名')} <button class="btn" style="font-size:12px;vertical-align:middle;margin-left:8px" data-pedit="1">${ICON.pen} 编辑</button><a class="btn" style="font-size:12px;vertical-align:middle;margin-left:6px;text-decoration:none" href="/resume-print" target="_blank" rel="noopener" data-rprint="1">${ICON.pdf} 全部经历打印版</a></h1>
+      ${p.headline?`<div class="dm"><span class="pill">${esc(p.headline)}</span></div>`:''}
+      <div class="kpis">
+        <span class="kpi"><b>${edus.length}</b>教育背景</span>
+        <span class="kpi"><b>${contacts.length}</b>联系方式</span>
+        ${p.photo?`<span class="kpi">已设证件照</span>`:''}
+      </div>
+    </div>
+    <div class="bento">
+      <div class="tile fact"><div class="lk"><span class="ic">${ICON.user}</span>联系方式与基础信息</div>
+        <div class="v">${contacts.length?contacts.map(x=>esc(x)).join(' · '):'<span style="color:var(--muted)">暂未填写联系方式，点击上方「编辑」补充。</span>'}</div></div>
+      <div class="tile wk"><div class="lk"><span class="ic">${ICON.doc}</span>教育背景</div>
+        <div class="v">${edus.length?edus.map(ed=>`<div style="margin-bottom:8px"><strong>${esc([ed.school,ed.major,ed.degree].filter(Boolean).join(' · '))}</strong> <span style="color:var(--muted);font-size:12.5px">${esc(ed.time||'')}</span>${(ed.details&&ed.details.length)?`<div style="color:var(--muted);font-size:13px;margin-top:2px">${ed.details.map(d=>esc(d)).join(' / ')}</div>`:''}</div>`).join(''):'<span style="color:var(--muted)">暂未填写教育背景，点击上方「编辑」添加。</span>'}</div></div>
+    </div></div>`;
+}
 function detailCol(){
   const back=S.mode==='single'?'<button class="btn" data-pane="list">← 时间线</button>':'';
+  if(S.res)return resumeView(back);
   if(S.doc)return docView(back);
+  if(S.sel==='__profile__')return profileView(back);
   const c=card(S.sel);
   if(!c)return `<div class="col" style="flex:1">${back?`<div class="backrow">${back}</div>`:''}<div class="empty">${CARDS.length?'从左侧选一段经历。':EMPTY_VAULT}</div></div>`;
   const fe=S.fedit&&S.fedit.id===c.id?S.fedit.f:null;
@@ -1072,63 +1331,70 @@ function detailCol(){
     ${fe==='title'?`<div class="dt-edit"><input class="fti" data-fedit="title" value="${esc(S.fedit&&S.fedit.v!=null?S.fedit.v:c.title)}" aria-label="编辑标题"><div class="fhint">↩ 保存 · Esc 取消</div></div>`
       :`<h1 class="dt" data-dbl="title" title="双击编辑标题">${esc(c.title)} <button class="more" style="font-size:18px;vertical-align:middle" data-cmenu="${c.id}" aria-label="经历操作：重命名、复制、删除" title="重命名、复制、删除">⋯</button><span class="fpen" aria-hidden="true">${ICON.pen2}</span></h1>`}
     <div class="dm">${c.tags.map(t=>`<span class="pill">${esc(t)}</span>`).join('')}</div>
-    <div class="kpis"><span class="kpi"><b>${nVers(c)}</b>写法</span><span class="kpi"><b>${c.works.length}</b>作品</span><span class="kpi"><b>${r?r.versions.length:0}</b>申请引用</span></div></div>
-    <div class="bento${LIVE&&c.works.some(w=>w&&(w.kind==='image'||w.kind==='video'))?' has-media':''}">${tile('fact','fact','事实','fact','双击填写事实——做了什么','','做了什么、在什么情境下……')}${tile('res','res','结果','result','双击填写结果——最好有数字',bn?`<div class="big"><span>${esc(bn.n)}</span><small>${esc(bn.u)}</small></div>`:'','结果——最好有数字或证明材料')}${tile('th','th','思考','thought','双击填写思考——这段经历让你想到了什么','','这段经历让你想到了什么')}
+    <div class="kpis"><span class="kpi"><b>${nVers(c)}</b>写法</span><span class="kpi"><b>${c.works.length}</b>作品</span><span class="kpi"><b>${r?r.versions.length:0}</b>申请引用</span><span class="kpi"><b>${RESUMES.filter(x=>rin(c.id,x)).length}</b>简历引用</span></div>${(()=>{const rs=RESUMES.filter(x=>rin(c.id,x));return rs.length?`<div class="rv-refs">用到它的简历：${rs.map(x=>`<button class="${x.status==='已投递'?'sent':''}" data-res="${esc(x.id)}" title="${x.status==='已投递'?'已投递 · 内容冻结，改这张卡片不影响它':'草稿 · 改这张卡片会跟着变'}">${x.status==='已投递'?'✓ ':''}${esc(x.title||'未命名简历')}</button>`).join('')}</div>`:''})()}</div>
+    <div data-guide="bento" class="bento${LIVE&&c.works.some(w=>w&&(w.kind==='image'||w.kind==='video'))?' has-media':''}">${tile('fact','fact','事实','fact','双击填写事实——做了什么','','做了什么、在什么情境下……')}${tile('res','res','结果','result','双击填写结果——最好有数字',bn?`<div class="big"><span>${esc(bn.n)}</span><small>${esc(bn.u)}</small></div>`:'','结果——最好有数字或证明材料')}${tile('th','th','思考','thought','双击填写思考——这段经历让你想到了什么','','这段经历让你想到了什么')}
     <div class="tile wk ${c.works.length?'':'miss'}"><div class="lk">${ICON.wk}作品</div><div class="v">${c.works.length?c.works.map(workHtml).join(''):'无'}</div></div></div>
-    <div class="sec"><span>已有写法<small>${c.writings.length+(r?1:0)}</small></span>${anyMany?`<button class="tog" data-expall="1">${S.expAll?'全部收起':'全部展开对比'}</button>`:''}</div>${ws||'<div class="empty">还没有写法。回到对话，让 AI 按某次申请的要求生成。</div>'}</div>`;
+    <div class="sec" data-guide="writings"><span>已有写法<small>${c.writings.length+(r?1:0)}</small></span>${anyMany?`<button class="tog" data-expall="1">${S.expAll?'全部收起':'全部展开对比'}</button>`:''}</div>${ws||'<div class="empty">还没有写法。回到对话，让 AI 按某次申请的要求生成。</div>'}</div>`;
 }
-const dtitle=d=>d.title||'未命名简历';
+const dtitle=d=>d.title||'未命名申请信';
 function docView(back){
   const d=DOCS.find(x=>x.id===S.doc);
-  if(!d)return `<div class="col" style="flex:1">${back?`<div class="backrow">${back}</div>`:''}<div class="empty">这份简历已经不在了。</div></div>`;
+  if(!d)return `<div class="col" style="flex:1">${back?`<div class="backrow">${back}</div>`:''}<div class="empty">这份申请信已经不在了。</div></div>`;
   const ed=S.docEdit===d.id,yr=String(d.date||'').slice(0,4);
-  const head=`<div class="backrow">${back}<button class="btn" data-back="1">← 返回卡片</button><span class="grow"></span>${ed?`<button class="btn pri" data-ddone="1">完成</button>`:`<button class="btn" data-dedit="${esc(d.id)}">${ICON.pen2}编辑</button>`}</div>`;
+  const delBtn=`<button class="btn ${S.docDelConf===d.id?'danger':''}" style="${S.docDelConf===d.id?'color:var(--danger);border-color:var(--danger)':''}" data-ddocdel="${esc(d.id)}">${S.docDelConf===d.id?'再点一次确认删除':'删除'}</button>`;
+  const head=`<div class="backrow">${back}<button class="btn" data-back="1">← 返回卡片</button><span class="grow"></span>${ed?`${delBtn}<button class="btn pri" data-ddone="1">完成</button>`:`<button class="btn" data-dedit="${esc(d.id)}">${ICON.pen2}编辑</button>`}</div>`;
   if(ed){
     const opts=sel=>`<option value="">无</option>`+CARDS.map(c=>`<option value="${esc(c.id)}"${c.id===sel?' selected':''}>${esc(c.title||c.id)}</option>`).join('')+(sel&&!card(sel)?`<option value="${esc(sel)}" selected>（找不到这段经历）</option>`:'');
     const f=(k,l,ph)=>`<label>${l}<input data-df="${k}" value="${esc(d[k]||'')}" placeholder="${ph}"></label>`;
     return `<div class="col doc detail editing${FX.sel?' fx':''}" style="flex:1;min-width:0">${head}
     <div class="hero"><span class="ghost" aria-hidden="true">${esc(yr)}</span>
-    <div class="htop"><span class="tbadge">简历</span><span>编辑中 · ${LIVE?'改动会自动保存':'演示数据不会保存'}</span></div>
-    <input class="din dtitle" data-df="title" value="${esc(d.title||'')}" placeholder="标题，如：某项目 · 自荐信" aria-label="标题">
-    <div class="dmeta">${f('kind','类型','自荐信')}${f('target','申请对象','某机构')}${f('scene','场景','实习申请')}${f('date','日期','2026.11')}${f('lang','语言','中文')}</div></div>
-    <div class="body dbody">${d.paras.map((p,i)=>`<div class="dpara"><textarea class="dta" data-dp="${i}" rows="2" placeholder="这一段写什么……" aria-label="第 ${i+1} 段">${esc(p.text||'')}</textarea>
+    <div class="htop"><span class="tbadge">申请信</span><span>编辑中 · ${LIVE?'改动会自动保存':'演示数据不会保存'}</span></div>
+    <input class="din dtitle" data-df="title" value="${esc(d.title||'')}" placeholder="标题，如：某公司 · 自荐信 / 动机信" aria-label="标题">
+    <div class="dmeta">${f('kind','类型','自荐信 / 动机信')}${f('target','投递对象','某机构')}${f('scene','场景','实习申请')}${f('date','日期','2026.11')}${f('lang','语言','中文')}</div></div>
+    <div class="body dbody">${d.paras.map((p,i)=>`<div class="dpara" data-pdrop="${i}"><textarea class="dta" data-dp="${i}" rows="2" placeholder="这一段写什么……（也可从中间栏拖入经历卡片）" aria-label="第 ${i+1} 段">${esc(p.text||'')}</textarea>
       <div class="dctl"><span class="dno">${i+1}</span><label>用到的经历<select data-dc="${i}" aria-label="第 ${i+1} 段用到的经历">${opts(p.card)}</select></label>
       <button class="ib" data-dmv="${i}:-1" ${i?'':'disabled'} title="上移" aria-label="上移">↑</button><button class="ib" data-dmv="${i}:1" ${i<d.paras.length-1?'':'disabled'} title="下移" aria-label="下移">↓</button>
       <button class="ib del${S.dconf===i?' confirm':''}" data-ddel="${i}" title="删除这一段">${S.dconf===i?'再点一次删除':'删除'}</button></div></div>`).join('')}
+      <div class="ddrop" data-pdrop="end">将中间栏的经历卡片拖到这里，自动填入内容并关联</div>
       <button class="btn dadd" data-dadd="1">${ICON.plus}添加段落</button></div>
     <div class="foot"><button class="btn pri" data-ddone="1">完成</button></div></div>`;
   }
   const mp=(cls,v,pre='')=>`<span class="pill ${cls}"${v?'':' data-empty'}>${pre}${esc(v||'')}</span>`;
+  const linkedIds=[...new Set(d.paras.map(p=>p.card).filter(id=>id&&card(id)))];
+  const rprintBtn=linkedIds.length?`<a class="btn" style="text-decoration:none" href="/resume-print?ids=${encodeURIComponent(linkedIds.join(','))}" target="_blank" rel="noopener" data-rprint="1" title="只用这封申请信关联的 ${linkedIds.length} 段经历生成 A4 打印版简历">${ICON.pdf}关联经历打印版</a>`:'';
   return `<div class="col doc detail${FX.sel?' fx':''}" style="flex:1;min-width:0">${head}
     <div class="hero"><span class="ghost" aria-hidden="true">${esc(yr)}</span>
-    <div class="htop"><span class="tbadge">简历</span><span>引用经历的完整文档</span></div>
-    <h1 class="dt">${esc(dtitle(d))} <button class="more" style="font-size:18px;vertical-align:middle" data-dmenu="${esc(d.id)}" aria-label="简历操作：复制、删除" title="复制、删除">⋯</button></h1>
-    <div class="dm">${mp('solid m-kind',d.kind)}${mp('m-target',d.target,'申请对象：')}${mp('m-scene',d.scene,'场景：')}${mp('m-date',d.date)}${mp('m-lang',d.lang)}</div>
-    <div class="kpis"><span class="kpi"><b>${d.paras.length}</b>段</span><span class="kpi"><b>${new Set(d.paras.map(p=>p.card).filter(Boolean)).size}</b>段经历被引用</span></div></div>
-    <div class="body">${d.paras.map((p,i)=>`<p class="${S.hit===i?'hit':''}">${esc(p.text)}</p>${p.card&&card(p.card)?`<div class="from"><button data-sel="${esc(p.card)}">用到的经历：${esc(card(p.card).title)}</button></div>`:''}`).join('')||'<p class="dempty">还没有内容。点右上角「编辑」开始写。</p>'}</div>
-    <div class="foot"><button class="btn" data-copytext="${esc(d.paras.map(p=>p.text).join('\n\n'))}">复制全文</button><button class="btn" data-export="${esc(d.id)}" title="导出为 PDF">${ICON.pdf}导出 PDF</button></div></div>`;
+    <div class="htop"><span class="tbadge">申请信</span><span>自荐信 / 动机信 / 个人陈述</span></div>
+    ${S.rename==='doc#'+d.id?`<input id="rn" class="rn" style="width:100%;font-size:20px;font-weight:600;padding:4px 10px;border-radius:10px;margin:4px 0 8px" value="${esc(d.title||'')}" aria-label="申请信名称">`:`<h1 class="dt">${esc(dtitle(d))} <button class="more" style="font-size:18px;vertical-align:middle" data-dmenu="${esc(d.id)}" aria-label="申请信操作：重命名、复制、删除" title="重命名、复制、删除">⋯</button></h1>`}
+    <div class="dm">${mp('solid m-kind',d.kind)}${mp('m-target',d.target,'投递对象：')}${mp('m-scene',d.scene,'场景：')}${mp('m-date',d.date)}${mp('m-lang',d.lang)}</div>
+    <div class="kpis"><span class="kpi"><b>${d.paras.length}</b>段</span><span class="kpi"><b>${linkedIds.length}</b>段经历被引用</span></div></div>
+    <div class="body" data-pdrop="end">${d.paras.map((p,i)=>`<p class="${S.hit===i?'hit':''}">${esc(p.text)}</p>${p.card&&card(p.card)?`<div class="from"><button data-sel="${esc(p.card)}">用到的经历：${esc(card(p.card).title)}</button></div>`:''}`).join('')||'<p class="dempty">还没有内容。点右上角「编辑」，或直接从中间栏拖入经历卡片。</p>'}</div>
+    <div class="foot"><button class="btn" data-copytext="${esc(d.paras.map(p=>p.text).join('\n\n'))}">复制全文</button><button class="btn" data-export="${esc(d.id)}" title="导出为 PDF">${ICON.pdf}导出 PDF</button>${rprintBtn}<span class="wcount">全文 ${countStats(d.paras.map(p=>p.text).join('\n\n'))}</span></div></div>`;
 }
 const WK_KIND={image:'图片',video:'视频',pdf:'PDF',slides:'幻灯片',document:'文档',archive:'压缩包',folder:'文件夹',file:'文件',link:'链接'};
 function workHtml(w){
   if(!w||typeof w!=='object')return `<span class="pill solid">${esc(w==null?'':w)}</span>`;
   const label=esc(w.label||w.asset||w.url||'作品'),src=w.asset?VAULT.url(w.asset):'';
-  if(w.asset&&LIVE&&VAULT.missing(w.asset))return `<span class="pill solid wmiss" title="原文件可能被移动、改名或删除了。可以让 AI 帮你「检查快捷方式」。">${label}<span class="wk-k">原文件找不到了</span></span>`;
-  if(w.kind==='image'&&src&&LIVE)return `<button class="wimg" data-zoom="${esc(src)}" title="点击放大"><img src="${esc(src)}" alt="${label}" loading="lazy" data-asset="${esc(w.asset)}"><span>${label}</span></button>`;
-  if(w.kind==='video'&&src&&LIVE)return `<div class="wvid"><video src="${esc(src)}" controls preload="metadata" playsinline data-asset="${esc(w.asset)}"></video><span>${label}</span></div>`;
-  if(w.kind==='link'&&/^(https?:|mailto:)/i.test(w.url||''))return `<a class="pill solid wlink" href="${esc(w.url)}" target="_blank" rel="noopener noreferrer">${label}<span class="wk-k">链接 ↗</span></a>`;
-  if(src&&LIVE)return `<a class="pill solid wlink" href="${esc(src)}" target="_blank" rel="noopener">${label}<span class="wk-k">${WK_KIND[w.kind]||'文件'} ↗</span></a>`;
-  return `<span class="pill solid">${label}</span>`;
+  const sum=w.summary?`<div class="wk-sum">${esc(w.summary)}</div>`:'';
+  const wrap=inner=>sum?`<div class="wk-item">${inner}${sum}</div>`:inner;
+  if(w.asset&&LIVE&&VAULT.missing(w.asset))return wrap(`<span class="pill solid wmiss" title="原文件可能被移动、改名或删除了。可以让 AI 帮你运行「relink」自动找回。">${label}<span class="wk-k">原文件找不到了</span></span>`);
+  if(w.kind==='image'&&src&&LIVE)return wrap(`<button class="wimg" data-zoom="${esc(src)}" title="点击放大"><img src="${esc(src)}" alt="${label}" loading="lazy" data-asset="${esc(w.asset)}"><span>${label}</span></button>`);
+  if(w.kind==='video'&&src&&LIVE)return wrap(`<div class="wvid"><video src="${esc(src)}" controls preload="metadata" playsinline data-asset="${esc(w.asset)}"></video><span>${label}</span></div>`);
+  if(w.kind==='link'&&/^(https?:|mailto:)/i.test(w.url||''))return wrap(`<a class="pill solid wlink" href="${esc(w.url)}" target="_blank" rel="noopener noreferrer">${label}<span class="wk-k">链接 ↗</span></a>`);
+  if(src&&LIVE)return wrap(`<a class="pill solid wlink" href="${esc(src)}" target="_blank" rel="noopener">${label}<span class="wk-k">${WK_KIND[w.kind]||'文件'} ↗</span></a>`);
+  return wrap(`<span class="pill solid">${label}</span>`);
 }
 function render(){
   if(typeof persist==='function')persist();
   const qf=document.activeElement===QI?[QI.selectionStart,QI.selectionEnd]:null;
   if(S.loading){QP.append(QB);$('cols').innerHTML=`<div class="col loadcol" style="flex:0 0 32%;min-width:200px"><div class="skel sk-band"></div><div class="skel"></div><div class="skel"></div><div class="skel"></div></div><div class="col loadcol" style="flex:1"><div class="skel sk-hero"></div><div class="skel-grid"><div class="skel"></div><div class="skel"></div></div><p class="loadmsg">正在读取经历库…</p></div>`;sync();return}
   const single=S.mode==='single',parts=[];
-  const fOpen=S.show.filter&&S.mode==='wide';
-  let showList=S.show.list,showDetail=S.show.detail;
+  const rfocus=rIsFocus();   // 专注: the resume sheet gets the whole width
+  const fOpen=S.show.filter&&S.mode==='wide'&&!rfocus;
+  let showList=S.show.list&&!rfocus,showDetail=S.show.detail||rfocus;
   if(single){showList=S.pane==='list';showDetail=!showList}
   const railNav=single&&S.show.filter&&S.pane==='filter';
-  const fk=S.doc?'d:'+S.doc:'c:'+S.sel;FX.sel=fk!==FX.k;FX.k=fk;
+  const fk=S.res?'r:'+S.res:S.doc?'d:'+S.doc:'c:'+S.sel;FX.sel=fk!==FX.k;FX.k=fk;
   const sig=[S.mode,railNav,fOpen,showList,showDetail].join();$('cols').classList.toggle('fx',sig!==FX.sig);FX.sig=sig;
   if(railNav){$('cols').innerHTML=filterCol(true).replace('flex:0 0 '+pct('filter')+';min-width:150px','flex:1');sync();placeQ(qf);return}
   parts.push(filterCol(fOpen));
@@ -1143,6 +1409,10 @@ function render(){
   const at=$('add-title');if(at&&document.activeElement!==at&&!rn&&!$('ta')&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='SELECT')at.focus();
   document.querySelectorAll('.dta,.fta').forEach(autoGrow);
   if(S.dfocus!=null){const el=S.dfocus==='title'?document.querySelector('.dtitle'):document.querySelector(`[data-dp="${S.dfocus}"]`);S.dfocus=null;if(el)el.focus()}
+  if(S.res&&typeof rfit==='function')rfit();
+  if(typeof rhistSave==='function')rhistSave();
+  if(typeof jlRunHooks==='function')jlRunHooks();
+  const hh=S.res?'#res='+S.res:'';if(location.hash!==hh&&(hh||location.hash.startsWith('#res=')))try{history.replaceState(null,'',hh||location.pathname+location.search)}catch(e){}
 }
 let QM=false;const QB=document.getElementById('qbox'),QI=document.getElementById('q'),QP=document.getElementById('qpark');
 function placeQ(qf){const qb=QB,q=QI,slot=document.querySelector('.qslot');
@@ -1163,7 +1433,7 @@ function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');cle
 function copy(text){try{navigator.clipboard.writeText(text).then(()=>toast('已复制'),()=>toast('复制被浏览器拒绝，请手动选中文字'))}catch(e){toast('复制被浏览器拒绝，请手动选中文字')}}
 function wv(ek){const[key,v]=ek.split('#'),[cid,i]=key.split(':');return{key,w:card(cid).writings[+i],vi:+v}}
 function menuHtml(){const m=S.menu;if(!m)return '';
-  if(m.doc)return `<button data-dm="dup">复制这份记录</button><button data-dm="del" class="${m.confirm?'danger':''}">${m.confirm?'再点一次确认删除':'删除这份记录'}</button>`;
+  if(m.doc)return `<button data-dm="rename">重命名</button><button data-dm="dup">复制这封申请信</button><button data-dm="del" class="${m.confirm?'danger':''}">${m.confirm?'再点一次确认删除':'删除这份简历'}</button>`;
   if(m.card)return `<button data-cm="rename">重命名</button><button data-cm="dup">复制为新经历</button><button data-cm="del" class="${m.confirm?'danger':''}">${m.confirm?'再点一次确认删除':'删除'}</button>`;
   const{w}=wv(m.ek);
   return `<button data-m="rename">重命名</button><button data-m="dup">复制为新版本</button><button data-m="del" ${w.versions.length<2?'disabled title="至少保留一个版本"':''} class="${m.confirm?'danger':''}">${m.confirm?'再点一次确认删除':'删除'}</button>`}
@@ -1171,8 +1441,13 @@ function showMenu(){const el=$('menu'),m=S.menu;if(!m){el.hidden=true;return}
   el.innerHTML=menuHtml();el.hidden=false;const W=el.offsetWidth,H=el.offsetHeight;
   el.style.left=Math.max(8,Math.min(innerWidth-W-8,m.x))+'px';el.style.top=Math.max(8,Math.min(innerHeight-H-8,m.y))+'px';
   if(!m.confirm)el.querySelector('button').focus()}
-function commitRename(inp){if(!S.rename)return;const n=inp.value.trim();if(S.rename.startsWith('card#')){const c=card(S.rename.slice(5));if(n&&c)c.title=n}else{const{w,vi}=wv(S.rename);if(n)w.versions[vi].name=n}S.rename=null}
+function commitRename(inp){if(!S.rename)return;const n=inp.value.trim();if(S.rename.startsWith('card#')){const c=card(S.rename.slice(5));if(n&&c)c.title=n}else if(S.rename.startsWith('doc#')){const d=DOCS.find(o=>o.id===S.rename.slice(4));if(n&&d)d.title=n}else{const{key,w,vi}=wv(S.rename);if(n){const old=w.versions[vi].name,cid=key.split(':')[0];w.versions[vi].name=n;
+    RESUMES.forEach(r=>r.sections.forEach(s=>(s.items||[]).forEach(it=>{if(it.card===cid&&it.version===old&&(it.writing||'简历条目')===w.type)it.version=n})))}}S.rename=null}
+document.addEventListener('input',e=>{
+  if(e.target&&e.target.id==='ta'){const c=$('ta-count');if(c)c.textContent=countStats(e.target.value)}
+});
 document.addEventListener('click',e=>{
+  if(e.target.closest('[data-rprint]')&&!LIVE){e.preventDefault();toast('演示模式暂不支持生成打印版，连接本地经历库后即可一键生成');return}
   const b=e.target.closest('button');
   if(S.menu&&!(b&&(b.dataset.m||b.dataset.cm||b.dataset.menu||b.dataset.cmenu||b.dataset.dm||b.dataset.dmenu))){S.menu=null;showMenu()}
   if(!b)return;const d=b.dataset,single=S.mode==='single';
@@ -1182,8 +1457,9 @@ document.addEventListener('click',e=>{
   if(d.dm){const m=S.menu,x=DOCS.find(o=>o.id===m.doc),i=DOCS.indexOf(x);
     if(!x){S.menu=null;showMenu();return}
     if(d.dm==='del'&&!m.confirm){m.confirm=true;showMenu();return}
-    if(d.dm==='dup'){const n=JSON.parse(JSON.stringify(x));n.id=newId('a',DOCS);n.title=dtitle(x)+' 副本';DOCS.splice(i+1,0,n);S.doc=n.id;S.docEdit=null;S.hit=null;toast('已复制这份简历')}
-    else if(d.dm==='del'){DOCS.splice(i,1);if(S.doc===x.id){S.doc=null;S.docEdit=null}toast('已删除这份简历')}
+    if(d.dm==='rename'){S.rename='doc#'+x.id}
+    else if(d.dm==='dup'){const n=JSON.parse(JSON.stringify(x));n.id=newId('a',DOCS);n.title=dtitle(x)+' 副本';DOCS.splice(i+1,0,n);S.doc=n.id;S.docEdit=null;S.hit=null;toast('已复制这封申请信')}
+    else if(d.dm==='del'){DOCS.splice(i,1);if(S.doc===x.id){S.doc=null;S.docEdit=null}toast('已删除这封申请信')}
     S.menu=null;showMenu();render();return}
   if(d.cm){const m=S.menu,c=card(m.card),i=CARDS.indexOf(c);
     if(d.cm==='del'&&!m.confirm){m.confirm=true;showMenu();return}
@@ -1210,12 +1486,14 @@ document.addEventListener('click',e=>{
   else if(d.alltypes){S.type=null;if(single)S.pane='list'}
   else if(d.add){S.adding=!S.adding}
   else if(d.addcancel){S.adding=false}
-  else if(d.sel){S.sel=d.sel;S.doc=null;S.docEdit=null;S.edit=null;S.fedit=null;S.show.detail=true;S.pane='detail'}
-  else if(d.doc){if(S.docEdit!==d.doc)S.docEdit=null;S.doc=d.doc;S.hit=d.hit!==undefined?+d.hit:null;S.show.detail=true;S.pane='detail'}
-  else if(d.back){S.doc=null;S.docEdit=null}
-  else if(d.dnew){const id=newId('a',DOCS);DOCS.push({schema:1,id,title:'',kind:'',target:'',scene:'',date:ym(),lang:'中文',paras:[{text:'',card:null}]});S.doc=id;S.docEdit=id;S.hit=null;S.show.detail=true;S.pane='detail';S.dfocus='title';toast('已新建简历')}
-  else if(d.dedit){S.docEdit=d.dedit;S.dconf=null;S.hit=null}
-  else if(d.ddone){S.docEdit=null;S.dconf=null;toast(LIVE?'简历已保存':'已更新（演示数据不会保存）')}
+  else if(d.res){S.res=d.res;S.rcmp=null;S.doc=null;S.docEdit=null;S.rsel=S.redit=S.rpend=null;S.rdel=null;S.show.detail=true;S.pane='detail'}
+  else if(d.sel){S.sel=d.sel;S.res=null;S.doc=null;S.docEdit=null;S.edit=null;S.fedit=null;S.show.detail=true;S.pane='detail'}
+  else if(d.doc){S.res=null;if(S.docEdit!==d.doc)S.docEdit=null;S.docDelConf=null;S.doc=d.doc;S.hit=d.hit!==undefined?+d.hit:null;S.show.detail=true;S.pane='detail'}
+  else if(d.back){S.doc=null;S.docEdit=null;S.docDelConf=null}
+  else if(d.dnew){S.res=null;const id=newId('a',DOCS);DOCS.push({schema:1,id,title:'',kind:'',target:'',scene:'',date:ym(),lang:'中文',paras:[{text:'',card:null}]});S.doc=id;S.docEdit=id;S.docDelConf=null;S.hit=null;S.show.detail=true;S.pane='detail';S.dfocus='title';toast('已新建申请信')}
+  else if(d.dedit){S.docEdit=d.dedit;S.dconf=null;S.docDelConf=null;S.hit=null}
+  else if(d.ddone){S.docEdit=null;S.dconf=null;S.docDelConf=null;toast(LIVE?'申请信已保存':'已更新（演示数据不会保存）')}
+  else if(d.ddocdel){const id=d.ddocdel,i=DOCS.findIndex(o=>o.id===id);if(i<0)return;if(S.docDelConf!==id){S.docDelConf=id}else{DOCS.splice(i,1);S.doc=null;S.docEdit=null;S.docDelConf=null;toast('已删除这封申请信')}}
   else if(d.dadd){const x=DOCS.find(o=>o.id===S.docEdit);if(x){x.paras.push({text:'',card:null});S.dconf=null;S.dfocus=x.paras.length-1}}
   else if(d.dmv){const x=DOCS.find(o=>o.id===S.docEdit),[i,dir]=d.dmv.split(':').map(Number),j=i+dir;if(x&&j>=0&&j<x.paras.length){[x.paras[i],x.paras[j]]=[x.paras[j],x.paras[i]];S.dconf=null}}
   else if(d.ddel){const x=DOCS.find(o=>o.id===S.docEdit),i=+d.ddel;if(!x)return;if(S.dconf!==i)S.dconf=i;else{x.paras.splice(i,1);if(!x.paras.length)x.paras.push({text:'',card:null});S.dconf=null;toast('已删除这一段')}}
@@ -1226,20 +1504,67 @@ document.addEventListener('click',e=>{
   else if(d.cancel)S.edit=null;
   else if(d.save){const{w,vi}=wv(d.save);w.versions[vi].text=$('ta').value;S.edit=null;toast('已保存到当前版本')}
   else if(d.savenew){const{key,w}=wv(d.savenew);w.versions.push({name:'v'+(w.versions.length+1)+' 新版本',text:$('ta').value});S.ver[key]=w.versions.length-1;S.edit=null;toast('已另存为新版本')}
+  else if(d.prof){S.sel='__profile__';S.res=null;S.doc=null;S.docEdit=null;S.edit=null;S.fedit=null;S.profEdit=false;S.profEdus=null;S.show.detail=true;S.pane='detail'}
+  else if(d.pedit){S.profEdit=true;S.profEdus=JSON.parse(JSON.stringify((VAULT_CFG.profile&&VAULT_CFG.profile.education)||[]))}
+  else if(d.pcancel){S.profEdit=false;S.profEdus=null}
+  else if(d.peduadd){syncProfDraft();S.profEdus=S.profEdus||[];S.profEdus.push({school:'',major:'',degree:'',time:'',details:[]})}
+  else if(d.pedudel!==undefined){syncProfDraft();S.profEdus.splice(+d.pedudel,1)}
+  else if(d.psave){
+    syncProfDraft();
+    const prof={
+      name:$('pf-name').value.trim(),headline:$('pf-head').value.trim(),location:$('pf-loc').value.trim(),
+      email:$('pf-email').value.trim(),phone:$('pf-phone').value.trim(),
+      links:$('pf-links').value.split(',').map(s=>s.trim()).filter(Boolean),
+      photo:$('pf-photo').value.trim(),
+      education:(S.profEdus||[]).filter(x=>x.school||x.major||x.degree||x.time||(x.details&&x.details.length)),
+      skills:$('pf-skills').value.split('\n').map(s=>s.trim()).filter(Boolean)
+    };
+    S.profEdit=false;S.profEdus=null;
+    if(window.saveProfileConfig)window.saveProfileConfig(prof);
+    return;
+  }
   else if(d.copy){const{w,vi}=wv(d.copy);copy(w.versions[vi].text);return}
   else if(d.copytext){copy(d.copytext);return}
   else return;
   render();
 });
-document.addEventListener('contextmenu',e=>{const t=e.target.closest('[data-vk],[data-ck]');if(!t)return;e.preventDefault();
-  S.menu=t.dataset.vk?{ek:t.dataset.vk,x:e.clientX,y:e.clientY}:{card:t.dataset.ck,x:e.clientX,y:e.clientY};showMenu()});
+document.addEventListener('contextmenu',e=>{const t=e.target.closest('[data-vk],[data-ck],[data-dk]');if(!t)return;e.preventDefault();
+  S.menu=t.dataset.vk?{ek:t.dataset.vk,x:e.clientX,y:e.clientY}:t.dataset.dk?{doc:t.dataset.dk,x:e.clientX,y:e.clientY}:{card:t.dataset.ck,x:e.clientX,y:e.clientY};showMenu()});
+let dragCid=null;
+function cardDraftText(c){
+  if(!c)return '';
+  const w=(c.writings||[]).find(x=>x.type==='简历条目'&&x.versions&&x.versions.length)
+    ||(c.writings||[]).find(x=>x.type==='动机信段落'&&x.versions&&x.versions.length)
+    ||(c.writings||[]).find(x=>x.versions&&x.versions.length);
+  if(w){const vi=Math.min(S.ver[c.id+':'+c.writings.indexOf(w)]||0,w.versions.length-1);if(w.versions[vi]&&w.versions[vi].text)return w.versions[vi].text}
+  return [c.fact,c.result].filter(Boolean).join('\n');
+}
+document.addEventListener('dragstart',e=>{const el=e.target.closest('.card[data-ck]');if(!el)return;dragCid=el.dataset.ck;el.classList.add('dragging');try{e.dataTransfer.setData('text/plain',dragCid);e.dataTransfer.effectAllowed='copy'}catch{}});
+document.addEventListener('dragend',()=>{dragCid=null;document.querySelectorAll('.card.dragging').forEach(x=>x.classList.remove('dragging'));document.querySelectorAll('.drag-over').forEach(x=>x.classList.remove('drag-over'))});
+document.addEventListener('dragover',e=>{const dz=e.target.closest('[data-pdrop]');if(!dz||!S.doc)return;e.preventDefault();if(!dz.classList.contains('drag-over'))dz.classList.add('drag-over')});
+document.addEventListener('dragleave',e=>{const dz=e.target.closest('[data-pdrop]');if(dz&&!dz.contains(e.relatedTarget))dz.classList.remove('drag-over')});
+document.addEventListener('drop',e=>{
+  const dz=e.target.closest('[data-pdrop]');if(!dz||!S.doc)return;e.preventDefault();dz.classList.remove('drag-over');
+  let cid=dragCid;if(!cid)try{cid=e.dataTransfer.getData('text/plain')}catch{}
+  const c=card(cid),doc=DOCS.find(o=>o.id===S.doc);if(!c||!doc)return;
+  const text=cardDraftText(c),pos=dz.dataset.pdrop;
+  if(pos==='end'){
+    if(doc.paras.length===1&&!doc.paras[0].text.trim()&&!doc.paras[0].card){doc.paras[0]={text,card:c.id}}
+    else{doc.paras.push({text,card:c.id})}
+  }else{
+    const idx=+pos,cur=doc.paras[idx];
+    if(cur&&!cur.text.trim()&&!cur.card){doc.paras[idx]={text,card:c.id}}
+    else{doc.paras.splice(idx+1,0,{text,card:c.id})}
+  }
+  toast('已将「'+(c.title||c.id)+'」加入申请信');render();
+});
 document.addEventListener('submit',e=>{if(e.target.id!=='addf')return;e.preventDefault();const title=$('add-title').value.trim();if(!title)return;
   const time=$('add-time').value.trim()||'2026.11',y=parseInt(time,10);
   const c={schema:1,id:newId('e',CARDS),type:$('add-type').value,org:title.split(/[·・]/)[0].trim(),title,time,year:y>1900?y:2026,role:'',tags:[],fact:'',result:'',thought:'',works:[],writings:[]};
   CARDS.push(c);S.sel=c.id;S.doc=null;S.adding=false;if(S.type&&S.type!==c.type)S.type=null;S.tag=null;toast('已新增一段经历');render()});
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){if(S.menu){S.menu=null;showMenu()}if(S.rename){S.rename=null;render()}}
-  if(e.key==='Enter'&&e.target.id==='rn'){commitRename(e.target);render()}});
+  if(e.key==='Enter'&&!e.isComposing&&e.keyCode!==229&&e.target.id==='rn'){commitRename(e.target);render()}});
 document.addEventListener('focusout',e=>{if(e.target.id==='rn'&&S.rename){commitRename(e.target);render()}});
 document.addEventListener('input',e=>{const t=e.target;if(!t.dataset)return;
   if(t.dataset.fedit!==undefined){if(S.fedit)S.fedit.v=t.value;if(t.tagName==='TEXTAREA')autoGrow(t);return}
@@ -1277,9 +1602,463 @@ document.addEventListener('dblclick',e=>{const s=e.target.closest('.split');if(s
 new ResizeObserver(([en])=>{const w=en.contentRect.width,m=w<524?'single':w<1064?'mid':'wide'; /* #cols ≈ viewport − 36px: single < 560px, mid 560–1099px, wide ≥ 1100px */
   if(m==='wide')S.pin=false;
   if(S.pin&&m==='mid')return;
-  if(m!==S.mode){S.mode=m;if(m==='single')S.pane=S.doc||S.sel?'detail':'list';render()}}).observe($('cols'));
-if(LIVE){CARDS.length=0;DOCS.length=0;S.sel=null;S.loading=true}
+  if(m!==S.mode){S.mode=m;if(m==='single')S.pane=S.res||S.doc||S.sel?'detail':'list';render()}}).observe($('cols'));
+/* ===================== 简历编辑器 =====================
+   A resume (resumes/<id>.json) lists which version of which card goes where. The front end does the
+   deterministic part — arrange, switch versions, edit text (always saved back to the card), freeze when sent,
+   watch the page fill. Choosing experiences for a JD or rewriting is the AI's job: those buttons copy an instruction. */
+const RWT='简历条目';
+/* 专注 is automatic at half width (the sheet would be unreadable beside the timeline) until the user toggles it */
+/* #res=<id> opens that resume (deep link / reload keeps it open) */
+function rhashOpen(){const m=location.hash.match(/^#res=([A-Za-z0-9_-]{1,64})$/);if(m&&RESUMES.some(r=>r.id===m[1])){S.res=m[1];S.doc=null;S.show.detail=true;S.pane='detail'}}
+function rcmpOther(){const o=S.rcmp&&S.rcmp!==S.res?RESUMES.find(x=>x.id===S.rcmp):null;return o||null}
+function rIsFocus(){return !!(S.res&&S.mode!=='single'&&(rcmpOther()||(S.rfocusPref!=null?S.rfocusPref:S.mode==='mid')))}
+const RSEC={'实习':'实习经历','项目':'项目经历','志愿者':'志愿经历','获奖':'荣誉奖项','技能':'技能与语言'};
+const R_LINE=17.5,R_AVAIL=1123-78;
+const RIC={spark:'<svg class="ic" width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 1.5 9.4 6.6 14.5 8 9.4 9.4 8 14.5 6.6 9.4 1.5 8 6.6 6.6z"/></svg>',
+  expand:'<svg class="ic" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M6.5 13.5h-4v-4M13.5 2.5 9 7M2.5 13.5 7 9"/></svg>',
+  shrink:'<svg class="ic" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 7H9V3M3 9h4v4M9 7l4.5-4.5M7 9l-4.5 4.5"/></svg>',
+  lock:'<svg class="ic" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3.2" y="7" width="9.6" height="6.8" rx="1.8"/><path d="M5.4 7V5.2a2.6 2.6 0 0 1 5.2 0V7"/></svg>'};
+const rcur=()=>RESUMES.find(r=>r.id===S.res);
+const rfrozen=r=>!!r&&r.status==='已投递';
+const rvers=(cid,wt)=>{const c=card(cid),w=c&&c.writings.find(x=>x.type===(wt||RWT));return w?w.versions:[]};
+const rvtext=(cid,name,wt)=>{const v=rvers(cid,wt).find(x=>x.name===name);return v?v.text:null};
+function ritemText(r,it){if(it.draft!=null)return it.draft;const live=rvtext(it.card,it.version,it.writing);return rfrozen(r)||live==null?(it.text||''):live}
+function rsnap(r){if(!r||rfrozen(r))return;r.sections.forEach(s=>(s.items||[]).forEach(it=>{const live=rvtext(it.card,it.version,it.writing);if(live!=null&&it.text!==live)it.text=live}))}
+const rin=(cid,r)=>{r=r||rcur();return !!r&&r.sections.some(s=>(s.items||[]).some(it=>it.card===cid))};
+const rblob=c=>[c.title,c.org,c.role,c.fact,c.result,...c.writings.flatMap(w=>w.versions.map(v=>v.text))].join(' ').toLowerCase();
+const rkw=(c,r)=>(r.keywords||[]).filter(k=>rblob(c).includes(String(k).toLowerCase()));
+function rcovered(r){const p=VAULT_CFG.profile||{};
+  const txt=r.sections.flatMap(s=>s.from==='education'?[JSON.stringify(p.education||[])]:(s.items||[]).map(it=>ritemText(r,it))).join(' ').toLowerCase();
+  return (r.keywords||[]).filter(k=>txt.includes(String(k).toLowerCase()))}
+// same rules as resume_model.split_lead / body_lines (tools/test_render_parity.py checks they agree)
+const rlead=l=>{l=String(l);for(const sep of ['：',': ']){const i=l.indexOf(sep);if(i<0)continue;const pre=l.slice(0,i).trim(),rest=l.slice(i+sep.length).trim(),n=[...pre].length;if(n>=1&&n<=16&&rest)return [pre+sep.trim(),rest]}return null};
+function rbody(text){const lines=String(text||'').split(/\r\n|\r|\n/).map(l=>l.replace(/^[ \-•·]+|[ \-•·]+$/g,'')).filter(Boolean),any=lines.some(rlead);
+  return lines.map((l,k)=>{const m=rlead(l);if(k===0&&!m&&any&&lines.length>1)return `<p class="rp-sum">${esc(l)}</p>`;return `<p class="rp-pt">${m?`<b>${esc(m[0])}</b>${esc(m[1])}`:esc(l)}</p>`}).join('')}
+const rlen=t=>[...String(t||'').replace(/\s/g,'')].length;
+const rkey=(si,ii)=>si+':'+ii;
+function rget(key){const r=rcur(),[si,ii]=key.split(':').map(Number),s=r&&r.sections[si];return{r,s,si,ii,it:s&&s.items?s.items[ii]:null}}
+/* undo / redo: snapshots of the resumes and the card versions they touch; cleared when the AI changes files */
+const RH={past:[],future:[]};
+const rsnapAll=()=>JSON.stringify({r:RESUMES,w:CARDS.map(c=>[c.id,c.writings])});
+function rcommit(before){RH.past.push(before||rsnapAll());if(RH.past.length>60)RH.past.shift();RH.future=[]}
+function rhistClear(){RH.past=[];RH.future=[];try{sessionStorage.removeItem(RH_KEY)}catch(e){}}
+const RH_KEY='jingliku.undo.v1';
+const rfp=()=>{   // fingerprint of the content only: ignores timestamps and list order, which change on save / reload
+  const strip=o=>JSON.stringify(o,(k,v)=>k==='updated'||k==='created'||k==='schema'?undefined:v);
+  const str=JSON.stringify([RESUMES.map(strip).sort(),CARDS.map(c=>c.id+'\u0001'+JSON.stringify(c.writings)).sort()]);
+  let h=5381;for(let i=0;i<str.length;i++)h=((h<<5)+h+str.charCodeAt(i))|0;return (h>>>0).toString(36)+':'+str.length};
+/* keep undo across a reload of this tab; dropped if the files changed in between (e.g. the AI edited them) */
+function rhistSave(){if(!RH.past.length&&!RH.future.length)return;let n=20;const fp=rfp();
+  while(n>0){try{sessionStorage.setItem(RH_KEY,JSON.stringify({past:RH.past.slice(-n),future:RH.future.slice(-n),fp}));return}catch(e){n=Math.floor(n/2)}}}
+function rhistLoad(){try{const o=JSON.parse(sessionStorage.getItem(RH_KEY)||'null');if(!o)return;
+  if(o.fp===rfp()){RH.past=o.past||[];RH.future=o.future||[]}else sessionStorage.removeItem(RH_KEY)}catch(e){}}
+function rrestore(str){const o=JSON.parse(str),m=new Map(o.w);RESUMES.splice(0,RESUMES.length,...o.r);CARDS.forEach(c=>{if(m.has(c.id))c.writings=m.get(c.id)});
+  S.rsel=S.redit=S.rpend=null;if(S.res&&!RESUMES.some(r=>r.id===S.res))S.res=null;rpopClose();render()}
+function rundoAll(){if(!RH.past.length){toast('没有可以撤销的改动');return}RH.future.push(rsnapAll());rrestore(RH.past.pop());toast('已撤销')}
+function rredoAll(){if(!RH.future.length){toast('没有可以重做的改动');return}RH.past.push(rsnapAll());rrestore(RH.future.pop());toast('已重做')}
+function rnorm(o,id){
+  if(!o||typeof o!=='object'||Array.isArray(o))return null;o.id=id;
+  if(!Array.isArray(o.sections))o.sections=[];
+  o.sections=o.sections.filter(s=>s&&typeof s==='object');
+  o.sections.forEach(s=>{if(s.from!=='education'){if(!Array.isArray(s.items))s.items=[];s.items=s.items.filter(it=>it&&typeof it==='object'&&it.card)}if(s.title==null)s.title=''});
+  if(!o.header||typeof o.header!=='object')o.header={};
+  if(!Array.isArray(o.keywords))o.keywords=[];
+  if(!Array.isArray(o.exports))o.exports=[];
+  for(const k of ['title','target','position','jd','lang','date','sent'])if(o[k]==null)o[k]='';
+  if(o.status!=='已投递')o.status='草稿';
+  return o}
+function rtoday(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function rnew(base){rcommit();const id='jl-'+hex8();
+  const r=base?JSON.parse(JSON.stringify(base)):{keywords:[],jd:'',header:{headline:'',photo:true},sections:[{title:'教育经历',from:'education'}],target:'',position:''};
+  Object.assign(r,{schema:1,id,title:base?(base.title||'未命名简历')+' 副本':'未命名简历',lang:r.lang||'中文',date:ym(),status:'草稿',sent:'',exports:[]});
+  delete r.created;delete r.updated;r.sections.forEach(s=>(s.items||[]).forEach(it=>delete it.draft));
+  RESUMES.unshift(r);S.res=id;S.doc=null;S.docEdit=null;S.rsel=S.redit=S.rpend=null;S.show.detail=true;S.pane='detail';return r}
+
+/* ---------- the view ---------- */
+function resumeView(back){
+  const r=rcur();
+  if(!r)return `<div class="col" style="flex:1">${back?`<div class="backrow">${back}</div>`:''}<div class="empty">这份简历已经不在了。</div></div>`;
+  rsnap(r);
+  const fz=rfrozen(r),cov=rcovered(r),kws=r.keywords||[];
+  const meta=[r.target,r.position,r.lang,r.date].filter(Boolean).map(esc).join(' · ')||'投递对象、岗位可以让 AI 补上';
+  const jd=(kws.length||r.jd||!fz)?`<div class="rv-jd"><span class="lab2">岗位要求</span>
+    <div class="rv-kw">${kws.map(k=>`<span class="k ${cov.includes(k)?'on':''}" data-ra="kw" data-k="${esc(k)}" title="${cov.includes(k)?'在简历里标出这个词':'在时间线里找含这个词的经历'}">${esc(k)}${fz?'':`<i data-ra="kwdel" data-k="${esc(k)}" title="删掉这个关键词" aria-label="删掉关键词 ${esc(k)}">×</i>`}</span>`).join('')}${fz?'':`<input data-rkw="1" placeholder="＋ 关键词" aria-label="加一个岗位关键词，回车确认">`}${!kws.length&&!fz?`<button class="btn" data-ra="aikw" style="height:24px;font-size:11.5px">${RIC.spark}让 AI 从 JD 里提取</button>`:''}</div>
+    ${kws.length?`<span class="rv-cov">已覆盖 <b>${cov.length}</b>/${kws.length}</span>`:''}${r.jd?`<button class="btn" data-ra="jd" style="height:26px">${S.rjd?'收起原文':'看原文'}</button>`:''}
+    ${S.rjd&&r.jd?`<div class="rv-raw">${esc(r.jd)}</div>`:''}</div>`:'';
+  return `<div class="col detail rv${FX.sel?' fx':''}" style="flex:1;min-width:0">${back?`<div class="backrow">${back}</div>`:''}
+    <div class="rv-bar">
+      <div class="rv-ttl"><h1><span ${fz?'':'contenteditable="plaintext-only" spellcheck="false" data-rce="title" title="点击改名"'}>${esc(r.title||'未命名简历')}</span></h1><div class="rv-meta">${meta}</div></div>
+      <div class="seg" role="group" aria-label="状态"><button class="${fz?'':'on'}" data-ra="status" data-v="草稿">草稿</button><button class="${fz?'on':''}" data-ra="status" data-v="已投递">已投递</button></div>
+      <button class="rv-meter" id="rv-meter" data-ra="fit"><span class="mt"><span>1 页</span><b id="rv-mtxt">—</b></span><span class="track"><span class="fill" id="rv-mfill"></span></span></button>
+      ${fz?'':`<button class="btn" data-ra="addmenu" title="添加经历（也可以把时间线里的卡片拖到纸上）">${ICON.plus}<span class="bt">添加经历</span></button>`}
+      <button class="btn" data-ra="askai" title="复制一句指令，粘贴到左边的 AI 对话">${RIC.spark}<span class="bt">问 </span>AI</button>
+      <button class="btn pri" data-ra="export">${ICON.pdf}导出 PDF</button>
+      <button class="btn rv-zoom" id="rv-zoom" data-ra="zoom" title="在「适应宽度」和「100%」之间切换">100%</button>
+      ${S.mode==='single'?'':`<button class="btn" data-ra="focus" aria-pressed="${rIsFocus()?'true':'false'}" title="${rIsFocus()?'退出专注：显示时间线和左栏':'专注：收起时间线和左栏，让纸更大'}">${rIsFocus()?RIC.shrink:RIC.expand}<span class="bt">${rIsFocus()?'退出专注':'专注'}</span></button>`}
+      <span class="rv-hist"><button class="more" data-ra="undo" title="撤销（⌘Z）" aria-label="撤销" ${RH.past.length?'':'disabled'}>↶</button><button class="more" data-ra="redo" title="重做（⇧⌘Z）" aria-label="重做" ${RH.future.length?'':'disabled'}>↷</button></span>
+      <button class="more" data-tour="menu" title="帮助：这一页怎么用" aria-label="帮助">?</button>
+      <button class="more" data-ra="rmenu" aria-label="简历操作：复制、删除" title="复制、删除">⋯</button>
+    </div>${jd}
+    ${fz?`<div class="rv-frozen">${RIC.lock}<span>${esc(r.sent||'')} 投给 <b>${esc(r.target||'对方')}</b> 的版本，内容已冻结；之后卡片怎么改都不影响它。</span><button class="btn" data-ra="dup">复制为新草稿</button></div>`:''}
+    <div class="rv-canvas" id="rv-canvas">${(()=>{const o=rcmpOther();
+      const left=`<div class="rv-box" id="rv-box"><div class="rp ${fz?'':'rp-edit'}" id="rp">${rpage(r,{other:o})}</div><div class="rv-break fit" id="rv-break"><span>第 1 页到此为止</span></div></div>`;
+      if(!o)return left;
+      return `<div class="rv-cmphead"><span>对照：<b>${esc(r.title||'未命名简历')}</b> ↔ <b>${esc(o.title||'未命名简历')}</b>${o.lang?' · '+esc(o.lang):''}${o.status==='已投递'?' · 已投递':''}</span><span class="lg"><i></i>只在一边出现</span><span class="lg">鼠标移到一条上，另一边对应的那条会一起亮</span><span class="grow"></span><button class="btn" data-ra="cmpswap" title="打开右边这份来编辑">编辑右边这份</button><button class="btn" data-ra="cmpoff">退出对照</button></div>
+        <div class="rv-pair"><div class="rv-side"><span class="cap">${esc(r.lang||'')} · 可编辑</span>${left}</div><div class="rv-side"><span class="cap">${esc(o.lang||'')} · 只读</span><div class="rv-box" id="rv-box2"><div class="rp" id="rp2">${rpage(o,{ro:true,other:r})}</div></div></div></div>`})()}</div>
+  </div>`;
+}
+function rpage(r,opt){opt=opt||{};
+  const p=VAULT_CFG.profile||{},fz=rfrozen(r)||!!opt.ro,h=r.header||{};
+  const contact=[p.location,p.phone&&'电话：'+p.phone,p.email&&'邮箱：'+p.email,...(p.links||[])].filter(Boolean).map(esc).join('<i class="rp-sep">|</i>');
+  const hl='headline' in h?h.headline:(p.headline||'');
+  const hlHtml=fz?(hl?`<div class="rp-hl">${esc(hl)}</div>`:''):`<div class="rp-hl ${hl?'':'ph'}" contenteditable="plaintext-only" spellcheck="false" data-rce="headline">${esc(hl||'添加求职意向（可选）')}</div>`;
+  const src=LIVE&&/^assets\//.test(p.photo||'')?'/vault/'+p.photo.split('/').map(encodeURIComponent).join('/'):'';
+  const photo=h.photo===false?(fz?'':`<button class="rp-addphoto" data-ra="photo">＋ 照片</button>`)
+    :src?`<div class="rp-photo"><img src="${esc(src)}" alt="证件照">${fz?'':'<button data-ra="photo">不放照片</button>'}</div>`
+    :fz?'':`<div class="rp-photo">证件照<small>在「个人概况」里上传</small><button data-ra="photo">不放照片</button></div>`;
+  let out=`<div class="rp-head"><div class="rp-hm"><div class="rp-name">${esc(p.name||'姓名')}</div>${hlHtml}<div class="rp-ct">${contact||(fz?'':'<span class="rp-ph">联系方式在「个人概况」里填写</span>')}</div></div>${photo}</div>`;
+  let total=0;
+  r.sections.forEach((s,si)=>{
+    const empty=s.from!=='education'&&!s.items.length;
+    const stool=fz?'':`<span class="rp-stool"><span class="rp-sgrip" draggable="true" data-s="${si}" title="拖动调整这一节的位置">⋮⋮</span><button data-ra="secmv" data-s="${si}" data-d="-1" title="上移">↑</button><button data-ra="secmv" data-s="${si}" data-d="1" title="下移">↓</button>${empty?`<button data-ra="secdel" data-s="${si}">删除这一节</button>`:''}</span>`;
+    out+=`<div class="rp-sec" data-s="${si}"><h3><span class="st" ${fz?'':`contenteditable="plaintext-only" spellcheck="false" data-rce="sec" data-s="${si}" title="点击改分节名"`}>${esc(s.title)}</span>${stool}</h3><div class="rp-items">`;
+    if(s.from==='education'){
+      out+=(p.education||[]).map(e=>`<div class="rp-it edu"><div class="rp-ih"><b>${esc([e.school,[e.major,e.degree].filter(Boolean).join(' ')].filter(Boolean).join(' - '))}</b><span>${esc(e.time||'')}</span></div>${(e.details||[]).map(d=>{const m=rlead(d);return `<p class="rp-ln">${m?`<b>${esc(m[0])}</b>${esc(m[1])}`:esc(d)}</p>`}).join('')}</div>`).join('')
+        ||(fz?'':'<div class="rp-empty">教育背景在「个人概况」里填写</div>');
+    }else{
+      if(empty&&!fz)out+='<div class="rp-empty">把中间栏的经历拖到这里</div>';
+      s.items.forEach((it,ii)=>{total++;
+        const c=card(it.card),key=rkey(si,ii),wt=it.writing||RWT,vs=rvers(it.card,wt),gone=!c,vmiss=!!c&&!!it.version&&rvtext(it.card,it.version,wt)==null;
+        const skill=c&&c.type==='技能'&&!c.org&&!c.role&&!c.time;
+        const head=c&&!skill?`<div class="rp-ih"><b>${esc([c.org||c.title,c.role].filter(Boolean).join(' - '))}</b><span>${esc(c.time||'')}</span></div>`:'';
+        const vlabel=gone?'卡片已删除':vmiss?'原版本不在了':vs.length?esc(it.version||vs[0].name):'卡片原文';
+        const tools=fz?'':`<div class="rp-tools"><span class="rp-grip" title="拖动排序">⋮⋮</span><button class="rp-ver" data-ra="ver" data-k="${key}" title="换版本">${vlabel} ▾</button>${gone?'':`<button data-ra="edit" data-k="${key}" title="双击正文也可以改">改</button>`}<button data-ra="remove" data-k="${key}" title="从这份简历移除（卡片不受影响）" aria-label="移除">✕</button></div>`;
+        const ed=S.redit===key&&!opt.ro;
+        const solo=opt.other&&!rin(it.card,opt.other)?' solo':'';
+        out+=`<div class="rp-it${S.rsel===key&&!opt.ro?' sel':''}${S.rflash===key&&!opt.ro?' flash':''}${gone||vmiss?' warn':''}${solo}" ${opt.ro?'data-k2':'data-k'}="${key}" data-card="${esc(it.card)}"${fz||ed?'':' draggable="true"'}>${tools}${head}<div class="rp-body"${ed?' contenteditable="plaintext-only" spellcheck="false"':''}>${ed?esc(ritemText(r,it)):rbody(ritemText(r,it))}</div>${S.rpend===key?rsavebar(r,it):''}</div>`;
+      });
+    }
+    out+='</div></div>';
+  });
+  if(!total&&!fz)out+=`<div class="rp-guide"><b>这份简历还没有经历</b>把中间栏的卡片拖到纸上，或者让左边的 AI 按岗位要求先排一版<div style="margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button class="btn pri" data-ra="newai">${RIC.spark}复制给 AI 的指令</button><button class="btn" data-ra="addmenu">${ICON.plus}从经历里挑</button></div></div>`;
+  if(!opt.ro)S.rflash=null;
+  return out+'<div class="rp-end"></div>';
+}
+function rsavebar(r,it){
+  const c=card(it.card)||{},wt=it.writing||RWT,vs=rvers(it.card,wt),has=vs.some(v=>v.name===it.version);
+  const nm=`v${vs.length+1} ${String(r.position||'').replace(/实习生?$/,'').trim()||'新'}向`;
+  return `<div class="rp-save">这段改动存回「<b>${esc(c.org||c.title||it.card)}</b>」卡片：${has?`<button class="p" data-ra="save" data-mode="over">覆盖「${esc(it.version)}」</button>`:''}<button class="${has?'':'p'}" data-ra="save" data-mode="new">另存为「${esc(nm)}」</button><button data-ra="save" data-mode="undo">撤销</button></div>`;
+}
+
+/* ---------- page fill: scale the sheet to the column, count the lines left on page 1 ---------- */
+function rfit(){
+  const cv=$('rv-canvas'),rp=$('rp'),box=$('rv-box');if(!cv||!rp||!box)return;
+  const two=!!$('rv-box2'),fitS=Math.min(1,(two?(cv.clientWidth-48)/2:cv.clientWidth-32)/794),s=S.rzoom==='100'?1:fitS,h=Math.max(1123,rp.scrollHeight);
+  const zb=$('rv-zoom');if(zb){zb.textContent=S.rzoom==='100'?'100%':Math.round(fitS*100)+'%';zb.title=S.rzoom==='100'?'现在是 100%（实际大小）；点一下改回适应宽度':'现在按宽度缩放到 '+Math.round(fitS*100)+'%；点一下看实际大小（100%）';zb.disabled=fitS>=1&&S.rzoom!=='100'}
+  box.style.setProperty('--s',s.toFixed(4));box.style.setProperty('--h',h+'px');
+  const b2=$('rv-box2'),rp2=$('rp2');if(b2&&rp2){b2.style.setProperty('--s',s.toFixed(4));b2.style.setProperty('--h',Math.max(1123,rp2.scrollHeight)+'px')}
+  const br=$('rv-break');br.style.top=(1123*s)+'px';
+  const end=rp.querySelector('.rp-end'),used=end?end.offsetTop-38:0,left=Math.floor((R_AVAIL-used)/R_LINE);
+  const m=$('rv-meter'),f=$('rv-mfill'),t=$('rv-mtxt');if(!m)return;
+  f.style.width=Math.min(100,used/R_AVAIL*100)+'%';
+  m.classList.toggle('over',left<0);m.classList.toggle('warn',left>=0&&left<4);
+  t.textContent=left<0?`超出 ${-left} 行`:`还剩 ${left} 行`;m.title=left<0?`内容超出一页约 ${-left} 行，点这里看怎么压回一页`:`一页里还能再放约 ${left} 行`;
+  br.classList.toggle('fit',left>=0);
+}
+addEventListener('resize',()=>{if(S.res)rfit()});
+document.addEventListener('mouseover',e=>{const it=e.target.closest&&e.target.closest('.rp-it[data-card]');if(!it||!document.getElementById('rp2'))return;
+  const c=it.dataset.card;document.querySelectorAll('.rp-it.pair').forEach(x=>{if(x.dataset.card!==c)x.classList.remove('pair')});
+  document.querySelectorAll(`.rp-it[data-card="${CSS.escape(c)}"]`).forEach(x=>x.classList.add('pair'))});
+document.addEventListener('mouseout',e=>{const it=e.target.closest&&e.target.closest('.rp-it[data-card]');if(!it||(e.relatedTarget&&it.contains(e.relatedTarget)))return;document.querySelectorAll('.rp-it.pair').forEach(x=>x.classList.remove('pair'))});
+addEventListener('hashchange',()=>{const m=location.hash.match(/^#res=([A-Za-z0-9_-]{1,64})$/);if(m&&m[1]!==S.res&&RESUMES.some(r=>r.id===m[1])){rhashOpen();S.rsel=S.redit=S.rpend=null;render()}});
+
+/* ---------- popover ---------- */
+const RPOP=document.createElement('div');RPOP.className='rpop';RPOP.setAttribute('role','menu');document.body.append(RPOP);
+function rpop(html,anchor){RPOP.innerHTML=html;RPOP.classList.add('show');let a=anchor.getBoundingClientRect();if(!a.width&&anchor.closest){const it=anchor.closest('.rp-it,.rv-bar');if(it)a=it.getBoundingClientRect()}const w=RPOP.offsetWidth,h=RPOP.offsetHeight;
+  let x=Math.min(innerWidth-w-10,Math.max(10,a.left)),y=a.bottom+6;if(y+h>innerHeight-10)y=Math.max(10,a.top-h-6);RPOP.style.left=x+'px';RPOP.style.top=y+'px'}
+const rpopClose=()=>RPOP.classList.remove('show');
+function rcopyAI(text,what){
+  const done=()=>toast('已复制给 AI 的指令'+(what?'（'+what+'）':'')+'，粘贴到左边对话框就行');
+  try{navigator.clipboard.writeText(text).then(done,()=>toast('复制被浏览器拒绝。指令：'+text))}catch(e){toast('指令：'+text)}}
+function rusedIn(cid,ver){const rs=RESUMES.filter(x=>x.id!==S.res&&x.sections.some(s=>(s.items||[]).some(it=>it.card===cid&&it.version===ver)));
+  return rs.length?`<small style="color:var(--t3)">也用在：${rs.map(x=>esc(x.title||'未命名简历')+(rfrozen(x)?'（已投递）':'')).join('、')}</small>`:''}
+function rpopVersions(a,key){const{r,it}=rget(key);if(!it)return;const c=card(it.card),wt=it.writing||RWT,vs=rvers(it.card,wt);
+  rpop(`<h4>${esc(c?(c.org||c.title):it.card)} · ${esc(wt)}</h4>`+(vs.length?vs.map(v=>`<button class="o ${v.name===it.version?'on':''}" data-ra="pickver" data-k="${key}" data-v="${esc(v.name)}"><span><b>${v.name===it.version?'✓ ':''}${esc(v.name)}</b><span class="x">${esc(v.text)}</span>${rusedIn(it.card,v.name)}</span><em style="color:var(--muted);font-weight:400">${rlen(v.text)} 字</em></button>`).join('')
+    :`<div class="none">${c?`这张卡片还没有「${esc(wt)}」，现在显示的是卡片原文或快照。`:'这张卡片已经删除了，现在显示的是存下的快照；可以移除这一条。'}</div>`)
+    +(c?`<div class="sep"></div><button class="o ai" data-ra="airewrite" data-k="${key}"><span>${RIC.spark} 让 AI 针对这个岗位写一个新版本<small>复制一句指令，粘贴到左边对话</small></span></button>`:''),a)}
+function rpopAdd(a){const r=rcur();if(!r)return;
+  const list=CARDS.filter(c=>c.type!=='思考'&&!rin(c.id,r)).map(c=>({c,k:rkw(c,r)})).sort((x,y)=>(y.k.length-x.k.length)||String(y.c.time).localeCompare(String(x.c.time)));
+  rpop(`<h4>添加经历${(r.keywords||[]).length?' · 按和岗位的相关程度':''}</h4>`+(list.map(({c,k})=>`<button class="o" data-ra="addcard" data-id="${esc(c.id)}"><span class="ty">${esc(c.type)}</span><span><b>${esc(c.org||c.title)}</b><small>${esc([c.role,c.time].filter(Boolean).join(' · '))}${rvers(c.id).length?` · ${rvers(c.id).length} 个简历版本`:' · 还没有简历版本'}</small>${k.length?`<small style="color:var(--accent)">命中：${k.slice(0,4).map(esc).join('、')}</small>`:''}</span></button>`).join('')||'<div class="none">所有经历都已经在这份简历里了。</div>')
+    +'<div class="sep"></div><div class="none">也可以直接把中间栏的卡片拖到纸上。</div>',a)}
+function rpopFit(a){const r=rcur();if(!r)return;const fz=rfrozen(r),swaps=[],rel=[];
+  r.sections.forEach((s,si)=>(s.items||[]).forEach((it,ii)=>{const key=rkey(si,ii),c=card(it.card);if(!c)return;const now=rlen(ritemText(r,it));
+    const sh=rvers(it.card,it.writing).filter(v=>v.name!==it.version&&!/英文|english/i.test(v.name)).map(v=>({v,n:rlen(v.text)})).filter(x=>x.n<now-8).sort((x,y)=>x.n-y.n)[0];
+    if(sh)swaps.push({key,c,v:sh.v.name,save:now-sh.n});if(c.type!=='技能')rel.push({key,c,n:rkw(c,r).length})}));
+  rel.sort((x,y)=>x.n-y.n);const over=$('rv-meter')&&$('rv-meter').classList.contains('over');
+  rpop(`<h4>${over?'压回一页，可以这样做':'篇幅还够；需要更紧凑时可以这样做'}</h4>`+(fz?'<div class="none">已投递的简历内容冻结了。要改，先复制为新草稿。</div>'
+    :(swaps.length?swaps.map(x=>`<button class="o" data-ra="fixswap" data-k="${x.key}" data-v="${esc(x.v)}"><span>${esc(x.c.org||x.c.title)} 换成「${esc(x.v)}」<small>同一张卡片里更短的版本</small></span><em>省 ${x.save} 字</em></button>`).join(''):'<div class="none">每一条都已经是最短的版本了。</div>')
+     +(rel[0]?`<div class="sep"></div><button class="o" data-ra="remove" data-k="${rel[0].key}"><span>移除「${esc(rel[0].c.org||rel[0].c.title)}」<small>和岗位要求最不相关（命中 ${rel[0].n} 个关键词）</small></span><em>可撤销</em></button>`:'')
+     +`<div class="sep"></div><button class="o ai" data-ra="aifit"><span>${RIC.spark} 让 AI 帮我改到正好一页<small>复制一句指令，粘贴到左边对话</small></span></button>`),a)}
+function rpopExport(a){rpop(`<button class="o" data-ra="print"><span><b>打印版（马上就能存 PDF）</b><small>新标签页打开 A4 页面，点「打印 / 存为 PDF」；版式和这张纸一样</small></span></button><div class="sep"></div><button class="o ai" data-ra="ailatex"><span>${RIC.spark} 精排 PDF（LaTeX）<small>复制一句指令，让左边的 AI 用 LaTeX 模板导出并检查是否一页</small></span></button>`,a)}
+function rpopMenu(a){const r=rcur();if(!r)return;rpop(`<button class="o" data-ra="cmpmenu"><span>对照另一份<small>比如中文版和英文版并排，按经历对齐</small></span></button><div class="sep"></div><button class="o" data-ra="dup"><span>复制为新草稿<small>改投相似岗位时最快</small></span></button><div class="sep"></div><button class="o danger" data-ra="del"><span>${S.rdel===r.id?'再点一次确认删除':'删除这份简历'}<small>移到数据目录的 .trash，卡片不受影响</small></span></button>`,a)}
+function rpopCmp(a){const r=rcur();if(!r)return;
+  const others=RESUMES.filter(x=>x.id!==r.id).map(x=>({x,score:(x.lang&&x.lang!==r.lang?4:0)+(x.target&&x.target===r.target?2:0)+(x.position&&x.position===r.position?1:0)})).sort((a,b)=>b.score-a.score);
+  rpop(`<h4>和哪一份对照？</h4>`+(others.map(({x})=>`<button class="o" data-ra="cmpon" data-id="${esc(x.id)}"><span><b>${esc(x.title||'未命名简历')}</b><small>${esc([x.lang,x.position,x.status==='已投递'?'已投递 '+(x.sent||''):'草稿'].filter(Boolean).join(' · '))}</small></span></button>`).join('')||'<div class="none">还没有别的简历可以对照。</div>')
+    +`<div class="sep"></div><button class="o ai" data-ra="aien"><span>${RIC.spark} 让 AI 做一份英文版<small>复制一句指令：引用每张卡片的英文版本，没有就写一个新的</small></span></button>`,a)}
+function rpopNew(a){rpop(`<button class="o ai" data-ra="newai"><span>${RIC.spark} 让 AI 按岗位要求生成<small>推荐：复制指令，在左边贴上 JD，AI 挑经历、选版本、排到一页</small></span></button><div class="sep"></div>${rcur()?'<button class="o" data-ra="dup"><span>复制当前这份<small>改投相似岗位时最快</small></span></button>':''}<button class="o" data-ra="newblank"><span>空白简历<small>自己把经历拖进来</small></span></button>`,a)}
+
+/* ---------- actions ---------- */
+function rscroll(key){const el=document.querySelector(`.rp-it[data-k="${key}"]`),cv=$('rv-canvas');if(!el||!cv)return;const a=el.getBoundingClientRect(),c=cv.getBoundingClientRect();
+  if(a.top<c.top+20||a.bottom>c.bottom-20)cv.scrollBy({top:a.top-c.top-c.height/3,behavior:rm2()?'auto':'smooth'})}
+const rm2=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+function rsectionFor(r,c){const title=RSEC[c.type]||'其他经历';let s=r.sections.find(x=>x.title===title&&x.from!=='education');
+  if(!s){s={title,items:[]};const at=r.sections.findIndex(x=>x.title==='技能与语言');r.sections.splice(at<0?r.sections.length:at,0,s)}return s}
+function raddCard(cid,target){const r=rcur(),c=card(cid);if(!r||!c||rfrozen(r))return;
+  if(rin(cid,r)){toast('「'+(c.org||c.title)+'」已经在这份简历里了');return}
+  rcommit();
+  const v=rvers(cid)[0],it={card:cid,writing:RWT,version:v?v.name:'',text:v?v.text:[c.fact,c.result].filter(Boolean).join('\n')};
+  const title=RSEC[c.type]||'其他经历',s=target&&target.s&&target.s.title===title?target.s:rsectionFor(r,c),at=target&&target.s===s?target.at:s.items.length;
+  s.items.splice(at,0,it);const key=rkey(r.sections.indexOf(s),at);S.rsel=S.rflash=key;rpopClose();render();rscroll(key);
+  toast(`已把「${c.org||c.title}」加到「${s.title}」，用的是${v?'「'+v.name+'」':'卡片原文'}`)}
+function rremove(key){const{r,s,ii,it}=rget(key);if(!it)return;rcommit();
+  s.items.splice(ii,1);S.rsel=null;rpopClose();render();
+  const c=card(it.card);toast('已从简历移除「'+(c?(c.org||c.title):it.card)+'」，卡片本身不受影响');rundoBtn()}
+function rundoBtn(){const T=$('toast'),b=document.createElement('button');b.textContent='撤销';b.className='tundo';
+  b.style.cssText='margin-left:10px;border:0;border-radius:8px;padding:2px 10px;background:rgba(255,255,255,.16);color:inherit;font:600 12px var(--font);cursor:pointer;pointer-events:auto';
+  b.onclick=()=>rundoAll();T.append(b);T.style.pointerEvents='auto';clearTimeout(rundoBtn.t);rundoBtn.t=setTimeout(()=>{T.style.pointerEvents=''},4000)}
+function rcommitCE(el){const r=rcur();if(!r)return;const v=el.innerText.replace(/\s+/g,' ').trim(),k=el.dataset.rce,before=rsnapAll();
+  if(k==='title'){if(v&&v!==r.title){r.title=v;toast(LIVE?'已改名':'已改名（演示数据不会保存）')}}
+  else if(k==='headline'){if(el.classList.contains('ph')&&!v)return;r.header=r.header||{};if(v!==(r.header.headline||''))r.header.headline=v}
+  else if(k==='sec'){const s=r.sections[+el.dataset.s];if(s&&v&&v!==s.title)s.title=v}
+  if(rsnapAll()!==before)rcommit(before);render()}
+
+document.addEventListener('click',e=>{
+  const kwi=e.target.closest('[data-rkw]');if(kwi)return;
+  const a=e.target.closest('[data-ra]');
+  if(!a){if(!e.target.closest('.rpop'))rpopClose();const it=e.target.closest('.rp-edit .rp-it:not(.edu)');
+    if(it&&!S.redit&&S.rsel!==it.dataset.k){S.rsel=it.dataset.k;document.querySelectorAll('.rp-it.sel').forEach(x=>x.classList.remove('sel'));it.classList.add('sel')}
+    else if(!it&&S.rsel&&e.target.closest('#rp,.rv-canvas')){S.rsel=null;document.querySelectorAll('.rp-it.sel').forEach(x=>x.classList.remove('sel'))}
+    return}
+  const r=rcur(),act=a.dataset.ra,d=a.dataset;
+  if(!['ver','addmenu','fit','export','rmenu','newmenu'].includes(act)&&!a.closest('.rpop'))rpopClose();
+  if(act==='newmenu'){rpopNew(a);return}
+  if(act==='newblank'){rnew(null);rpopClose();render();toast('已新建空白简历');return}
+  if(act==='newai'){rpopClose();rcopyAI('我要投一个新岗位，岗位要求如下：<在这里粘贴 JD>。请按经历库 skill 的 recipes/10-按岗位做简历.md，从经历库里挑经历、选或改写版本，做一份一页的简历存进 resumes/，再导出 PDF。','按岗位生成简历');return}
+  if(!r)return;
+  if(act==='status'){if(r.status===d.v)return;
+    if(d.v==='草稿'&&!d.confirm){rpop(`<div class="none" style="color:var(--ink-2);line-height:1.6"><b>改回草稿？</b><br>这份简历现在冻结着 ${esc(r.sent||'')} 投出去时的文字。改回草稿后，每一条会重新跟随卡片里的最新版本，冻结的文字会被替换（可以撤销）。<br>想保留投递时的样子又要改，用「复制为新草稿」。</div><div class="sep"></div><button class="o" data-ra="status" data-v="草稿" data-confirm="1"><span><b>改回草稿</b></span></button><button class="o" data-ra="dup"><span>复制为新草稿<small>推荐：这份保持冻结</small></span></button>`,a);return}
+    rcommit();
+    if(d.v==='已投递'){r.sections.forEach(s=>(s.items||[]).forEach(it=>{it.text=ritemText(r,it)}));r.status='已投递';r.sent=rtoday();S.rsel=S.redit=S.rpend=null;toast('已标记为已投递：当前文字已冻结存档')}
+    else{r.status='草稿';r.sent='';toast('改回草稿：重新跟随卡片里的最新版本')}
+    render();return}
+  if(act==='fit'){rpopFit(a);return}
+  if(act==='addmenu'){rpopAdd(a);return}
+  if(act==='addcard'){raddCard(d.id);return}
+  if(act==='export'){rpopExport(a);return}
+  if(act==='print'){rpopClose();if(!LIVE){toast('演示模式不能生成打印版；连接本地经历库后就可以');return}
+    if(typeof persist==='function')persist(0);setTimeout(()=>window.open('/resume-print?resume='+encodeURIComponent(r.id),'_blank','noopener'),350);return}
+  if(act==='ailatex'){rpopClose();rcopyAI(`请把经历库里的简历「${r.title}」（resumes/${r.id}.json）用 LaTeX 模板导出成 PDF（fill_tex.py resume --from ${r.id}），放到「下载」文件夹，并检查是不是正好一页。`,'精排 PDF');return}
+  if(act==='askai'){const miss=(r.keywords||[]).filter(k=>!rcovered(r).includes(k));
+    rcopyAI(`请打开经历库里的简历「${r.title}」（resumes/${r.id}.json），对照里面存的岗位要求检查一遍：${miss.length?'还没覆盖「'+miss.join('、')+'」，看看库里有没有能补上的经历；':''}哪几条该换版本或改写，改写的新版本存回卡片，再更新这份简历，控制在一页以内。`,'检查这份简历');return}
+  if(act==='aifit'){rpopClose();rcopyAI(`经历库里的简历「${r.title}」（resumes/${r.id}.json）超过一页了。请按 recipes/10-按岗位做简历.md 第 6 步的顺序把它压到正好一页：先换更短的版本，必要时改写成更短的新版本存回卡片；删哪一段要先问我。`,'压到一页');return}
+  if(act==='aikw'){rcopyAI(`请从这段岗位要求里提炼 5–8 个关键词，写进经历库简历「${r.title}」（resumes/${r.id}.json）的 keywords（原文存进 jd）：<在这里粘贴 JD>`,'提取关键词');return}
+  if(act==='airewrite'){const{it}=rget(d.k);rpopClose();if(!it)return;const c=card(it.card)||{};
+    rcopyAI(`请以经历库「${c.title||it.card}」卡片的「${it.writing||RWT} · ${it.version||'卡片原文'}」为底，针对简历「${r.title}」的岗位要求（${(r.keywords||[]).join('、')||'见 resumes/'+r.id+'.json 的 jd'}）改写一个新版本：只用卡片里的事实和数字，存成卡片的新版本，并让这份简历改用它。`,'改写这一条');return}
+  if(act==='cmpmenu'){rpopCmp(document.querySelector('[data-ra="rmenu"]')||a);return}
+  if(act==='cmpon'){S.rcmp=d.id;rpopClose();render();return}
+  if(act==='cmpoff'){S.rcmp=null;render();return}
+  if(act==='cmpswap'){const o=S.rcmp;S.rcmp=S.res;S.res=o;S.rsel=S.redit=S.rpend=null;render();return}
+  if(act==='aien'){rpopClose();rcopyAI(`请把经历库里的简历「${r.title}」（resumes/${r.id}.json）做一份英文版：复制成新的简历文件，lang 写「英文」，每一条改用卡片里的英文写法版本（名字里带「英文」的）；没有英文版本的，按原版本翻译成简历英文，存成卡片的新版本（如「v<N> 英文」）再引用。只用卡片里的事实。`,'做英文版');return}
+  if(act==='zoom'){S.rzoom=S.rzoom==='100'?'fit':'100';rfit();return}
+  if(act==='focus'){S.rfocusPref=!rIsFocus();rpopClose();render();return}
+  if(act==='undo'){rundoAll();return}
+  if(act==='redo'){rredoAll();return}
+  if(act==='rmenu'){S.rdel=null;rpopMenu(a);return}
+  if(act==='dup'){rnew(r);rpopClose();render();toast('已复制为新草稿，可以改了');return}
+  if(act==='del'){if(S.rdel!==r.id){S.rdel=r.id;rpopMenu(document.querySelector('[data-ra="rmenu"]')||a);return}
+    rcommit();const i=RESUMES.findIndex(x=>x.id===r.id);RESUMES.splice(i,1);S.res=null;S.rdel=null;rpopClose();render();toast('已删除这份简历（在 .trash 里可以找回）');return}
+  if(rfrozen(r)&&!['kw','jd'].includes(act)){toast('已投递的简历内容冻结了；要改先「复制为新草稿」');return}
+  if(act==='jd'){S.rjd=!S.rjd;render();return}
+  if(act==='kw'){if(e.target.closest('[data-ra="kwdel"]'))return;const k=d.k;
+    if(a.classList.contains('on')){const keys=[];r.sections.forEach((s,si)=>(s.items||[]).forEach((it,ii)=>{if(ritemText(r,it).toLowerCase().includes(String(k).toLowerCase()))keys.push(rkey(si,ii))}));
+      keys.forEach(x=>{const el=document.querySelector(`.rp-it[data-k="${x}"]`);if(el)el.classList.add('hit')});if(keys[0])rscroll(keys[0]);
+      setTimeout(()=>document.querySelectorAll('.rp-it.hit').forEach(x=>x.classList.remove('hit')),1800);toast(keys.length?`「${k}」出现在 ${keys.length} 条里`:`「${k}」出现在教育经历里`)}
+    else{S.q=k;S.show.list=true;S.rfocusPref=false;if(S.mode==='single')S.pane='list';render();const n=visible().length;toast(n?`时间线里筛出了含「${k}」的经历，拖到纸上就能加入`:`库里还没有含「${k}」的经历，可以让 AI 追问你补一段`)}
+    return}
+  if(act==='kwdel'){rcommit();r.keywords=r.keywords.filter(k=>k!==d.k);render();return}
+  if(act==='photo'){rcommit();r.header=r.header||{};r.header.photo=r.header.photo===false;render();toast(r.header.photo?'这份简历放证件照（照片来自个人概况）':'这份简历不放照片');return}
+  if(act==='secmv'){const i=+d.s,j=i+(+d.d);if(j<0||j>=r.sections.length)return;rcommit();[r.sections[i],r.sections[j]]=[r.sections[j],r.sections[i]];S.rsel=null;render();return}
+  if(act==='secdel'){rcommit();r.sections.splice(+d.s,1);render();return}
+  if(act==='ver'){rpopVersions(a,d.k);return}
+  if(act==='pickver'){const{it}=rget(d.k);if(!it)return;rcommit();it.version=d.v;it.writing=it.writing||RWT;it.text=rvtext(it.card,d.v,it.writing)||it.text;S.rflash=d.k;rpopClose();render();toast('换成了「'+d.v+'」');return}
+  if(act==='fixswap'){const{it}=rget(d.k);if(!it)return;rcommit();it.version=d.v;it.text=rvtext(it.card,d.v,it.writing)||it.text;S.rflash=d.k;rpopClose();render();rscroll(d.k);toast('换成了更短的「'+d.v+'」');return}
+  if(act==='remove'){rremove(d.k);return}
+  if(act==='edit'){S.redit=S.rsel=d.k;S.rpend=null;render();rfocusEdit();return}
+  if(act==='save'){const key=S.rpend,{it}=rget(key||'');if(!it){S.rpend=null;render();return}const c=card(it.card),wt=it.writing||RWT;if(d.mode!=='undo')rcommit();
+    if(d.mode==='over'){const v=rvers(it.card,wt).find(x=>x.name===it.version);if(v){v.text=it.draft;it.text=it.draft;toast(`已覆盖「${c.org||c.title}」卡片的「${it.version}」`)}}
+    else if(d.mode==='new'&&c){let w=c.writings.find(x=>x.type===wt);if(!w){w={type:wt,versions:[]};c.writings.push(w)}
+      const nm=`v${w.versions.length+1} ${String(r.position||'').replace(/实习生?$/,'').trim()||'新'}向`;w.versions.push({name:nm,text:it.draft});it.version=nm;it.writing=wt;it.text=it.draft;toast(`已在「${c.org||c.title}」卡片下新存「${nm}」，这份简历改用它`)}
+    else toast('已撤销，卡片没有变化');
+    delete it.draft;S.rpend=null;S.rflash=key;render();return}
+});
+function rfocusEdit(){const b=document.querySelector('.rp-body[contenteditable]');if(!b)return;b.focus();const g=document.createRange();g.selectNodeContents(b);g.collapse(false);const s=getSelection();s.removeAllRanges();s.addRange(g)}
+document.addEventListener('dblclick',e=>{const it=e.target.closest('.rp-edit .rp-it:not(.edu):not(.warn)');if(!it||e.target.closest('.rp-tools,.rp-save'))return;S.redit=S.rsel=it.dataset.k;S.rpend=null;render();rfocusEdit()});
+document.addEventListener('focusout',e=>{
+  const ce=e.target.closest&&e.target.closest('[data-rce]');if(ce){rcommitCE(ce);return}
+  const b=e.target.closest&&e.target.closest('.rp-body[contenteditable]');if(!b||!S.redit)return;
+  const key=S.redit,{r,it}=rget(key);S.redit=null;if(!it){render();return}
+  const now=b.innerText.replace(/\n{2,}/g,'\n').trim();if(now&&now!==ritemText(r,it).trim()){it.draft=now;S.rpend=key}render()});
+document.addEventListener('focusin',e=>{const ce=e.target.closest&&e.target.closest('[data-rce="headline"]');if(ce&&ce.classList.contains('ph')){ce.textContent='';ce.classList.remove('ph')}});
+document.addEventListener('keydown',e=>{
+  const t=e.target;
+  if(t.dataset&&t.dataset.rkw&&e.key==='Enter'&&!e.isComposing&&e.keyCode!==229){e.preventDefault();const r=rcur(),k=t.value.trim();if(r&&k&&!r.keywords.includes(k)){rcommit();r.keywords.push(k);render();const n=document.querySelector('[data-rkw]');if(n)n.focus()}else t.value='';return}
+  if(t.closest&&t.closest('[data-rce]')&&e.key==='Enter'&&!e.isComposing&&e.keyCode!==229){e.preventDefault();t.blur();return}
+  if(e.key==='Escape'){if(RPOP.classList.contains('show')){rpopClose();return}if(S.redit){S.redit=null;render();return}if(S.rsel){S.rsel=null;document.querySelectorAll('.rp-it.sel').forEach(x=>x.classList.remove('sel'))}}
+  if(S.res&&(e.metaKey||e.ctrlKey)&&!e.altKey&&(e.key==='z'||e.key==='Z'||e.key==='y')&&!(t.closest&&t.closest('input,textarea,select,[contenteditable]'))){e.preventDefault();(e.key==='y'||e.shiftKey)?rredoAll():rundoAll();return}
+  if(!S.res||!S.rsel||S.redit||(t.closest&&t.closest('input,textarea,select,[contenteditable]')))return;
+  const r=rcur();if(!r||rfrozen(r))return;
+  const keys=r.sections.flatMap((s,si)=>(s.items||[]).map((_,ii)=>rkey(si,ii))),i=keys.indexOf(S.rsel);if(i<0)return;
+  if((e.key==='ArrowDown'||e.key==='ArrowUp')&&!e.altKey){e.preventDefault();S.rsel=keys[Math.max(0,Math.min(keys.length-1,i+(e.key==='ArrowDown'?1:-1)))];render();rscroll(S.rsel)}
+  else if((e.key==='ArrowDown'||e.key==='ArrowUp')&&e.altKey){e.preventDefault();const{s,si,ii}=rget(S.rsel),j=ii+(e.key==='ArrowDown'?1:-1);if(j<0||j>=s.items.length)return;rcommit();[s.items[ii],s.items[j]]=[s.items[j],s.items[ii]];S.rsel=rkey(si,j);render();rscroll(S.rsel)}
+  else if(e.key==='Enter'){e.preventDefault();S.redit=S.rsel;render();rfocusEdit()}
+  else if(e.key==='Delete'||e.key==='Backspace'){e.preventDefault();rremove(S.rsel)}
+});
+
+/* ---------- drag: timeline cards in, items reordered on the sheet ---------- */
+let rdrag=null,rsdrag=null;
+document.addEventListener('dragstart',e=>{const g=e.target.closest&&e.target.closest('.rp-sgrip');if(!g)return;e.stopPropagation();rsdrag={si:+g.dataset.s};const sec=g.closest('.rp-sec');if(sec)sec.classList.add('sdragging');try{e.dataTransfer.setData('text/plain','rps');e.dataTransfer.effectAllowed='move'}catch{}},true);
+function rsTarget(e){const secs=[...document.querySelectorAll('#rp .rp-sec')];let at=secs.length;for(let i=0;i<secs.length;i++){const b=secs[i].getBoundingClientRect();if(e.clientY<b.top+b.height/2){at=i;break}}return{at,secs}}
+function rsClear(){document.querySelectorAll('.rp-sec.sins,.rp-sec.sins-end,.rp-sec.sdragging').forEach(x=>x.classList.remove('sins','sins-end','sdragging'))}
+document.addEventListener('dragover',e=>{if(!rsdrag||!e.target.closest('#rp'))return;e.preventDefault();document.querySelectorAll('.rp-sec.sins,.rp-sec.sins-end').forEach(x=>x.classList.remove('sins','sins-end'));
+  const{at,secs}=rsTarget(e);if(at<secs.length)secs[at].classList.add('sins');else if(secs.length)secs[secs.length-1].classList.add('sins-end')});
+document.addEventListener('drop',e=>{if(!rsdrag||!e.target.closest('#rp'))return;e.preventDefault();const r=rcur(),{at}=rsTarget(e),from=rsdrag.si;rsdrag=null;rsClear();
+  if(!r||rfrozen(r))return;const to=at>from?at-1:at;if(to===from)return;rcommit();const[m]=r.sections.splice(from,1);r.sections.splice(to,0,m);S.rsel=null;render();toast('已把「'+(m.title||'这一节')+'」移到第 '+(to+1)+' 节')});
+document.addEventListener('dragend',()=>{if(rsdrag){rsdrag=null;rsClear()}});
+document.addEventListener('dragstart',e=>{const it=e.target.closest&&e.target.closest('.rp-it[draggable]');if(!it)return;rdrag={key:it.dataset.k};it.classList.add('dragging');try{e.dataTransfer.setData('text/plain','rp');e.dataTransfer.effectAllowed='move'}catch{}});
+function rclearMarks(){document.querySelectorAll('.rp-it.ins,.rp-sec.ins-end,.rp-sec.drop').forEach(x=>x.classList.remove('ins','ins-end','drop'))}
+function rtarget(e){const r=rcur();if(!r)return null;let s;
+  if(rdrag)s=rget(rdrag.key).s;else{const c=card(dragCid);if(!c||c.type==='思考')return null;s=r.sections.find(x=>x.title===(RSEC[c.type]||'其他经历')&&x.from!=='education')||null;if(!s)return{s:null}}
+  const si=r.sections.indexOf(s),els=[...document.querySelectorAll(`.rp-sec[data-s="${si}"] .rp-it`)];let at=s.items.length,el=null;
+  for(let i=0;i<els.length;i++){const b=els[i].getBoundingClientRect();if(e.clientY<b.top+b.height/2){at=i;el=els[i];break}}return{s,si,at,el}}
+document.addEventListener('dragover',e=>{if(!S.res||!e.target.closest('#rp'))return;const r=rcur();if(!r||rfrozen(r)||!(rdrag||dragCid))return;e.preventDefault();rclearMarks();
+  const t=rtarget(e);if(!t)return;if(!t.s){document.getElementById('rp').classList.add('drop');return}const sec=document.querySelector(`.rp-sec[data-s="${t.si}"]`);if(sec){sec.classList.add('drop');if(t.el)t.el.classList.add('ins');else sec.classList.add('ins-end')}});
+document.addEventListener('drop',e=>{if(!S.res||!e.target.closest('#rp'))return;e.preventDefault();rclearMarks();const t=rtarget(e);
+  if(rdrag){if(t&&t.s){rcommit();const{s,ii}=rget(rdrag.key),[m]=s.items.splice(ii,1),at=t.at>ii?t.at-1:t.at;s.items.splice(at,0,m);S.rsel=S.rflash=rkey(rcur().sections.indexOf(s),at);render()}rdrag=null;return}
+  if(dragCid)raddCard(dragCid,t&&t.s?{s:t.s,at:t.at}:null)});
+document.addEventListener('dragend',()=>{rdrag=null;rclearMarks();document.querySelectorAll('.rp-it.dragging').forEach(x=>x.classList.remove('dragging'))});
+
+/* ===================== 引导 =====================
+   A read-only spotlight tour (same pattern as SqsAgent's GuidedTour): a modal <dialog> makes the page inert,
+   one box-shadow dims everything but the target, a card explains it. Steps whose target isn't on screen are skipped.
+   Runs once on first open (remembered in localStorage); the「?」buttons bring it back. ?notour skips the auto run. */
+const TOUR_KEY='jingliku.tour.v1';
+const GS=(target,title,text,pre)=>({target,title,text,pre});
+const TOUR_MAIN=[
+  GS('[data-guide="types"]','按类型看经历','左栏按实习、项目、志愿者……分好了类。点类型只看这一类，点前面的小三角展开每一段。'),
+  GS('.hexp[data-toggle="filter"]','左栏收起来了','点这里展开左栏：里面有经历类型、简历和申请信。'),
+  GS('[data-guide="resumes"]','简历','每投一个岗位做一份。简历只记「用哪张卡片的哪个版本」，文字始终存在卡片里；投出去后标记「已投递」，内容就冻结了。'),
+  GS('[data-guide="letters"]','申请信','自荐信、动机信、个人陈述整篇存在这里，每一段都连着它用到的经历。'),
+  GS('.col.list .stats','一眼看库存','一共几段经历、几种写法、几份简历；下面的色条是各类经历的占比。'),
+  GS('.col.list .tl .card[data-ck]','一段经历一张卡片','时间线按年份排好。点开看详情；按住拖到右边的简历或申请信里，就把这段经历加进去了。'),
+  GS('.col.list [data-sel="__profile__"]','个人概况','姓名、联系方式、教育背景和证件照填在这里，导出简历时自动带上。'),
+  GS('[data-guide="bento"]','事实 · 结果 · 思考 · 作品','一段经历拆成这四块。双击任意一块就能直接改，改完自动保存。'),
+  GS('[data-guide="writings"]','同一段经历的多种写法','简历条目、网申短描述、英文版……每种写法可以有多个版本，能展开对比、复制、另存新版本。'),
+  GS('.vsync,.vdot','同步状态','绿色表示已经和电脑里的文件同步。左边的 AI 改了文件，这里两秒内自动刷新。'),
+  GS(null,'重活交给左边的 AI','把素材、旧简历、岗位要求发给左边的 AI：它负责拆卡片、追问细节、改写、做简历。右半屏负责看、挑、微调。想再看一遍，点「?」。'),
+];
+const TOUR_RES=[
+  GS('.rv-ttl','这是一份简历','点标题就能改名；下面一行是投递对象和岗位。'),
+  GS('.rv-bar .seg','草稿 / 已投递','草稿跟着卡片里的最新版本走；投出去后点「已投递」，内容冻结，卡片再怎么改都不影响它。'),
+  GS('#rv-meter','一页纸','实时显示还剩几行、超出几行。超了就点它，会建议换成更短的版本，或移除最不相关的一段。'),
+  GS('.rp-edit .rp-it:not(.edu)','纸上的一条','每一条来自一张卡片的某个版本。鼠标移上去可以换版本、改字、移除；双击直接改，改动存回卡片；按住拖动调整顺序。'),
+  GS('[data-ra="addmenu"]','添加经历','从经历里挑一段加进来，已经按和岗位的相关程度排好。也可以把时间线里的卡片直接拖到纸上。'),
+  GS('.rv-jd','岗位关键词','打勾的是简历里已经覆盖的词。点一个词，能在纸上标出它，或在时间线里找相关经历。'),
+  GS('[data-ra="askai"]','需要改写时问 AI','按岗位改写、压到一页、从零生成，这些交给左边的 AI：点这里会复制一句写好的指令。'),
+  GS('[data-ra="export"]','导出 PDF','打印版马上就能存成 PDF；精排版让 AI 用 LaTeX 导出，版式和这张纸一样。'),
+  GS('[data-ra="focus"]','专注','收起时间线和左栏，让纸更大。半屏时会自动打开。'),
+];
+const openFirstResume=()=>{if(!S.res&&RESUMES.length){S.res=RESUMES[0].id;S.doc=null;S.show.detail=true;S.pane='detail';render()}};
+const TOUR_FLOW=[...TOUR_MAIN.slice(0,-1),
+  GS('.rv-ttl','做一份简历','打开一份简历：它是一张可以直接改的 A4 纸。',openFirstResume),
+  TOUR_RES[3],TOUR_RES[2],TOUR_RES[1],TOUR_RES[7],TOUR_MAIN[TOUR_MAIN.length-1]];
+function gtVisible(sel){if(!sel)return null;return [...document.querySelectorAll(sel)].find(el=>!el.closest('[hidden],[aria-hidden="true"]')&&el.getClientRects().length>0&&getComputedStyle(el).visibility!=='hidden')||null}
+const GT={dlg:null,steps:[],i:0,ret:null};
+function tourStart(steps){
+  if(typeof rpopClose==='function')rpopClose();
+  GT.steps=steps;GT.i=-1;GT.ret=document.activeElement;
+  if(!GT.dlg){
+    const d=GT.dlg=document.createElement('dialog');d.className='gt';d.setAttribute('aria-label','操作引导');
+    d.innerHTML='<div class="gt-spot" aria-hidden="true"></div><div class="gt-card"></div>';document.body.append(d);
+    d.addEventListener('cancel',e=>{e.preventDefault();tourEnd()});
+    d.addEventListener('keydown',e=>{
+      if(e.key==='Escape'){e.preventDefault();tourEnd()}
+      else if(e.key==='ArrowRight'){e.preventDefault();tourGo(1)}
+      else if(e.key==='ArrowLeft'){e.preventDefault();tourGo(-1)}
+      else if(e.key==='Tab'){const bs=[...d.querySelectorAll('.gt-card button:not(:disabled)')],f=bs[0],l=bs[bs.length-1];
+        if(e.shiftKey&&document.activeElement===f){e.preventDefault();l.focus()}else if(!e.shiftKey&&document.activeElement===l){e.preventDefault();f.focus()}}});
+    d.addEventListener('click',e=>{const b=e.target.closest('[data-gt]');if(!b)return;const a=b.dataset.gt;
+      if(a==='end')tourEnd();else if(a==='next'){if(!tourGo(1))tourEnd()}else if(a==='prev')tourGo(-1)});
+    addEventListener('resize',()=>{if(d.open)tourPlace()});
+  }
+  try{GT.dlg.showModal()}catch(e){GT.dlg.setAttribute('open','')}
+  if(!tourGo(1))tourEnd();
+}
+/* move to the next step in direction d that has something to show (running its pre() first) */
+function tourGo(d){for(let j=GT.i+d;j>=0&&j<GT.steps.length;j+=d){const s=GT.steps[j];if(s.pre)s.pre();if(!s.target||gtVisible(s.target)){GT.i=j;tourShow();return true}}return false}
+function tourHasMore(d){for(let j=GT.i+d;j>=0&&j<GT.steps.length;j+=d){const s=GT.steps[j];if(s.pre||!s.target||gtVisible(s.target))return true}return false}
+function tourShow(){
+  const s=GT.steps[GT.i],card=GT.dlg.querySelector('.gt-card'),total=GT.steps.filter(x=>x.pre||!x.target||gtVisible(x.target)).length,pos=GT.steps.slice(0,GT.i+1).filter(x=>x.pre||!x.target||gtVisible(x.target)).length;
+  const last=!tourHasMore(1);
+  card.innerHTML=`<div class="gt-top"><span>${pos} / ${Math.max(total,pos)}</span><button type="button" data-gt="end">结束引导</button></div>
+    <div aria-live="polite" aria-atomic="true"><h2>${esc(s.title)}</h2><p>${esc(s.text)}</p></div>
+    <div class="gt-act"><button type="button" class="btn" data-gt="prev" ${tourHasMore(-1)?'':'disabled'}>上一步</button><span class="gt-keys">← → 翻页 · Esc 结束</span><button type="button" class="btn pri" data-gt="next">${last?'完成':'下一步'}</button></div>`;
+  const el=gtVisible(s.target);if(el)el.scrollIntoView({block:'nearest',inline:'nearest'});
+  tourPlace();const nb=card.querySelector('[data-gt="next"]');if(nb)nb.focus({preventScroll:true});
+}
+function tourPlace(){
+  const s=GT.steps[GT.i];if(!s)return;const el=gtVisible(s.target),spot=GT.dlg.querySelector('.gt-spot'),card=GT.dlg.querySelector('.gt-card');
+  const W=innerWidth,H=innerHeight,cw=card.offsetWidth||Math.min(340,W-24),ch=card.offsetHeight||200;
+  if(!el){spot.classList.add('none');Object.assign(spot.style,{left:W/2+'px',top:H/2+'px',width:'1px',height:'1px'});/* 1px, not 0: some engines skip the shadow of an empty box */card.style.left=Math.max(12,(W-cw)/2)+'px';card.style.top=Math.max(12,(H-ch)/2)+'px';return}
+  spot.classList.remove('none');
+  const r=el.getBoundingClientRect(),x=Math.max(6,r.left-5),y=Math.max(6,r.top-5),R=Math.min(W-6,r.right+5),B=Math.min(H-6,r.bottom+5);
+  Object.assign(spot.style,{left:x+'px',top:y+'px',width:Math.max(0,R-x)+'px',height:Math.max(0,B-y)+'px'});
+  const side=W>760&&R+cw+24<W;   // room on the right: sit beside the target, else below / above it
+  const left=side?R+12:Math.max(12,Math.min(W-cw-12,x));
+  const top=side?Math.max(12,Math.min(H-ch-12,y)):B+ch+24<H?B+12:y-ch-12>12?y-ch-12:Math.max(12,H-ch-12);
+  card.style.left=left+'px';card.style.top=top+'px';
+}
+function tourEnd(){if(GT.dlg){try{GT.dlg.close()}catch(e){GT.dlg.removeAttribute('open')}}try{localStorage.setItem(TOUR_KEY,'1')}catch(e){}
+  if(GT.ret&&GT.ret.isConnected&&GT.ret.focus)GT.ret.focus({preventScroll:true})}
+function tourAuto(){if(/[?&]notour\b/.test(location.search)||S.loading||(GT.dlg&&GT.dlg.open))return;let seen=null;try{seen=localStorage.getItem(TOUR_KEY)}catch(e){}if(!seen)tourStart(S.res?TOUR_RES:TOUR_MAIN)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-tour]');if(!b)return;const t=b.dataset.tour;
+  if(t==='menu'){rpop(`<h4>帮助</h4><button class="o" data-tour="page"><span><b>这一页怎么用</b><small>${S.res?'简历编辑器的各个区域':'左栏、时间线、详情区各是做什么的'}</small></span></button><button class="o" data-tour="flow"><span><b>完整流程</b><small>从看经历到做一份简历</small></span></button>`,b);return}
+  if(typeof rpopClose==='function')rpopClose();
+  if(t==='page')tourStart(S.res?TOUR_RES:TOUR_MAIN);else if(t==='flow')tourStart(TOUR_FLOW)});
+
+/* ===================== 用户自定义（C4，轻量） =====================
+   The user's own tweaks live in the vault, not in this file, so skill updates never overwrite them:
+     <VAULT>/custom.css  — loaded after the built-in styles (override CSS variables, sizes, colours)
+     <VAULT>/custom.js   — small additions, through window.JL (see recipes/12-改造前端.md)
+   Delete or rename a file to undo it. A failing custom.js shows one toast; the page keeps working. */
+const JL_HOOKS=[];let jlWarned=false;
+function jlErr(e){console.error('custom.js',e);if(!jlWarned){jlWarned=true;toast('custom.js 出错了：'+(e&&e.message||e)+'（右半屏其他功能不受影响）')}}
+window.JL={
+  get state(){return S},get cards(){return CARDS},get docs(){return DOCS},get resumes(){return RESUMES},get profile(){return VAULT_CFG.profile||{}},
+  render(){render()},toast(m){toast(String(m))},
+  afterRender(fn){if(typeof fn!=='function')return;JL_HOOKS.push(fn);try{fn()}catch(e){jlErr(e)}}
+};
+function jlRunHooks(){for(const fn of JL_HOOKS){try{fn()}catch(e){jlErr(e)}}}
+addEventListener('error',e=>{if(e.filename&&/\/vault\/custom\.js/.test(e.filename))jlErr(e.message)});
+async function loadCustom(){if(!LIVE)return;try{
+  const r=await fetch('/vault/',{cache:'no-store'});if(!r.ok)return;const names=new Set((await r.json()).map(f=>f.name));
+  if(names.has('custom.css')){const l=document.createElement('link');l.rel='stylesheet';l.href='/vault/custom.css';document.head.append(l)}
+  if(names.has('custom.js')){const sc=document.createElement('script');sc.src='/vault/custom.js';sc.onerror=()=>jlErr('文件没能加载');document.body.append(sc)}
+}catch(e){}}
+
+if(LIVE){CARDS.length=0;DOCS.length=0;RESUMES.length=0;S.sel=null;S.loading=true}else{rhashOpen();rhistLoad()}
 render();
+if(!LIVE)setTimeout(tourAuto,900);
 </script>
 <script>
 /* ===== Motion engine — presentation only. It wraps render / toast / showMenu and listens with event delegation;
@@ -1402,8 +2181,8 @@ const _render=render;
 function doRender(){const p=snap();_render();post(p)}
 render=function(){
   if(M.vtPending)return; // a pending view transition renders the latest state itself
-  const nk=S.doc?'d:'+S.doc:'c:'+S.sel;
-  const old=FX.k!=null&&nk!==FX.k&&!S.doc&&!rm()&&document.startViewTransition&&document.visibilityState==='visible'?qs(`.tl .card[data-ck="${CSS.escape(String(S.sel))}"] .t`):null;
+  const nk=S.res?'r:'+S.res:S.doc?'d:'+S.doc:'c:'+S.sel;   // must match render()'s page key
+  const old=FX.k!=null&&nk!==FX.k&&!S.doc&&!S.res&&!rm()&&document.startViewTransition&&document.visibilityState==='visible'?qs(`.tl .card[data-ck="${CSS.escape(String(S.sel))}"] .t`):null;
   if(!old){doRender();return}
   old.style.viewTransitionName='fx-title';M.vtPending=true;root.classList.add('vt-run');
   let vt,ran=false;
@@ -1521,7 +2300,7 @@ document.addEventListener('pointerout',e=>{const bar=e.target.closest&&e.target.
    A typeset LaTeX version is made by the harness AI (skill/recipes/07-导出PDF.md). ---------- */
 function exportPdf(b){
   const d=DOCS.find(x=>x.id===b.dataset.export);if(!d)return;
-  const prev=document.title;document.title=(d.title||'简历').replace(/[\\/:*?"<>|]+/g,'_');  // default PDF file name
+  const prev=document.title;document.title=(d.title||'申请信').replace(/[\\/:*?"<>|]+/g,'_');  // default PDF file name
   window.addEventListener('afterprint',()=>{document.title=prev},{once:true});
   window.print();
 }
@@ -1555,8 +2334,8 @@ if(!LIVE){window.persist=()=>{};return}
 document.body.insertAdjacentHTML('beforeend','<div class="extnote" role="status"><span>这条已在别处更新</span><button class="btn pri" data-extload="1">载入最新</button></div>');
 const note=qs('.extnote');
 const status=(s,t)=>{VST.s=s;VST.t=t;document.querySelectorAll('.vsync,.vdot').forEach(n=>{n.dataset.s=s;n.title=t;const x=n.querySelector('span');if(x)x.textContent=t})};
-const DIR={e:'experiences',a:'applications'},ARR={e:CARDS,a:DOCS};
-const base={e:new Map(),a:new Map()},mt={e:new Map(),a:new Map()};   // id → {cmp,raw}; file name → mtime
+const DIR={e:'experiences',a:'applications',r:'resumes'},ARR={e:CARDS,a:DOCS,r:RESUMES};
+const base={e:new Map(),a:new Map(),r:new Map()},mt={e:new Map(),a:new Map(),r:new Map()};   // id → {cmp,raw}; file name → mtime
 const inflight=new Set(),again=new Set(),pending=new Map();let busyN=0;
 const cmpStr=o=>JSON.stringify(o,function(k,v){return this===o&&k==='updated'?undefined:v});
 const remember=(k,o)=>base[k].set(o.id,{cmp:cmpStr(o),raw:JSON.stringify(o)});
@@ -1581,30 +2360,35 @@ function normDoc(o,id){
   o.paras.forEach(p=>{if(p.text==null)p.text='';if(p.card===undefined)p.card=null});
   for(const k of ['title','kind','target','scene','date','lang'])if(o[k]==null)o[k]='';
   return o}
-const NORM={e:normCard,a:normDoc};
+const NORM={e:normCard,a:normDoc,r:(o,id)=>rnorm(o,id)};
 
 /* ---------- re-render without trampling an input the user is typing in ---------- */
 let deferred=false;
-const typing=()=>{const a=document.activeElement;return !!(a&&a.closest&&a.closest('#cols')&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))};
+const typing=()=>{const a=document.activeElement;return !!(a&&a.closest&&a.closest('#cols')&&(/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)||a.isContentEditable))};
 function rerender(){if(typing()){deferred=true;return}deferred=false;render()}
 document.addEventListener('focusout',()=>{if(deferred)setTimeout(()=>{if(deferred&&!typing()){deferred=false;render()}},0)});
 
 /* ---------- load ---------- */
 async function boot(){
   try{
-    const [cfg,el,al]=await Promise.all([getJSON('/vault/config.json').catch(()=>null),getJSON('/vault/experiences/').catch(()=>[]),getJSON('/vault/applications/').catch(()=>[])]);
+    const [cfg,el,al,rl]=await Promise.all([getJSON('/vault/config.json').catch(()=>null),getJSON('/vault/experiences/').catch(()=>[]),getJSON('/vault/applications/').catch(()=>[]),getJSON('/vault/resumes/').catch(()=>[])]);
+    if(cfg&&typeof cfg==='object'){VAULT_CFG={schema:cfg.schema||1,...cfg,profile:{name:'',headline:'',location:'',email:'',phone:'',links:[],photo:'',education:[],skills:[],...(cfg.profile||{})}}}
     if(cfg&&Array.isArray(cfg.types)&&cfg.types.length){TYPES.length=0;TYPES.push(...cfg.types.map(String))}
     const load=async(k,list)=>(await Promise.all(list.filter(f=>!f.dir&&/\.json$/.test(f.name)).map(f=>
       getJSON(`/vault/${DIR[k]}/${encodeURIComponent(f.name)}`).then(o=>{mt[k].set(f.name,f.mtime);return NORM[k](o,f.name.slice(0,-5))}).catch(()=>null)))).filter(Boolean);
-    const [cs,ds]=await Promise.all([load('e',el),load('a',al)]);
-    CARDS.length=0;CARDS.push(...cs);DOCS.length=0;DOCS.push(...ds);
-    cs.forEach(o=>remember('e',o));ds.forEach(o=>remember('a',o));
+    const [cs,ds,rs]=await Promise.all([load('e',el),load('a',al),load('r',Array.isArray(rl)?rl:[])]);
+    CARDS.length=0;CARDS.push(...cs);DOCS.length=0;DOCS.push(...ds);RESUMES.length=0;RESUMES.push(...rs.sort((a,b)=>String(b.updated||b.created||'').localeCompare(String(a.updated||a.created||''))));
+    cs.forEach(o=>remember('e',o));ds.forEach(o=>remember('a',o));rs.forEach(o=>remember('r',o));
     CARDS.forEach(c=>{if(c.type&&!TYPES.includes(c.type))TYPES.push(c.type)});
     const first=[...CARDS].sort((a,b)=>String(b.time).localeCompare(String(a.time)))[0];
     S.sel=first?first.id:null;S.open={};if(first)S.open[first.type]=true;
+    if(typeof rhistLoad==='function')rhistLoad();
+    if(typeof rhashOpen==='function')rhashOpen();
     status('ok','已同步');
   }catch(e){status('err','读取失败');toast('读取经历库失败：'+e.message)}
   S.loading=false;render();
+  if(typeof loadCustom==='function')loadCustom();
+  setTimeout(()=>{if(typeof tourAuto==='function')tourAuto()},900);
   setInterval(()=>{if(!document.hidden)poll()},2000);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)poll()});
 }
@@ -1615,7 +2399,7 @@ window.persist=function(delay=150){clearTimeout(pt);pt=setTimeout(flush,delay)};
 function busy(n){busyN+=n;if(busyN>0)status('save','保存中…');else if(VST.s==='save')status('ok','已同步')}
 function flush(){
   if(S.loading)return;
-  for(const k of ['e','a']){const b=base[k],ids=new Set();
+  for(const k of ['e','a','r']){const b=base[k],ids=new Set();
     ARR[k].forEach(o=>{ids.add(o.id);const prev=b.get(o.id);if(!prev||prev.cmp!==cmpStr(o))write(k,o,prev)});
     [...b.keys()].forEach(id=>{if(!ids.has(id))remove(k,id,b.get(id))})}
   settle();
@@ -1647,11 +2431,13 @@ async function remove(k,id,prev){
 function fixSel(){
   if(S.sel&&!card(S.sel)){const v=visible()[0]||CARDS[0];S.sel=v?v.id:null}
   if(S.doc&&!DOCS.some(d=>d.id===S.doc)){S.doc=null;S.docEdit=null}
+  if(S.res&&!RESUMES.some(r=>r.id===S.res)){S.res=null;S.rsel=S.redit=S.rpend=null}
 }
 
 /* ---------- live sync: poll listings, fetch only what changed ---------- */
-const editing=(k,id)=>k==='e'?!!((S.fedit&&S.fedit.id===id)||(S.edit&&S.edit.startsWith(id+':'))||(S.rename&&(S.rename==='card#'+id||S.rename.startsWith(id+':')))):S.docEdit===id;
+const editing=(k,id)=>k==='r'?(S.res===id&&(S.redit!=null||S.rpend!=null||!!(document.activeElement&&document.activeElement.closest&&document.activeElement.closest('[data-rce],[data-rkw]')))):k==='e'?!!((S.fedit&&S.fedit.id===id)||(S.edit&&S.edit.startsWith(id+':'))||(S.rename&&(S.rename==='card#'+id||S.rename.startsWith(id+':')))):S.docEdit===id;
 function apply(k,id,o){
+  if(typeof rhistClear==='function')rhistClear();
   const arr=ARR[k],i=arr.findIndex(x=>x.id===id);
   if(o){if(i>=0)arr[i]=o;else arr.push(o);remember(k,o);if(k==='e'&&o.type&&!TYPES.includes(o.type))TYPES.push(o.type)}
   else{if(i>=0)arr.splice(i,1);base[k].delete(id)}
@@ -1673,8 +2459,8 @@ let polling=false;
 async function poll(){
   if(polling||S.loading)return;polling=true;
   try{let changed=false;
-    for(const k of ['e','a']){
-      const list=await getJSON(`/vault/${DIR[k]}/`),names=new Set();
+    for(const k of ['e','a','r']){
+      let list;try{list=await getJSON(`/vault/${DIR[k]}/`)}catch(e){if(k==='r'&&/^404/.test(e.message))continue;throw e}const names=new Set();
       for(const f of list){
         if(f.dir||!/\.json$/.test(f.name))continue;names.add(f.name);
         if(mt[k].get(f.name)===f.mtime)continue;
@@ -1713,8 +2499,126 @@ document.addEventListener('error',e=>{const t=e.target;if(t&&(t.tagName==='IMG'|
   const box=t.closest('.wimg,.wvid');if(box)box.classList.add('noload');  // clean placeholder instead of the broken-image icon
   const s=t.dataset.asset,i=s.lastIndexOf('/');listAssets(i>0?s.slice(0,i):'',true)}},true);
 
+window.saveProfileConfig=async function(prof){
+  VAULT_CFG.profile=prof;
+  if(!LIVE){render();toast('已更新（演示数据不会保存）');return}
+  busy(1);
+  try{await send('PUT','/vault/config.json',VAULT_CFG);render();toast('已保存个人信息与教育背景')}
+  catch(e){status('err','保存失败');toast('保存失败：'+e.message)}
+  finally{busy(-1)}
+};
+
+async function uploadPortrait(file){
+  if(!file)return;
+  const ext=(file.name.split('.').pop()||'').toLowerCase().replace('jpeg','jpg');
+  const ok=['png','jpg','webp'].includes(ext)?ext:(file.type==='image/png'?'png':file.type==='image/webp'?'webp':'jpg');
+  const rel='assets/portrait.'+ok;
+  if(!LIVE){toast('演示模式下无法写入本地文件');return}
+  busy(1);
+  try{
+    const r=await fetch('/vault/'+rel,{method:'PUT',headers:{'X-Token':TOKEN},body:file});
+    if(!r.ok)throw new Error(String(r.status));
+    const inp=$('pf-photo'),img=$('pf-pimg'),txtEl=document.querySelector('#pf-drop .pdt b');
+    if(inp)inp.value=rel;
+    if(img){img.src='/vault/'+rel+'?t='+Date.now();img.hidden=false}
+    if(txtEl)txtEl.textContent='已上传证件照（点击「保存」生效）';
+    toast('证件照已上传到 '+rel);
+  }catch(e){toast('上传失败：'+e.message)}
+  finally{busy(-1)}
+}
+document.addEventListener('click',e=>{const dz=e.target.closest&&e.target.closest('#pf-drop');if(dz&&e.target.id!=='pf-file')$('pf-file')?.click()});
+document.addEventListener('change',e=>{if(e.target&&e.target.id==='pf-file'&&e.target.files[0])uploadPortrait(e.target.files[0])});
+document.addEventListener('dragover',e=>{const dz=e.target.closest&&e.target.closest('#pf-drop');if(dz){e.preventDefault();dz.classList.add('drag')}});
+document.addEventListener('dragleave',e=>{const dz=e.target.closest&&e.target.closest('#pf-drop');if(dz&&!dz.contains(e.relatedTarget))dz.classList.remove('drag')});
+document.addEventListener('drop',e=>{const dz=e.target.closest&&e.target.closest('#pf-drop');if(!dz)return;e.preventDefault();dz.classList.remove('drag');const f=e.dataTransfer&&e.dataTransfer.files[0];if(f)uploadPortrait(f)});
+
 boot();
 })();
+
+function syncProfDraft(){
+  const box=$('pf-edus');if(!box)return;
+  S.profEdus=[...box.querySelectorAll('.pedu-item')].map(el=>({
+    school:el.querySelector('[data-ef="school"]').value.trim(),
+    major:el.querySelector('[data-ef="major"]').value.trim(),
+    degree:el.querySelector('[data-ef="degree"]').value.trim(),
+    time:el.querySelector('[data-ef="time"]').value.trim(),
+    details:el.querySelector('[data-ef="details"]').value.split('\n').map(s=>s.trim()).filter(Boolean)
+  }));
+}
+function openProfileModal(){
+  let dlg=document.getElementById('prof-dlg');
+  if(dlg)dlg.remove();
+  const p=VAULT_CFG.profile||{};
+  const edus=Array.isArray(p.education)?JSON.parse(JSON.stringify(p.education)):[];
+  dlg=document.createElement('div');dlg.id='prof-dlg';dlg.className='pdlg';dlg.setAttribute('role','dialog');dlg.setAttribute('aria-label','个人信息与教育背景');
+  const eduHtml=()=>edus.length?edus.map((ed,i)=>`<div class="pedu-item" data-ei="${i}">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:12px;color:var(--muted)">
+      <span>教育经历 ${i+1}</span><button type="button" class="btn" style="padding:2px 8px;font-size:11px" data-edudel="${i}">删除</button>
+    </div>
+    <div class="pgrid">
+      <label class="pfield">学校<input data-ef="school" value="${esc(ed.school||'')}"></label>
+      <label class="pfield">专业<input data-ef="major" value="${esc(ed.major||'')}"></label>
+      <label class="pfield">学历（如 本科 / 硕士）<input data-ef="degree" value="${esc(ed.degree||'')}"></label>
+      <label class="pfield">时间（如 2023.09 – 2027.06）<input data-ef="time" value="${esc(ed.time||'')}"></label>
+      <label class="pfield full">成绩 / 主修课程（每行一条，导出简历时会展示）<textarea rows="2" data-ef="details">${esc((ed.details||[]).join('\n'))}</textarea></label>
+    </div></div>`).join(''):'<div style="font-size:12.5px;color:var(--muted);padding:8px 2px">还没有填写教育背景，点右上角「+ 添加学历」即可录入。</div>';
+
+  dlg.innerHTML=`<div class="pbox">
+    <div class="phead"><h3>个人信息与教育背景</h3><button type="button" class="btn" data-pclose="1">关闭</button></div>
+    <div class="pgrid">
+      <label class="pfield">姓名<input id="pf-name" value="${esc(p.name||'')}"></label>
+      <label class="pfield">头衔 / 求职方向<input id="pf-head" placeholder="如：传播学 · 本科三年级" value="${esc(p.headline||'')}"></label>
+      <label class="pfield">邮箱<input id="pf-email" value="${esc(p.email||'')}"></label>
+      <label class="pfield">电话<input id="pf-phone" value="${esc(p.phone||'')}"></label>
+      <label class="pfield">所在城市 / 到岗时间<input id="pf-loc" placeholder="如：北京 · 可立即到岗" value="${esc(p.location||'')}"></label>
+      <label class="pfield">个人主页 / 链接（逗号隔开）<input id="pf-links" value="${esc((p.links||[]).join(', '))}"></label>
+      <label class="pfield full">证件照路径（建议让 AI 复制到 ~/folio/assets/portrait.jpg）<input id="pf-photo" placeholder="assets/portrait.jpg" value="${esc(p.photo||'')}"></label>
+    </div>
+    <div class="pedu-head"><span>教育背景</span><button type="button" class="btn" data-eduadd="1">+ 添加学历</button></div>
+    <div id="pf-edus">${eduHtml()}</div>
+    <div class="pedu-head"><span>技能与语言（每行一条，导出简历时显示在底部）</span></div>
+    <label class="pfield"><textarea id="pf-skills" rows="3" placeholder="语言：IELTS 7.0（口语 7.0）、CET-6 610&#10;工具：Python、SQL、Figma">${esc((p.skills||[]).join('\n'))}</textarea></label>
+    <div class="pfoot"><button type="button" class="btn" data-pclose="1">取消</button><button type="button" class="btn pri" id="pf-save">保存</button></div>
+  </div>`;
+  document.body.append(dlg);
+  requestAnimationFrame(()=>dlg.classList.add('on'));
+
+  const syncEdus=()=>{
+    dlg.querySelectorAll('.pedu-item').forEach(el=>{
+      const i=+el.dataset.ei;
+      edus[i]={
+        school:el.querySelector('[data-ef="school"]').value.trim(),
+        major:el.querySelector('[data-ef="major"]').value.trim(),
+        degree:el.querySelector('[data-ef="degree"]').value.trim(),
+        time:el.querySelector('[data-ef="time"]').value.trim(),
+        details:el.querySelector('[data-ef="details"]').value.split('\n').map(s=>s.trim()).filter(Boolean)
+      };
+    });
+  };
+  const close=()=>{dlg.classList.remove('on');setTimeout(()=>dlg.remove(),200)};
+  dlg.addEventListener('click',e=>{
+    if(e.target===dlg||e.target.closest('[data-pclose]')){close();return}
+    if(e.target.closest('[data-eduadd]')){syncEdus();edus.push({school:'',major:'',degree:'',time:'',details:[]});document.getElementById('pf-edus').innerHTML=eduHtml();return}
+    const del=e.target.closest('[data-edudel]');
+    if(del){syncEdus();edus.splice(+del.dataset.edudel,1);document.getElementById('pf-edus').innerHTML=eduHtml();return}
+    if(e.target.id==='pf-save'){
+      syncEdus();
+      const prof={
+        name:document.getElementById('pf-name').value.trim(),
+        headline:document.getElementById('pf-head').value.trim(),
+        location:document.getElementById('pf-loc').value.trim(),
+        email:document.getElementById('pf-email').value.trim(),
+        phone:document.getElementById('pf-phone').value.trim(),
+        links:document.getElementById('pf-links').value.split(',').map(s=>s.trim()).filter(Boolean),
+        photo:document.getElementById('pf-photo').value.trim(),
+        education:edus.filter(x=>x.school||x.major||x.degree||x.time||(x.details&&x.details.length)),
+        skills:document.getElementById('pf-skills').value.split('\n').map(s=>s.trim()).filter(Boolean)
+      };
+      close();
+      if(window.saveProfileConfig)window.saveProfileConfig(prof);
+    }
+  });
+}
 </script>
 </body>
 </html>

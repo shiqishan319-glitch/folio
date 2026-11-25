@@ -44,7 +44,7 @@ ln -sfn "/path/to/Sqs经历库/skill" "$HOME/.agents/skills/jingliku"
 ### ⚠️ 头号坑：DSH 的文件沙箱
 
 DSH 的文件策略默认是 `workspace-write`：**只允许写当前会话的工作区**。
-`~/.agents/skills`、`~/经历库` 都在工作区外，所以 `ln -s`、改 JSON、往 `.trash/` 移文件会被**直接拒绝**：
+`~/.agents/skills`、`~/folio` 都在工作区外，所以 `ln -s`、改 JSON、往 `.trash/` 移文件会被**直接拒绝**：
 
 ```
 ln: /Users/you/.agents/skills/jingliku: Operation not permitted
@@ -57,10 +57,10 @@ ln: /Users/you/.agents/skills/jingliku: Operation not permitted
    无人值守的场景会 fail closed（直接失败），所以得有人在电脑前。
 2. **自己开终端装。** 上面那两条 `ln` 命令在系统终端里跑，没有沙箱，一步到位。
 3. **把数据目录放进工作区。** 安装用上面第 2 条，运行期把 `--vault` 指到工作区里的路径
-   （例如 `<工作区>/经历库`），之后读写经历、挂作品都不再需要授权。
+   （例如 `<工作区>/folio`），之后读写经历、挂作品都不再需要授权。
 
-> 怎么选：**日常写经历、改卡片、挂作品全是写 `<VAULT>` 的操作**，vault 在 `~/经历库` 的话，
-> DSH 每次都要审批一次，很烦。已有历史数据在 `~/经历库` 的，用第 1 或第 2 条并接受审批；
+> 怎么选：**日常写经历、改卡片、挂作品全是写 `<VAULT>` 的操作**，vault 在 `~/folio` 的话，
+> DSH 每次都要审批一次，很烦。已有历史数据在 `~/folio` 的，用第 1 或第 2 条并接受审批；
 > 新用户直接按第 3 条把 vault 建在工作区里最省心。**不要替用户改 DSH 的安全策略**，要改让他自己改。
 
 ### 安装后验证
@@ -79,19 +79,19 @@ DSH 会**热加载** skill 目录：装完不用重启，**当前会话**的下�
 ## 两个路径（先弄清楚）
 
 - **`<SKILL>`** = 安装后的绝对路径，用户级就是 `$HOME/.agents/skills/jingliku`。
-- **`<VAULT>`** = 数据目录，默认 `$HOME/经历库`（用户指定了就用用户的）。
+- **`<VAULT>`** = 数据目录，默认 `$HOME/folio`（用户指定了就用用户的）。
 
 `~` 在英文双引号里不展开——这个坑 DSH 上命中率特别高，因为 skill 本身就装在 `~` 底下：
 
 ```bash
 # ✗ 错：双引号里的 ~ 不展开，报 No such file or directory
-python3 "~/.agents/skills/jingliku/scripts/serve.py" --vault "~/经历库" --ensure
+python3 "~/.agents/skills/jingliku/scripts/serve.py" --vault "~/folio" --ensure
 
 # ✓ 对：用 $HOME（双引号里会展开）
-python3 "$HOME/.agents/skills/jingliku/scripts/serve.py" --vault "$HOME/经历库" --ensure
+python3 "$HOME/.agents/skills/jingliku/scripts/serve.py" --vault "$HOME/folio" --ensure
 
 # ✓ 更稳：直接写完整绝对路径
-python3 "/Users/你的用户名/.agents/skills/jingliku/scripts/serve.py" --vault "/Users/你的用户名/经历库" --ensure
+python3 "/Users/你的用户名/.agents/skills/jingliku/scripts/serve.py" --vault "/Users/你的用户名/folio" --ensure
 ```
 
 ## 在右半屏打开前端
@@ -105,7 +105,7 @@ DSH 桌面版的右侧栏有一个 **Browser 标签页**（非桌面端默认关
 
 **别用 `file://` 打开 `app/index.html`**：那样只会显示「演示数据 · 不会保存」的静态版，改动存不下来。
 一律走 `serve.py` 打印的 `http://127.0.0.1:XXXX/` 地址（端口被占时会顺延，以打印的为准，
-也可以 `cat "$HOME/经历库/.runtime.json"` 看 `url`）。
+也可以 `cat "$HOME/folio/.runtime.json"` 看 `url`）。
 
 DSH 没有 `.claude/launch.json` 那种固定预览配置，也不需要：每次会话开头跑一遍 `serve.py --ensure` 就够，
 已经在运行时它什么都不改。
@@ -136,7 +136,7 @@ DSH 没有 `.claude/launch.json` 那种固定预览配置，也不需要：每�
 ```bash
 python3 --version                                   # 需要 3.9+
 test -f "$HOME/.agents/skills/jingliku/SKILL.md" && echo INSTALLED
-python3 -m json.tool "$HOME/经历库/config.json" > /dev/null && echo VAULT_OK
+python3 -m json.tool "$HOME/folio/config.json" > /dev/null && echo VAULT_OK
 ```
 
 `VAULT_OK` 没出来就按 `<SKILL>/recipes/01-启动.md` 第 2 步初始化数据目录（空库或带示例数据）。

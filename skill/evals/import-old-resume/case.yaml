@@ -1,0 +1,11 @@
+schema_version: "1.1"
+name: import-old-resume
+expected_outcome: |
+  Starting from an empty vault, the fictional resume 林可-简历.pdf is imported: config.json profile gets the
+  name, email and the 海滨大学 education entry (details kept line by line); each entry becomes one card with the
+  right type (two 实习, one 项目, one 志愿者, plus a 技能 card), normalized time "YYYY.MM – YYYY.MM", and the
+  original bullet text saved verbatim as a "v1 原简历" version; no number is invented; a resume record in
+  resumes/ reproduces the original section order and passes `resume_model.py check`; the reply asks at most
+  3 follow-up questions.
+context:
+  scaffold_script: place-files.sh

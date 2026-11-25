@@ -1,80 +1,83 @@
-% 经历库 · 简历模板（单栏 A4，参考 sqs-resume 风格：紧凑留白 + 灰底黑条分节栏）
+% 经历库 · 简历模板（单栏 A4，无衬线；参考 sqs 的简历：加粗分节标题 + 通栏细线、条目「机构 - 角色」右侧时间、要点加粗小标题）
 % 由 scripts/fill_tex.py 填充 %%占位符%%
 % 编译：xelatex（需要 ctex 宏包）
 \documentclass[UTF8]{ctexart}
-\usepackage[a4paper,left=22.5bp,right=22.17bp,top=19.5bp,bottom=22.5bp]{geometry}
-\usepackage{xcolor,tikz,needspace,etoolbox,graphicx}
+\usepackage[a4paper,left=36bp,right=36bp,top=30bp,bottom=28bp]{geometry}
+\usepackage{xcolor,needspace,etoolbox,graphicx,calc}
 \usepackage[hidelinks]{hyperref}
+
+% 中英文都用无衬线，并且要有真正的粗体：按系统挑字体（Mac 冬青黑体 → Windows 微软雅黑 → Linux 思源/Noto 黑体），
+% 都没有就退回 ctex 默认黑体 + 伪粗体，保证换电脑也能编译
+\newcommand{\usesans}[2]{%
+  \setCJKmainfont{#1}[BoldFont={#2}]\setCJKsansfont{#1}[BoldFont={#2}]%
+  \setmainfont{#1}[BoldFont={#2}]\setsansfont{#1}[BoldFont={#2}]}
+\IfFontExistsTF{Hiragino Sans GB W3}{\usesans{Hiragino Sans GB W3}{Hiragino Sans GB W6}}{%
+  \IfFontExistsTF{Microsoft YaHei}{\usesans{Microsoft YaHei}{Microsoft YaHei Bold}}{%
+    \IfFontExistsTF{Noto Sans CJK SC}{\usesans{Noto Sans CJK SC}{Noto Sans CJK SC Bold}}{%
+      \xeCJKsetup{AutoFakeBold=2.5}}}}
+% 「2023.09 – 2027.06」里的短横按西文处理，两边的空格才不会被吞掉
+\xeCJKDeclareCharClass{Default}{"2013}
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand*{\CJKfamilydefault}{\CJKsfdefault}
 
 \pagestyle{empty}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{1.4bp}
+\setlength{\parskip}{0pt}
 \setlength{\topskip}{0pt}
-\setlength{\emergencystretch}{0pt}
+\setlength{\emergencystretch}{1em}
 \clubpenalty=10000
 \widowpenalty=10000
 
-\newcommand{\resumebodyfont}{\fontsize{9bp}{10.5bp}\selectfont}
+\newcommand{\resumebodyfont}{\fontsize{9.4bp}{12.6bp}\selectfont}
 \AtBeginDocument{\resumebodyfont\raggedright}
 
-% 顶部个人信息 + 首个分节栏（可选右上角证件照）
-% #1 姓名, #2 副标题/求职意向（可空）, #3 联系方式, #4 证件照路径（可空）, #5 首个分节名
+% 顶部：左边姓名 / 求职意向 / 联系方式，右上角可选证件照；随后是第一个分节
+% #1 姓名, #2 求职意向（可空）, #3 联系方式, #4 证件照路径（可空）, #5 首个分节名
 \newcommand{\resumeheader}[5]{%
+  \noindent
   \ifstrempty{#4}{%
-    \noindent\textbf{\fontsize{15bp}{18bp}\selectfont #1}%
-    \ifstrempty{#2}{}{\quad{\color{black!60}#2}}\par
-    \vspace{2bp}
-    \noindent{\color{black!75}#3}\par
-    \vspace{4bp}
-    \resumebar{#5}%
+    \begin{minipage}[t]{\linewidth}%
   }{%
-    \noindent\begin{tikzpicture}[x=1bp,y=1bp,baseline=0bp]
-      \path[use as bounding box] (0,0) rectangle (551.25,76);
-      \node[anchor=north east,inner sep=0pt] at (551.25,76) {\includegraphics[width=60bp,height=72bp]{#4}};
-      \node[anchor=base west,inner sep=0pt,font=\bfseries\fontsize{15bp}{18bp}\selectfont] at (0,44) {#1};
-      \ifstrempty{#2}{}{\node[anchor=base west,inner sep=0pt,font=\resumebodyfont,text=black!60] at (0,59) {#2};}
-      \node[anchor=base west,inner sep=0pt,font=\resumebodyfont,text=black!80] at (0,24) {#3};
-      \fill[black!5] (0,0) rectangle (479.25,18);
-      \fill[black] (0,0) rectangle (3,18);
-      \node[anchor=base west,inner sep=0pt,font=\bfseries\fontsize{10.5bp}{12bp}\selectfont] at (15,5.25) {#5};
-    \end{tikzpicture}\par\vspace{1.5bp}%
+    \begin{minipage}[t]{\linewidth-76bp}%
   }%
-}
+    \vspace{0pt}\raggedright
+    {\bfseries\fontsize{19bp}{23bp}\selectfont #1}\par
+    \ifstrempty{#2}{}{\vspace{3bp}{\color{black!62}#2}\par}%
+    \vspace{4bp}{\color{black!85}#3}\par
+  \end{minipage}%
+  \ifstrempty{#4}{}{\hfill\begin{minipage}[t]{64bp}\vspace{0pt}\includegraphics[width=64bp,height=80bp,keepaspectratio=false]{#4}\end{minipage}}%
+  \par\vspace{2bp}%
+  \resumesection{#5}}
 
-% 18bp 灰底 + 3bp 左侧黑条分节栏
-\newcommand{\resumebar}[1]{%
-  \begingroup
-  \setlength{\fboxsep}{0pt}%
-  \noindent\colorbox{black!5}{%
-    \makebox[\linewidth][l]{%
-      \rule{3bp}{18bp}\hspace{12bp}%
-      \raisebox{5.25bp}{\bfseries\fontsize{10.5bp}{12bp}\selectfont #1}%
-      \hfill}}%
-  \par\endgroup\vspace{1.5bp}}
-
+% 分节：加粗标题 + 通栏细线
 \newif\ifafterpoint
 \afterpointfalse
-
 \newcommand{\resumesection}[1]{%
-  \par\Needspace{55bp}%
-  \ifdim\pagetotal=0pt\relax\vspace*{10bp}\fi
-  \vspace{5.7bp}\nointerlineskip
-  \resumebar{#1}%
+  \par\Needspace{48bp}%
+  \vspace{8bp}%
+  {\bfseries\fontsize{11.5bp}{14bp}\selectfont #1}\par
+  \vspace{1.6bp}\hrule height 0.7bp\relax\vspace{3.2bp}%
   \global\afterpointfalse}
 
-% 条目头：左侧加粗，右侧时间
+% 条目头：左侧「机构 - 角色」加粗，右侧时间
 \newcommand{\entry}[2]{%
-  \par\Needspace{45bp}%
-  \ifafterpoint\ifstrempty{#2}{\vspace{3bp}}{\vspace{6bp}}\fi
-  \noindent\textbf{#1}\hfill{\color{black!70}#2}\par
+  \par\Needspace{36bp}%
+  \ifafterpoint\vspace{2.4bp}\fi
+  \noindent\textbf{#1}\hfill{\color{black!85}#2}\par
   \global\afterpointfalse}
 
-% 要点：可选加粗前缀 + 正文
+% 条目下的一句概述（不带圆点）
+\newcommand{\summaryline}[1]{\par\noindent #1\par}
+
+% 不带圆点的一行，可选加粗前缀（教育背景的 GPA、主修课程等）
+\newcommand{\plainline}[2]{\par\noindent\ifstrempty{#1}{}{\textbf{#1}}#2\par}
+
+% 要点：圆点 + 可选加粗小标题 + 正文
 \newcommand{\point}[2]{%
-  \par\Needspace{21bp}%
+  \par\Needspace{14bp}%
   \begingroup
-    \leftskip=15bp\relax
-    \noindent\llap{\textbullet\hspace{7bp}}%
+    \leftskip=11bp\relax
+    \noindent\llap{\raisebox{.12ex}{\scalebox{.75}{$\bullet$}}\hspace{5bp}}%
     \ifstrempty{#1}{}{\textbf{#1}}#2\par
   \endgroup
   \global\afterpointtrue}

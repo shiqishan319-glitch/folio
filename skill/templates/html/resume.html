@@ -4,178 +4,58 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>%%TITLE%%</title>
+<!-- 经历库 · 网页打印版简历。版式和 templates/latex/resume.tex、右半屏的简历编辑器保持一致：
+     无衬线、分节标题加粗 + 通栏细线、条目「机构 - 角色」右侧时间、要点加粗小标题、首行概述不带圆点。 -->
 <style>
-  @page {
-    size: A4;
-    margin: 11mm 13mm;
-  }
-  * {
-    box-sizing: border-box;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
+  @page { size: A4; margin: 10.5mm 12.7mm 10mm; }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
   body {
     margin: 0;
-    padding: 0;
-    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    font-size: 9.2pt;
-    line-height: 1.45;
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 9.4pt;
+    line-height: 1.42;
     color: #18181b;
     background: #f4f4f5;
   }
   .print-bar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 10px 20px;
-    background: #18181b;
-    color: #fafafa;
-    font-size: 13px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    position: sticky; top: 0; z-index: 10;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 10px 20px; background: #18181b; color: #fafafa; font-size: 13px;
   }
-  .print-bar .tip {
-    color: #a1a1aa;
-    font-size: 12px;
-  }
-  .print-btn {
-    appearance: none;
-    border: none;
-    background: #ffffff;
-    color: #18181b;
-    font-weight: 600;
-    font-size: 13px;
-    padding: 6px 14px;
-    border-radius: 6px;
-    cursor: pointer;
-    white-space: nowrap;
-  }
-  .print-btn:hover {
-    background: #e4e4e7;
-  }
-  .page {
-    width: 210mm;
-    min-height: 297mm;
-    margin: 18px auto 32px;
-    padding: 11mm 13mm;
-    background: #ffffff;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-  }
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 14px;
-    margin-bottom: 6px;
-  }
-  .header-main {
-    flex: 1;
-    min-width: 0;
-  }
-  .name-row {
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  .name {
-    font-size: 16pt;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    color: #111111;
-    margin: 0;
-  }
-  .headline {
-    font-size: 9.5pt;
-    color: #52525b;
-  }
-  .contact {
-    margin-top: 4px;
-    font-size: 8.8pt;
-    color: #3f3f46;
-    word-break: break-word;
-  }
-  .portrait {
-    width: 21mm;
-    height: 25.2mm;
-    object-fit: cover;
-    border-radius: 2px;
-    flex-shrink: 0;
-    border: 1px solid #e4e4e7;
-  }
-  .sec-bar {
-    background: #f2f2f2;
-    border-left: 3.5px solid #111111;
-    padding: 3px 10px;
-    font-size: 10.2pt;
-    font-weight: 700;
-    color: #111111;
-    margin: 9px 0 5px;
-    page-break-after: avoid;
-    break-after: avoid;
-  }
-  .entry {
-    margin-bottom: 5px;
-  }
-  .entry-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 12px;
-    margin-top: 4px;
-    margin-bottom: 2px;
-    page-break-after: avoid;
-    break-after: avoid;
-  }
-  .entry-title {
-    font-weight: 700;
-    color: #111111;
-  }
-  .entry-time {
-    font-size: 8.8pt;
-    color: #52525b;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  ul.points {
-    margin: 0 0 3px 0;
-    padding-left: 15px;
-  }
-  ul.points li {
-    margin: 1.5px 0;
-    page-break-inside: avoid;
-    break-inside: avoid;
-  }
-  ul.points li strong {
-    color: #111111;
-  }
+  .print-bar .tip { color: #a1a1aa; font-size: 12px; }
+  .print-btn { border: 0; background: #fff; color: #18181b; font: 600 13px inherit; padding: 6px 14px; border-radius: 6px; cursor: pointer; white-space: nowrap; }
+  .print-btn:hover { background: #e4e4e7; }
+  .page { width: 210mm; min-height: 297mm; margin: 18px auto 32px; padding: 10.5mm 12.7mm; background: #fff; box-shadow: 0 4px 24px rgba(0, 0, 0, .08); }
+
+  .header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 2px; }
+  .header-main { flex: 1; min-width: 0; }
+  .name { margin: 0; font-size: 19pt; line-height: 1.2; font-weight: 700; letter-spacing: .04em; }
+  .headline { margin-top: 3px; color: #52525b; }
+  .contact { margin-top: 4px; color: #27272a; overflow-wrap: anywhere; }
+  .contact .sep { color: #a1a1aa; margin: 0 .45em; }
+  .portrait { width: 22.5mm; height: 28mm; object-fit: cover; border-radius: 2px; flex: none; }
+
+  section { margin-top: 8px; }
+  .sec-title { font-size: 11.5pt; font-weight: 700; padding-bottom: 1.5px; border-bottom: 1px solid #18181b; margin-bottom: 3px; break-after: avoid; page-break-after: avoid; }
+  .entry { margin-top: 2.5px; break-inside: avoid-page; }
+  .entry-head { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; font-weight: 700; break-after: avoid; page-break-after: avoid; }
+  .entry-time { font-weight: 400; color: #27272a; white-space: nowrap; flex: none; }
+  .ln { margin: 0; }
+  .pt { position: relative; margin: 0; padding-left: 11pt; }
+  .pt::before { content: "•"; position: absolute; left: 2.5pt; }
+  .ln b, .pt b { font-weight: 700; }
+
   @media print {
-    body {
-      background: #ffffff;
-    }
-    .print-bar {
-      display: none !important;
-    }
-    .page {
-      width: auto;
-      min-height: auto;
-      margin: 0;
-      padding: 0;
-      box-shadow: none;
-    }
+    body { background: #fff; }
+    .print-bar { display: none !important; }
+    .page { width: auto; min-height: auto; margin: 0; padding: 0; box-shadow: none; }
   }
 </style>
 </head>
 <body>
   <div class="print-bar">
-    <div>
-      <strong>经历库 · 打印版简历</strong>
-      <span class="tip">（打印时建议开启「背景图形」以保留灰底分节栏，页眉页脚可取消勾选）</span>
-    </div>
-    <button class="print-btn" onclick="window.print()">打印 / 存为 PDF (Cmd/Ctrl + P)</button>
+    <div><strong>经历库 · 打印版简历</strong> <span class="tip">（页眉页脚可在打印对话框里取消勾选）</span></div>
+    <button class="print-btn" onclick="window.print()">打印 / 存为 PDF（Cmd/Ctrl + P）</button>
   </div>
   <main class="page">
     %%CONTENT%%

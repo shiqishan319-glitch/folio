@@ -23,7 +23,7 @@ cp -R "/path/to/Sqs经历库/skill" "$HOME/.workbuddy/skills/jingliku"
 ## 两个路径（先弄清楚）
 
 - **`<SKILL>`** = 安装后的绝对路径，用户级就是 `<HOME>/.workbuddy/skills/jingliku`（`<HOME>` 如 `/Users/你的用户名`）。
-- **`<VAULT>`** = 数据目录，默认 `~/经历库`。
+- **`<VAULT>`** = 数据目录，默认 `~/folio`。
 
 ⚠️ **WorkBuddy 最容易踩的坑：路径里的 `~`。**
 SKILL.md 里所有命令都用英文双引号包路径，而 `~` 在双引号里**不会展开**。
@@ -32,16 +32,16 @@ SKILL.md 里所有命令都用英文双引号包路径，而 `~` 在双引号里
 
 ```bash
 # ✗ 错：双引号里的 ~ 不展开
-python3 "~/.workbuddy/skills/jingliku/scripts/serve.py" --vault "~/经历库" --ensure
+python3 "~/.workbuddy/skills/jingliku/scripts/serve.py" --vault "~/folio" --ensure
 
 # ✓ 对：用 $HOME（在双引号里会展开）
-python3 "$HOME/.workbuddy/skills/jingliku/scripts/serve.py" --vault "$HOME/经历库" --ensure
+python3 "$HOME/.workbuddy/skills/jingliku/scripts/serve.py" --vault "$HOME/folio" --ensure
 
 # ✓ 对：直接写完整绝对路径，最省事、最不容易错
-python3 "/Users/你的用户名/.workbuddy/skills/jingliku/scripts/serve.py" --vault "/Users/你的用户名/经历库" --ensure
+python3 "/Users/你的用户名/.workbuddy/skills/jingliku/scripts/serve.py" --vault "/Users/你的用户名/folio" --ensure
 ```
 
-同理，`<VAULT>` 也别写 `"~/经历库"`，用 `"$HOME/经历库"` 或完整路径。
+同理，`<VAULT>` 也别写 `"~/folio"`，用 `"$HOME/folio"` 或完整路径。
 这不是 WorkBuddy 独有的坑，但因为它把 skill 装在 `~` 底下，命中率特别高。
 
 ## 在右半屏（结果区）打开网页
@@ -49,11 +49,11 @@ python3 "/Users/你的用户名/.workbuddy/skills/jingliku/scripts/serve.py" --v
 WorkBuddy 有内置浏览器预览面板，能打开 `localhost`，体验跟 Claude Code 桌面版一样：
 
 - **AI 自己启动：** 按 SKILL.md 铁律第 1 条运行
-  `python3 "$HOME/.workbuddy/skills/jingliku/scripts/serve.py" --vault "$HOME/经历库" --ensure`，
+  `python3 "$HOME/.workbuddy/skills/jingliku/scripts/serve.py" --vault "$HOME/folio" --ensure`，
   拿到 `RUNNING` / `STARTED http://127.0.0.1:XXXX/` 后，用预览/打开网页的能力打开这个地址，
   就会显示在右半屏的结果区。
 - **固定配置：** 不想每次都启动，可以让 AI 记住上面这条命令，每次会话开头先跑一遍（它很快，已在运行时什么都不改）。
-- 地址端口可能不是 8765（被占用时自动顺延），以 `--ensure` 打印的为准，或 `cat "$HOME/经历库/.runtime.json"` 看 `url`。
+- 地址端口可能不是 8765（被占用时自动顺延），以 `--ensure` 打印的为准，或 `cat "$HOME/folio/.runtime.json"` 看 `url`。
 
 **别用 `file://` 直接打开 `app/index.html`**：那样只会看到「演示数据 · 不会保存」的静态版，改动存不下来。
 一律走 `serve.py` 的 `http://127.0.0.1:XXXX/` 地址。
@@ -107,7 +107,7 @@ WorkBuddy 有内置浏览器预览面板，能打开 `localhost`，体验跟 Cla
 ```bash
 python3 --version   # 需要 3.9+
 ls "$HOME/.workbuddy/skills/jingliku/SKILL.md" && echo INSTALLED
-python3 -m json.tool "$HOME/经历库/config.json" > /dev/null && echo VAULT_OK
+python3 -m json.tool "$HOME/folio/config.json" > /dev/null && echo VAULT_OK
 ```
 
 数据目录还不存在时，按 `<SKILL>/recipes/01-启动.md` 第 2 步初始化（空库或带示例数据）。

@@ -1,0 +1,60 @@
+{
+  "schema": 1,
+  "id": "jl-ai-chanpin-202611",
+  "title": "某 AI 公司 · 产品实习",
+  "target": "某 AI 公司",
+  "position": "AI 产品实习生",
+  "jd": "参与 Agent 产品的需求分析与评测体系建设，有 Prompt / 评测集经验优先。",
+  "keywords": [
+    "Agent",
+    "评测",
+    "Prompt",
+    "需求分析",
+    "数据"
+  ],
+  "lang": "中文",
+  "date": "2026.11",
+  "status": "已投递",
+  "sent": "2026-11-20",
+  "header": {
+    "headline": "求职意向：AI 产品实习",
+    "photo": false
+  },
+  "sections": [
+    {
+      "title": "教育经历",
+      "from": "education"
+    },
+    {
+      "title": "实习经历",
+      "items": [
+        {
+          "card": "ali",
+          "writing": "简历条目",
+          "version": "v2 偏 Agent 岗位",
+          "text": "负责 Agent Skill 的评测方案：定义评测维度，设计 40 条用例并推动 12 条进入回归集，支撑两次版本迭代的质量判断。"
+        },
+        {
+          "card": "xhs",
+          "writing": "简历条目",
+          "version": "v1 通用",
+          "text": "负责垂类话题选题与数据复盘，每周输出选题建议，话题周均互动量提升约 30%。"
+        }
+      ]
+    },
+    {
+      "title": "技能与语言",
+      "items": [
+        {
+          "card": "skills",
+          "writing": "简历条目",
+          "version": "v1 AI 产品向",
+          "text": "产品与 AI：Figma 原型设计、SQL / Python 数据分析、AI Eval 评测集搭建与 Prompt 调优\n研究与协作：用户质性访谈、PRD 撰写、跨团队推进与数据复盘\n语言能力：中文（母语），英语（CET-6 610，可流畅阅读英文技术文档）"
+        }
+      ]
+    }
+  ],
+  "exports": [],
+  "created": "2026-11-18T21:00:00+08:00",
+  "updated": "2026-11-20T09:30:00+08:00"
+}

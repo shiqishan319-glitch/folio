@@ -2,7 +2,7 @@
 
 一个住在本地、由 AI 维护的个人经历数据库。每段经历只存一份；申请时按场景检索，生成对应的写法；生成结果存回库里，下次直接复用。
 
-> 当前版本：**`v0.3.4`**（v10 精致 Bento 前端 + 零依赖 HTML 打印版简历 + 多模态作品集分层存储与语义索引 + 个人信息/教育背景置底卡片 + 简历/申请信 LaTeX PDF 导出 + 已适配 7 款主流 AI 工具）。
+> 当前版本：**`v0.3.12`**（v10 精致 Bento 前端 + **简历**：按岗位做简历、右半屏直接改的简历编辑器、导入旧简历 + 申请信与简历的 LaTeX / 网页打印版 PDF + 多模态作品集分层存储（视频可让 AI 看懂写摘要）+ 个人主页一键生成 + 用户自定义前端（`custom.css` / `custom.js`）+ 首次打开分区引导 + 已适配 7 款主流 AI 工具）。
 
 ## 为什么做
 
@@ -25,7 +25,7 @@
 ```
 
 - **AI 做重活，前端做轻活**：批量入库、追问、检索、生成、LaTeX PDF 排版由 Skill 完成；右半屏前端负责浏览、对比、取用和轻量编辑。
-- **数据和产品都在本地**：所有数据存在 `~/经历库/`，不收集用户数据。换 AI 工具只需挂载 Skill，数据不用搬家。
+- **数据和产品都在本地**：所有数据存在 `~/folio/`，不收集用户数据。换 AI 工具只需挂载 Skill，数据不用搬家。
 - **只在电脑上维护**：专注桌面端与常用 AI 工具协同。
 - **多模态作品集「分层存储 + 语义索引」**：面对 PPT、视频、截图、PDF 等异构资料，既不让经历库体积爆炸，又能秒级找回与检索：
   - **Tier 0（在线链接）**：飞书 / Notion / GitHub / Figma 等只存 URL，0 体积；
@@ -43,7 +43,7 @@
 
 > 请读一下 `/path/to/Sqs经历库/skill/adapters/README.md`，帮我把经历库 skill 安装到当前工具并启动。
 
-AI 会按你正在用的工具找到对应的安装说明，完成安装、确认数据目录（默认 `~/经历库`），并在右半屏打开经历库页面。
+AI 会按你正在用的工具找到对应的安装说明，完成安装、确认数据目录（默认 `~/folio`），并在右半屏打开经历库页面。
 
 ### 方式二：按工具手动安装
 
@@ -67,6 +67,7 @@ AI 会按你正在用的工具找到对应的安装说明，完成安装、确�
 ├── docs/
 │   ├── PRD.md                经历库 PRD v0.1（需求背景、目标、流程、需求 List、待解决问题）
 │   ├── architecture.md       Skill 架构：AI 就是后端，代码只有一根细管子
+│   ├── resume-design.md      简历功能设计（分工、数据格式、前端交互；第九节问题已定）
 │   └── notes/
 │       └── 2026-11-11-思考.md  原始头脑风暴笔记
 ├── skill/                    经历库 Skill 包（装进 Claude Code / Codex / Qoder / WorkBuddy / DSH 等）
@@ -76,6 +77,7 @@ AI 会按你正在用的工具找到对应的安装说明，完成安装、确�
 │   ├── VERSION               版本号（改了 skill 就加一）
 │   ├── scripts/serve.py      本地细管子（Python 标准库）
 │   ├── scripts/check_update.py  每次会话检查 GitHub 有没有新版本
+│   ├── scripts/resume_model.py  简历：LaTeX / 网页打印版共用的排版模型 + 引用检查与快照同步
 │   ├── templates/latex/      申请记录、简历 LaTeX 模板
 │   ├── examples/sample-vault/ 示例数据
 │   └── adapters/             各 harness 的安装与打开方式
@@ -108,6 +110,7 @@ python3 -m http.server 8765 --bind 127.0.0.1 --directory demo
 
 - 分支策略：`main` 用于稳定发布，`dev` 用于日常开发与记录开发日志 / TODO。
 - 改了 `skill/` 下的任何东西，提交前把 `skill/VERSION` 的版本号加一（复制安装的用户靠它发现新版本）。
+- 改了前端或示例数据后运行 `python3 tools/sync_demo.py`（演示数据和 `demo/index.html` 都由它生成）；改了简历渲染规则后运行 `python3 tools/test_render_parity.py`。
 - 原始思考与设计文档见 `docs/PRD.md`、`docs/architecture.md` 和 `docs/notes/`。
 
 ## 开源协议

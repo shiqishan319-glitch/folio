@@ -2,34 +2,43 @@
 """经历库 thin local server: a dumb pipe between the browser page and the vault folder.
 All product logic lives in the front end and in the harness AI (see SKILL.md).
 
-    python3 serve.py [--vault ~/经历库] [--port 8765]
-    python3 serve.py --vault ~/经历库 --ensure     # AI uses this: prints "RUNNING <url>" or starts it
+    python3 serve.py [--vault ~/folio] [--port 8765]
+    python3 serve.py --vault ~/folio --ensure     # AI uses this: prints "RUNNING <url>" or starts it
                                                   # detached in the background and prints "STARTED <url>"
-    python3 serve.py --vault ~/经历库 --restart    # after an update: stop the old server, start the new code
+    python3 serve.py --vault ~/folio --restart    # after an update: stop the old server, start the new code
+    python3 serve.py --vault ~/folio --stop       # stop it (prints STOPPED or NOT_RUNNING), e.g. before moving the folder
 
   Port: last used port (from .runtime.json), else 8765; if another app holds it, the next free one.
 
   GET    /                 app/index.html (with the write token injected)
   GET    /vault/<path>     a vault file; a folder returns a JSON listing [{name,dir,size,mtime}]
-  PUT    /vault/<path>.json   write JSON (experiences/, applications/, config.json only)
+  PUT    /vault/<path>.json   write JSON (experiences/, applications/, resumes/, config.json only)
+  GET    /resume-print[?resume=<id>]   print-ready HTML resume (a saved resume, or all cards)
   DELETE /vault/<path>.json   move to .trash/
 Only 127.0.0.1; Host is checked; writes need the X-Token header. Standard library only.
 """
-import argparse, json, mimetypes, os, secrets, signal, socket, subprocess, sys, time, urllib.request
+import argparse, json, mimetypes, os, re, secrets, signal, socket, subprocess, sys, time, urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlsplit
 
 ap = argparse.ArgumentParser()
-ap.add_argument("--vault", default=os.environ.get("JINGLIKU_VAULT", "~/经历库"))
+ap.add_argument("--vault", default=os.environ.get("JINGLIKU_VAULT", "~/folio"))
 ap.add_argument("--port", type=int, default=None, help="preferred port (default: last used, else 8765)")
 ap.add_argument("--app", default=str(Path(__file__).resolve().parent.parent / "app"))
 ap.add_argument("--ensure", action="store_true", help="print the URL if running, else start detached")
 ap.add_argument("--restart", action="store_true", help="stop the running server (e.g. after an update), then --ensure")
+ap.add_argument("--stop", action="store_true", help="stop the running server for this vault (e.g. before moving the vault folder)")
 A = ap.parse_args()
 VAULT, APP = Path(A.vault).expanduser().resolve(), Path(A.app).resolve()
-WRITABLE = ("experiences/", "applications/", "config.json")
-SIGNATURE = "X-Jingliku"  # every response carries it, so we never mistake another app for ours
+WRITABLE = ("experiences/", "applications/", "resumes/", "config.json")
+DELETABLE = ("experiences/", "applications/", "resumes/")  # config.json can be written, never deleted
+SIGNATURE = "X-Jingliku"
+# The page may only talk to this server (and load the Google fonts it uses). So even a custom.js the user
+# was handed by someone else cannot send their vault anywhere — see recipes/12-改造前端.md.
+CSP = ("default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+       "font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; "
+       "connect-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'")  # every response carries it, so we never mistake another app for ours
 
 
 def runtime():
@@ -64,9 +73,10 @@ def is_our_process(pid):
         return False
 
 
-if A.restart:
-    pid = runtime().get("pid")
+if A.restart or A.stop:
+    pid, stopped = runtime().get("pid"), False
     if pid and is_our_process(pid):
+        stopped = True
         try:
             os.kill(int(pid), signal.SIGTERM)
         except OSError:
@@ -75,6 +85,9 @@ if A.restart:
             time.sleep(0.2)
             if not is_our_process(pid):
                 break
+    if A.stop:
+        print("STOPPED" if stopped else "NOT_RUNNING")
+        sys.exit(0)
     A.ensure = True
 
 if A.ensure:
@@ -142,10 +155,12 @@ HOSTS = {f"127.0.0.1:{PORT}", f"localhost:{PORT}"}
 
 
 class H(BaseHTTPRequestHandler):
-    def send(self, code, body=b"", ctype="application/json; charset=utf-8"):
+    def send(self, code, body=b"", ctype="application/json; charset=utf-8", csp=False):
         try:
             self.send_response(code)
             self.send_header("Content-Type", ctype)
+            if csp:
+                self.send_header("Content-Security-Policy", CSP)
             self.send_header("Content-Length", str(len(body)))
             self.send_header("Cache-Control", "no-store")
             self.send_header(SIGNATURE, "1")
@@ -159,23 +174,21 @@ class H(BaseHTTPRequestHandler):
         total = path.stat().st_size
         start, end, code = 0, total - 1, 200
         rng = self.headers.get("Range")
-        if rng and rng.startswith("bytes=") and total > 0:
-            spec = rng[6:].split(",", 1)[0].strip()
-            if "-" in spec:
-                s_part, e_part = spec.split("-", 1)
-                if s_part == "" and e_part:
-                    length = int(e_part)
-                    start = max(0, total - length)
-                elif s_part:
-                    start = int(s_part)
-                    end = int(e_part) if e_part else total - 1
-                if start > end or start >= total:
-                    self.send_response(416)
-                    self.send_header("Content-Range", f"bytes */{total}")
-                    self.send_header(SIGNATURE, "1")
-                    return self.end_headers()
-                end = min(end, total - 1)
-                code = 206
+        # only "bytes=N-", "bytes=N-M" or "bytes=-N"; anything else is ignored (full 200), as RFC 9110 allows
+        m = re.fullmatch(r"bytes=(\d*)-(\d*)", (rng or "").split(",", 1)[0].strip())
+        if m and (m[1] or m[2]) and total > 0:
+            if m[1]:
+                start = int(m[1])
+                end = int(m[2]) if m[2] else total - 1
+            else:
+                start = max(0, total - int(m[2]))
+            if start > end or start >= total:
+                self.send_response(416)
+                self.send_header("Content-Range", f"bytes */{total}")
+                self.send_header(SIGNATURE, "1")
+                return self.end_headers()
+            end = min(end, total - 1)
+            code = 206
         length = (end - start + 1) if total > 0 else 0
         try:
             self.send_response(code)
@@ -225,12 +238,17 @@ class H(BaseHTTPRequestHandler):
             writing = (qs.get("writing") or ["简历条目"])[0]
             prefer = (qs.get("prefer") or [None])[0]
             ids = qs["ids"][0].split(",") if qs.get("ids") and qs["ids"][0] else None
+            rid = (qs.get("resume") or [None])[0]
             sys.path.insert(0, str(Path(__file__).resolve().parent))
-            import fill_html
-            html_out = fill_html.resume(VAULT, writing, prefer, ids)
+            import fill_html, resume_model
+            if rid and not (resume_model.SAFE_ID.match(rid) and (VAULT / "resumes" / f"{rid}.json").is_file()):
+                return self.send(404, b'{"error":"no such resume"}')
+            html_out = fill_html.resume(VAULT, writing, prefer, ids, rid)
             return self.send(200, html_out.encode("utf-8"), "text/html; charset=utf-8")
         if path.startswith("/vault/"):
             p, _ = self.target()
+            if p and not p.exists() and unquote(path[len("/vault/"):]) in DELETABLE:
+                return self.send(200, b"[]")  # a data folder that isn't created yet (e.g. resumes/ in an older vault) is just empty
             if p and p.is_dir():
                 items = [{"name": c.name, "dir": c.is_dir(), "size": c.stat().st_size,
                           "mtime": c.stat().st_mtime} for c in sorted(p.iterdir())
@@ -245,7 +263,7 @@ class H(BaseHTTPRequestHandler):
         body = f.read_bytes()
         if f.suffix == ".html":
             body = body.replace(b"</head>", f'<meta name="jingliku-token" content="{TOKEN}"></head>'.encode(), 1)
-        self.send(200, body, mimetypes.guess_type(f.name)[0] or "application/octet-stream")
+        self.send(200, body, mimetypes.guess_type(f.name)[0] or "application/octet-stream", csp=f.suffix == ".html")
 
     def do_PUT(self):
         if not self.guard(write=True): return
@@ -275,7 +293,7 @@ class H(BaseHTTPRequestHandler):
     def do_DELETE(self):
         if not self.guard(write=True): return
         p, rel = self.target()
-        if not p or not rel.startswith(WRITABLE[:2]) or not p.is_file():
+        if not p or not rel.startswith(DELETABLE) or not p.is_file():
             return self.send(404, b'{"error":"not found"}')
         (VAULT / ".trash").mkdir(exist_ok=True)
         os.replace(p, VAULT / ".trash" / f"{time.strftime('%Y%m%d-%H%M%S')}-{p.name}")
